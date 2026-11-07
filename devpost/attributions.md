@@ -14,9 +14,9 @@ Room geometry, furniture silhouettes, task definition, numerical implementation,
 | qrcode-generator, Kazuhiko Arase | Portable QR matrix | MIT |
 | lz-string | Compressed plan links | MIT |
 
-Development tools retain their package licenses. Geist is self-hosted through `next/font` under its upstream font license. Editorial serif headings use a system fallback; no Georgia file is redistributed.
+Development tools retain their package licenses. Geist is self-hosted through `next/font`; its complete [SIL Open Font License](../public/fonts/Geist-OFL.txt) is included from the [official Google Fonts source](https://github.com/google/fonts/blob/main/ofl/geist/OFL.txt). The native project includes Inter and its complete [SIL Open Font License](../lens/Inter-OFL.txt), obtained from the [official Inter repository](https://github.com/rsms/inter/blob/master/LICENSE.txt). Editorial serif headings use a system fallback; no Georgia file is redistributed.
 
-Snap's SIK/UI Kit 2.0.0 packages come from the starter/Asset Library and remain subject to Snap's terms and notices. Open Door does not claim their authorship. Native cube, material and font inputs are supplied through the actual Lens project with their existing provenance.
+The installed Snap SIK/UI Kit packages come from the starter/Asset Library and remain subject to Snap's terms and notices. Open Door does not claim their authorship. Native cube and base-material inputs are supplied through the actual Lens project with their existing provenance. Rounded furniture meshes are authored procedural geometry. The images in `media/` are actual application/Preview captures; any outer-margin crops are disclosed there.
 
 Configuration-space search, separating axes, distance bounds and A* are established techniques. This project's contribution is their explicit task/revision contract, conservative checks, inspectable evidence and spatial room-editing workflow. It does not claim to invent these algorithms or be the first accessibility-related AR tool.
 

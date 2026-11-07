@@ -1,0 +1,20 @@
+# Changes driven by actual checks
+
+Recorded during the 7 November 2026 build. These changes came from numerical review, browser use and Lens Studio Preview; physical glasses and external user feedback were not part of this iteration.
+
+| Observation | Change | Evidence boundary |
+| --- | --- | --- |
+| An empty trajectory skipped its initial footprint, and conservative-only interference could be labeled as nominal blockage. | Validate initial occupancy even without movement; distinguish uncertainty from a demonstrated nominal collision. | Independent analytic cases and retained regression tests pass. |
+| Nested Drei HTML roots produced React unmount errors. | Keep annotation UI in the parent React tree and project positions from the scene. | Fresh local production and deployed browser sessions reported no error-console entries. |
+| Mobile framing cropped the room and some secondary labels were too small/pale. | Fit the camera to the viewport, clamp annotations and increase text size/contrast. | Reviewed desktop and 390 × 844 captures are in `media/`. |
+| Confirming profile assumptions interrupted the requested rehearsal. | Preserve the pending action and resume it after confirmation. | The local production browser exercised the full confirmation-to-playback flow. |
+| An existing companion tab changed its shared-plan URL while keeping the old model visible. | Handle hash/history navigation, capture the fragment before asynchronous parsing, reset plan context and cancel stale model work. | Six focused tests and fresh production browser checks passed revision 11/14, Back/Forward, open-dialog navigation and canonical reset with no console errors. |
+| “Extra clearance” could mean a total buffer or an increment. | Make the example request explicit: “Use a 5 cm clearance buffer.” Keep model output reviewable before application. | Live structured proposals were checked; the model never decides geometric feasibility. |
+| The first native controls exposed too many simultaneous actions. | Use three overview actions, contextual editing/details and a separate Fine adjust menu. | The final room overview was visually inspected in Preview. |
+| Named furniture moves alone did not provide direct spatial editing. | Add SIK far-ray pinch-drag, transformed into the model floor plane, with provisional feedback and one release-time commit. | Native simulated gestures covered valid movement, rollback and locks in miniature and 1:1; the final run is recorded separately. |
+| Flat, dark native primitives lacked the companion's architectural clarity. | Add bright warm materials, rounded furniture, bedding, a lamp, rug, window treatment and trim; keep decorations outside the collision model. | Actual Preview showed the complete room and controls without overlapping status text. |
+| MeshBuilder accepted the source shape at type-check time but rejected the uploaded nested vertex data in Preview. | Upload a flat interleaved position/normal/UV buffer. | Corrected meshes were rendered in the actual Lens. |
+| Destroying hovered furniture/controls left SIK cursor wrappers referring to retired native objects. A timed delay was not a reliable lifetime guarantee. | Reuse the finite menu roots and four furniture Interactable/collider roots; replace only decorative children. | Installed SIK source was reviewed read-only. Actual gestures passed, and the final QA log interval was clean; the later editor cleanup warning is disclosed in the native record. |
+| Logger JSON was a developer action, not a usable way to keep a plan. | Generate a revision-specific HTTPS QR, then validate and recompute the model in the companion before SVG/JSON downloads. | Final native revision 11 matched its decoded QR/public export. Separately, an earlier revision 14 opened in a fresh browser and its actual JSON download matched revision/fingerprint. |
+
+[Verification](verification.md) separates source checks, native interaction, browser handoff and hardware limits. [Native integration](../lens-src/INTEGRATION.md) describes the SIK lifetime decision and setup contract.

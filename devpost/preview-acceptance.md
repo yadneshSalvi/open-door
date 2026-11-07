@@ -1,6 +1,6 @@
 # Native Preview acceptance
 
-These are observable acceptance scenarios, not claims of completed LEAF runs. Use native Lens tooling and UI Kit interaction. Record the release build, simulator mode and observed outcome.
+These scenarios were exercised through native Lens tooling and actual simulated SIK/UI Kit interaction. [The accepted Preview record](native-preview.md) gives the source, simulator, observed results and limitations. No LEAF run or physical-device result is claimed.
 
 1. **Profile and witness:** Rehearse opens the provided-profile review. Accept it. Confirm journey `blocked_witness` against the table and door `blocked_witness` against the bench. Amber geometry must match the actual witness.
 2. **First fix:** Edit room → Move table. Confirm revision increases, table pose becomes (3.88, 2.85) m, journey clears, door remains blocked and bed pose/lock stay unchanged.

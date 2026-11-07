@@ -8,9 +8,11 @@ Open Door is a SPECS room-layout rehearsal prototype with a web companion. Expli
 
 This is a provided model, not live scene recognition. A clear result applies to the modeled checks, not accessibility certification, comfortable transfers or a person's lived experience.
 
-![Verified web companion showing both modeled checks clear after the furniture edits.](devpost/media/companion-desktop.jpg)
+| SPECS Lens — actual native Preview | Web companion |
+| --- | --- |
+| ![Native Preview showing the revised room and both modeled checks clear.](devpost/media/native-overview.png) | ![Verified web companion showing both modeled checks clear after the furniture edits.](devpost/media/companion-desktop.jpg) |
 
-Actual web companion capture. The separate native Lens and its evidence are described below.
+Actual captures. The native image trims empty outer margins; [native evidence](devpost/native-preview.md) records gestures, source hashes and the production handoff.
 
 ## Run locally
 
@@ -36,13 +38,13 @@ Inspect the production build at [localhost:3104](http://localhost:3104). Deploy 
 
 ## Open the actual Lens
 
-Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves SIK and UI Kit 2.0.0. Authored runtime source is in `lens/Assets/Scripts/OpenDoorExperience.ts`. Its `OpenDoorCore.js` is generated from the same numerical engine as the companion.
+Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves the installed SIK and UI Kit packages. Authored runtime source is in `lens/Assets/Scripts/OpenDoorExperience.ts`. Its `OpenDoorCore.js` is generated from the same numerical engine as the companion.
 
 Follow [native integration](lens-src/INTEGRATION.md) for inputs and Preview acceptance. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; copy it into native `Assets/Scripts/` after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
 
 The Lens has a three-action overview, direct SIK furniture dragging, a Fine adjust submenu, locks, undo, comparison, profile review, miniature/1:1 inspection, witnesses and route playback. Set `companionBaseUrl` to deployed HTTPS for a revision-specific QR handoff. The companion validates and recomputes the encoded model before downloads.
 
-Native compilation and Preview are separate evidence from web/numerical checks. See [verification](devpost/verification.md). No physical glasses have been tested.
+Native compilation and the observed Preview acceptance pass are complete: profile review, the two independent fixes, simulated SIK dragging in both scales, rollback/locks, playback and a production QR/export round trip. A fresh launch starts from the provided baseline; [the exported revision-11 plan](examples/native-preview-plan-r11.json) preserves the final edited layout. See [verification](devpost/verification.md) for the exact scope. No physical glasses have been tested.
 
 ## Source map
 
@@ -57,4 +59,4 @@ Native compilation and Preview are separate evidence from web/numerical checks. 
 | `examples/` | Original and revised room models |
 | `devpost/` | Curated design, methods, evidence and attribution |
 
-Read the [design brief](devpost/design-brief.md), [geometry note](devpost/geometry.md) and [API contract](devpost/api.md). Private plans, environment files and editor connection credentials remain ignored. Repository/video publication is a separate release action.
+Read the [design brief](devpost/design-brief.md), [geometry note](devpost/geometry.md), [API contract](devpost/api.md) and [iteration record](devpost/iterations.md). Private plans, environment files and editor connection credentials remain ignored. Repository/video publication is a separate release action.

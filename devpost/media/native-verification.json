@@ -1,0 +1,141 @@
+{
+  "recordedOn": "2026-11-07",
+  "environment": {
+    "lensStudio": "5.23.2.26081320",
+    "preview": "SPECS 27 Interactive Preview",
+    "scene": "bundled Plane",
+    "reportedSIKRuntimeVersion": "0.18.0",
+    "packages": "installed SIK and Spectacles UIKit"
+  },
+  "sourceSHA256": {
+    "OpenDoorExperience.ts": "677d9524724acc01fce482a722cd4cfbc3a8da911ddb88c9dedb8c9f08e47eea",
+    "ArchitecturalMeshes.ts": "099e1b16a2b5216beb0179ac1fb47ea12acbbae116289d8fa4135993928b6eef",
+    "OpenDoorCore.js": "72f1347920c6fd43131c58a6d3a5f99480a599cd5de208695a273f97e6046d08"
+  },
+  "nativeCompile": "succeeded",
+  "gestureMethod": "InjectPreviewGesture through the installed SIK mouse/far-ray interactor; separate hover/start/move/release observations",
+  "fullScaleSetup": "One supplemental commitMove(bench,1.4,2.7) call placed the test target in the fixed-camera viewport; subsequent movement was injected SIK input. Setup was undone through UI gestures.",
+  "assertions": [
+    {
+      "test": "mini far-ray drag",
+      "passed": true,
+      "revisionBefore": 2,
+      "revisionAtReleaseEvent": 2,
+      "revisionAfterUpdate": 3,
+      "poseAfter": {
+        "x": 3.4629515507698887,
+        "y": 0.5818165648390253,
+        "theta": 0
+      }
+    },
+    {
+      "test": "mini boundary rollback",
+      "passed": true,
+      "revision": 3
+    },
+    {
+      "test": "mini overlap rollback",
+      "passed": true,
+      "revision": 3
+    },
+    {
+      "test": "full far-ray drag",
+      "passed": true,
+      "revisionBefore": 8,
+      "revisionAtReleaseEvent": 8,
+      "revisionAfterUpdate": 9,
+      "poseAfter": {
+        "x": 1.4982891985437385,
+        "y": 2.8132702910349967,
+        "theta": 0
+      }
+    },
+    {
+      "test": "full boundary rollback",
+      "passed": true,
+      "revision": 9
+    },
+    {
+      "test": "full overlap rollback",
+      "passed": true,
+      "revision": 9
+    },
+    {
+      "test": "locked bed gesture",
+      "passed": true
+    },
+    {
+      "test": "two distinct fixes",
+      "passed": true,
+      "revisions": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "test": "separate X/Y/15deg edits and Undo",
+      "passed": true
+    },
+    {
+      "test": "actual Rehearse playback",
+      "passed": true
+    },
+    {
+      "test": "scale toggle preserves camera",
+      "passed": true
+    },
+    {
+      "test": "Compare",
+      "passed": true
+    }
+  ],
+  "runtimeLogAudit": {
+    "logBytesExamined": 810745,
+    "diagnostics": [],
+    "clean": true,
+    "scope": "Final-source reset through pre-debugger-cleanup QA interval; CDP/analytics payloads excluded"
+  },
+  "postDebuggerCleanup": {
+    "editorWarnings": [
+      "QObject::disconnect: wildcard call disconnects from destroyed signal of QTcpSocket::unnamed"
+    ],
+    "previewErrorPrints": []
+  },
+  "finalNativeQR": {
+    "revision": 11,
+    "inputHash": "851f354fb4fef3b3",
+    "decoder": "ZXing-C++ 3.1.1",
+    "decodedFromFullFrame": true,
+    "matchesRuntimeURL": true,
+    "roundTripMatchesExactNativeInput": true,
+    "url": "https://open-door-weld.vercel.app/#plan=N4IgbgpgTgzglgewHYgFwCYA0IBmcAeALgK5QRogCOxcEhAtFAggLb1gCMI2AxgBYBDJAHMIMNAG0JIJqwB0ZMHHjJuHDgF1M02SzkIARgCsIPQjDkc5ABwQwIc-NwDMcgBxutO5nsMmzFla29nIAntzo7gCsXjI++sam5nKRwQ5OmK7OAGzoAJxRHFFRAAwA7Nl5Hm7ZsboJ-smpdg7hmCVy2W4c3dlR2QAsbs55JehRzhpaIIIwfBRuhTjOUQM4BmsQywbOIAC+QA",
+    "image": "native-plan-qr-r11.png"
+  },
+  "finalCompanionHTTP": {
+    "pageStatus": 200,
+    "exportStatus": 200,
+    "exactInputMatch": true,
+    "evaluationMatchesWithinToleranceExcludingTiming": true,
+    "tolerance": 1e-12,
+    "maximumNumericalDifference": 2.220446049250313e-16,
+    "planJSON": "../../examples/native-preview-plan-r11.json",
+    "planSVG": "../../examples/native-preview-plan-r11.svg"
+  },
+  "independentBrowserHandoff": {
+    "revision": 14,
+    "inputHash": "72b5dad200d31552",
+    "scope": "Earlier native QR imported into a fresh browser tab; both checks reevaluated clear and an actual UI JSON download matched the revision/hash. Distinct from the final native revision11 run.",
+    "consoleErrors": 0,
+    "downloadedPlan": "../../examples/native-preview-plan-r14.json",
+    "capture": "native-handoff-browser-r14.jpg"
+  },
+  "limits": [
+    "No LEAF run",
+    "No physical glasses/handtracking/phone scan",
+    "No additive-display QR contrast validation",
+    "No accessibility or transfer-safety certification",
+    "Provided synthetic dimensions only"
+  ],
+  "detectorLimitation": "OpenCV 4.13.0 did not detect an earlier revision14 render. ZXing decoded it and the final revision11 render exactly."
+}

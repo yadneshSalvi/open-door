@@ -8,6 +8,7 @@ import { stableHash } from "@/engine/geometry";
 import type { DeviceProfile, Evaluation, EvaluationInput, EvaluationResponse, RoomObject, TaskResult } from "@/engine/types";
 import { evaluationInputSchema } from "@/engine/schema";
 import { RequestGuard } from "@/lib/request-guard";
+import { AsyncScope, watchPlanFragment } from "@/lib/plan-navigation";
 import type { PreferenceProposal } from "@/lib/preferences";
 
 const RoomScene=dynamic(()=>import("./room-scene"),{ssr:false,loading:()=> <div className="scene-loading"><LoaderCircle className="spin" size={22}/><span>Setting out your room…</span></div>});
@@ -30,49 +31,71 @@ export default function Studio(){
   const [preferenceText,setPreferenceText]=useState("Keep the bed where it is. Use a 5 cm clearance buffer.");
   const [proposal,setProposal]=useState<{value:PreferenceProposal;hash:string;model:string}|null>(null),[parsing,setParsing]=useState(false);
   const [shareLink,setShareLink]=useState("");
-  const importRef=useRef<HTMLInputElement>(null),exportGeneration=useRef(0),preferencesGeneration=useRef(0);
+  const importRef=useRef<HTMLInputElement>(null),exportGeneration=useRef(0),preferencesGeneration=useRef(0),shareGeneration=useRef(0),importGeneration=useRef(0);
+  const scope=useRef(new AsyncScope());
   latestInput.current=input;
 
-  useEffect(()=>{
-    if(!window.location.hash.startsWith("#plan="))return;
-    let active=true;
-    import("@/engine/share").then(({readShareLink})=>{
-      const shared=evaluationInputSchema.parse(readShareLink(window.location.hash));
-      if(!active)return;revision.current=shared.room.revision;setInput(shared);setProfileAcknowledged(true);setNotice(`Shared plan revision ${shared.room.revision} loaded. Checking its geometry.`);
-    }).catch(()=>{if(active)setNotice("That shared plan could not be loaded. The provided room is still available.");});
-    return()=>{active=false;};
+  const invalidateAsync=useCallback(()=>{
+    scope.current.invalidate();guard.current.cancel();
+    exportGeneration.current++;preferencesGeneration.current++;shareGeneration.current++;importGeneration.current++;
   },[]);
+  const clearDerived=useCallback(()=>{
+    setProposal(null);setParsing(false);setExportData(null);setExporting(false);setShareLink("");
+    setError(null);setResult(null);setCheckState("checking");setPlaying(false);setProgress(0);
+  },[]);
+  const replacePlan=useCallback((next:EvaluationInput,message:string,acknowledged:boolean)=>{
+    invalidateAsync();clearDerived();revision.current=next.room.revision;latestInput.current=next;
+    setInput(next);setHistory([]);setFuture([]);setSelected(null);setTask("journey");
+    setEditing(false);setPlanView(false);setDimensions(true);setCompare(false);setModal(null);
+    setProfileAcknowledged(acknowledged);pendingReplay.current=false;
+    setPreferenceText("Keep the bed where it is. Use a 5 cm clearance buffer.");setNotice(message);
+    if(importRef.current)importRef.current.value="";
+  },[invalidateAsync,clearDerived]);
+  useEffect(()=>{
+    const stop=watchPlanFragment(window,{
+      load:async fragment=>{
+        if(!fragment)return cloneInput();
+        const {readShareLink}=await import("@/engine/share");
+        return evaluationInputSchema.parse(readShareLink(fragment));
+      },
+      onStart:()=>{invalidateAsync();clearDerived();pendingReplay.current=false;setModal(null);},
+      onLoad:(shared,fragment)=>replacePlan(shared,fragment?`Shared plan revision ${shared.room.revision} loaded. Checking its geometry.`:"Provided room restored.",Boolean(fragment)),
+      onError:()=>replacePlan(cloneInput(),"That shared plan could not be loaded. The provided room is still available.",false),
+    });
+    return()=>{stop();invalidateAsync();};
+  },[invalidateAsync,clearDerived,replacePlan]);
 
   useEffect(()=>{
-    const active=guard.current.begin(input),controller=new AbortController();
+    const active=guard.current.begin(input),work=scope.current.begin();let disposed=false;
     setCheckState("checking");setError(null);setPlaying(false);setProgress(0);setExportData(null);exportGeneration.current++;
     const timeout=setTimeout(async()=>{
       try{
-        const response=await fetch("/api/v1/evaluations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...input,...active}),signal:controller.signal});
+        const response=await fetch("/api/v1/evaluations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...input,...active}),signal:work.signal});
         const data=await response.json();if(!response.ok)throw new Error(data.error??"The room could not be checked.");
-        if(guard.current.accepts(data as EvaluationResponse)){setResult(data.evaluation);setCheckState("ready");}
-      }catch(e){if(controller.signal.aborted)return;setCheckState("error");setError(e instanceof Error?e.message:"The connection was interrupted. Your edits are kept.");}
+        if(!disposed&&work.isCurrent()&&guard.current.accepts(data as EvaluationResponse)){setResult(data.evaluation);setCheckState("ready");}
+      }catch(e){if(disposed||!work.isCurrent())return;setCheckState("error");setError(e instanceof Error?e.message:"The connection was interrupted. Your edits are kept.");}finally{work.finish();}
     },100);
-    return()=>{clearTimeout(timeout);controller.abort();guard.current.cancel();};
+    return()=>{disposed=true;clearTimeout(timeout);work.cancel();guard.current.cancel();};
   },[input,retry]);
   useEffect(()=>{if(!notice)return;const timer=setTimeout(()=>setNotice(null),4500);return()=>clearTimeout(timer);},[notice]);
   useEffect(()=>{
     if(!playing)return;
-    const start=performance.now()-progress*6500;let frame:number;
-    const tick=(now:number)=>{const next=Math.min(1,(now-start)/6500);setProgress(next);if(next<1)frame=requestAnimationFrame(tick);else setPlaying(false);};
-    frame=requestAnimationFrame(tick);return()=>cancelAnimationFrame(frame);
+    const work=scope.current.begin(),start=performance.now()-progress*6500;let frame:number;
+    const tick=(now:number)=>{if(!work.isCurrent())return;const next=Math.min(1,(now-start)/6500);setProgress(next);if(next<1)frame=requestAnimationFrame(tick);else setPlaying(false);};
+    frame=requestAnimationFrame(tick);return()=>{cancelAnimationFrame(frame);work.cancel();};
     // Progress is deliberately captured at the start of playback, not every frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[playing]);
   const commit=useCallback((next:EvaluationInput,message?:string)=>{
     if(next===latestInput.current)return;
-    setHistory(prev=>[...prev.slice(-39),latestInput.current]);setFuture([]);
+    invalidateAsync();clearDerived();
+    const previous=latestInput.current;setHistory(prev=>[...prev.slice(-39),previous]);setFuture([]);
     revision.current++;const updated={...next,room:{...next.room,revision:revision.current}};
     latestInput.current=updated;setInput(updated);setCheckState("checking");setCompare(false);
     if(message)setNotice(message);
-  },[]);
-  function undo(){const previous=history.at(-1);if(!previous)return;setFuture(prev=>[input,...prev]);setHistory(prev=>prev.slice(0,-1));revision.current++;setInput({...previous,room:{...previous.room,revision:revision.current}});setCheckState("checking");setNotice("Previous layout restored. Checking this revision.");}
-  function redo(){const next=future[0];if(!next)return;setHistory(prev=>[...prev,input]);setFuture(prev=>prev.slice(1));revision.current++;setInput({...next,room:{...next.room,revision:revision.current}});setCheckState("checking");}
+  },[invalidateAsync,clearDerived]);
+  function undo(){const previous=history.at(-1);if(!previous)return;invalidateAsync();clearDerived();setFuture(prev=>[input,...prev]);setHistory(prev=>prev.slice(0,-1));revision.current++;latestInput.current={...previous,room:{...previous.room,revision:revision.current}};setInput(latestInput.current);setCheckState("checking");setNotice("Previous layout restored. Checking this revision.");}
+  function redo(){const next=future[0];if(!next)return;invalidateAsync();clearDerived();setHistory(prev=>[...prev,input]);setFuture(prev=>prev.slice(1));revision.current++;latestInput.current={...next,room:{...next.room,revision:revision.current}};setInput(latestInput.current);setCheckState("checking");}
   const move=useCallback((id:string,x:number,y:number,theta?:number)=>{
     const current=latestInput.current;const object=current.room.objects.find(o=>o.id===id);
     if(object?.locked){setNotice(`${object.name} is locked. Unlock it to make a change.`);return;}
@@ -96,27 +119,38 @@ export default function Studio(){
 
   async function exportPlan(){
     if(!currentResult)return;setModal("export");setExporting(true);setExportData(null);setShareLink("");setError(null);
-    const generation=++exportGeneration.current,hash=currentResult.inputHash;
+    const generation=++exportGeneration.current,hash=currentResult.inputHash,work=scope.current.begin();
+    const current=()=>work.isCurrent()&&generation===exportGeneration.current&&stableHash(latestInput.current)===hash;
     try{
-      const response=await fetch("/api/v1/exports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({input,expectedHash:hash,baseline:fixture.room,requestId:`export-${generation}`})});
+      const response=await fetch("/api/v1/exports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({input,expectedHash:hash,baseline:fixture.room,requestId:`export-${generation}`}),signal:work.signal});
       const data=await response.json();if(!response.ok)throw new Error(data.error);
-      if(generation!==exportGeneration.current||stableHash(latestInput.current)!==hash)return;
-      setExportData(data);
-    }catch(e){setError(e instanceof Error?e.message:"The plan could not be exported. Please retry.");}finally{if(generation===exportGeneration.current)setExporting(false);}
+      if(current())setExportData(data);
+    }catch(e){if(current())setError(e instanceof Error?e.message:"The plan could not be exported. Please retry.");}
+    finally{if(current())setExporting(false);work.finish();}
   }
   async function sharePlan(){
     if(!exportData||exportData.inputHash!==stableHash(input))return;
-    const {createShareLink}=await import("@/engine/share");const link=createShareLink(input,window.location.origin);setShareLink(link);
-    try{await navigator.clipboard.writeText(link);setNotice("Link to this exact revision copied.");}catch{setNotice("Your plan link is ready below. Select and copy it.");}
+    const snapshot=input,hash=exportData.inputHash,generation=++shareGeneration.current,work=scope.current.begin();
+    const current=()=>work.isCurrent()&&generation===shareGeneration.current&&stableHash(latestInput.current)===hash;
+    try{
+      const {createShareLink}=await import("@/engine/share");
+      if(!current())return;
+      const link=createShareLink(snapshot,window.location.origin);setShareLink(link);
+      try{await navigator.clipboard.writeText(link);if(current())setNotice("Link to this exact revision copied.");}
+      catch{if(current())setNotice("Your plan link is ready below. Select and copy it.");}
+    }catch{if(current())setError("The plan link could not be prepared. Please retry.");}
+    finally{work.finish();}
   }
   async function parsePreferences(){
     if(parsing)return;setParsing(true);setProposal(null);setError(null);
-    const generation=++preferencesGeneration.current,hash=stableHash(input);
+    const generation=++preferencesGeneration.current,hash=stableHash(input),work=scope.current.begin();
+    const current=()=>work.isCurrent()&&generation===preferencesGeneration.current&&stableHash(latestInput.current)===hash;
     try{
-      const response=await fetch("/api/v1/preferences/parse",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:preferenceText,objects:input.room.objects.map(o=>({id:o.id,name:o.name})),requestId:`preferences-${generation}`})});
+      const response=await fetch("/api/v1/preferences/parse",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:preferenceText,objects:input.room.objects.map(o=>({id:o.id,name:o.name})),requestId:`preferences-${generation}`}),signal:work.signal});
       const data=await response.json();if(!response.ok)throw new Error(data.error);
-      if(generation===preferencesGeneration.current)setProposal({value:data.proposal,hash,model:data.model});
-    }catch(e){setError(e instanceof Error?e.message:"The preference request could not be completed.");}finally{setParsing(false);}
+      if(current())setProposal({value:data.proposal,hash,model:data.model});
+    }catch(e){if(current())setError(e instanceof Error?e.message:"The preference request could not be completed.");}
+    finally{if(current())setParsing(false);work.finish();}
   }
   function applyProposal(){
     if(!proposal)return;if(proposal.hash!==stableHash(input)){setError("The room changed while this proposal was prepared. Please create a fresh proposal.");return;}
@@ -126,9 +160,15 @@ export default function Studio(){
   }
   async function importRoom(file:File|undefined){
     if(!file)return;
-    try{if(file.size>64000)throw new Error("Use a room JSON under 64 KB.");const raw=JSON.parse(await file.text());const next=evaluationInputSchema.parse(raw.input??raw);commit(next,"Room imported. Its dimensions are being checked.");setSelected(null);}
-    catch{setNotice("That file is not a supported Open Door room. Export a JSON plan to see the schema.");}
-    if(importRef.current)importRef.current.value="";
+    const generation=++importGeneration.current,work=scope.current.begin();
+    const current=()=>work.isCurrent()&&generation===importGeneration.current;
+    try{
+      if(file.size>64000)throw new Error("Use a room JSON under 64 KB.");
+      const text=await file.text();if(!current())return;
+      const raw=JSON.parse(text),next=evaluationInputSchema.parse(raw.input??raw);
+      replacePlan(next,"Room imported. Its dimensions are being checked.",false);
+    }catch{if(current())setNotice("That file is not a supported Open Door room. Export a JSON plan to see the schema.");}
+    finally{if(current()&&importRef.current)importRef.current.value="";work.finish();}
   }
   function play(){
     if(!profileAcknowledged){pendingReplay.current=true;setModal("profile");return;}

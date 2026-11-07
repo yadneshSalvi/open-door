@@ -16,6 +16,6 @@ This prototype uses explicit synthetic geometry. It does not scan a real room or
 - Code/methods/reproduction: this repository.
 - Hosted companion: https://open-door-weld.vercel.app (production geometry and live language proposal verified).
 - Preview recording: add after capturing the actual accepted native flow.
-- Native/LEAF evidence: update from observed release results, not proposed tests.
+- Native evidence: [accepted Preview pass](native-preview.md), with actual simulated SIK gestures, full-frame QR decoding and production export. No LEAF run or hardware test is claimed.
 
 This is a draft, not a published Devpost submission. No video or public repository release is implied.
