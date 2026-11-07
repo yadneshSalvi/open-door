@@ -30,6 +30,8 @@ Responsive inspection prompted larger/darker labels, viewport-fit cameras and cl
 
 The deployed companion at https://open-door-weld.vercel.app also passed the geometry flow and a live language proposal in a clean browser.
 
+Reviewed captures: [desktop companion](media/companion-desktop.jpg) shows revision 3 with a reviewed 5 cm buffer and both modeled checks clear; [mobile companion](media/companion-mobile.jpg) shows the fitted room at a 390 × 844 viewport. These are web captures, distinct from native Preview or hardware evidence.
+
 The production HTTP sequence returned 200 for all three evaluations and matching revision-2 export. One loopback run took 15/27/17 ms end to end; these are single-run observations, not hosted latency or percentile claims. The SVG included the door dimension.
 
 At the test base URL, the final model's share was 270 characters and a 65 × 65 QR matrix. URL decoding restored the identical fingerprint. Native QR scanning and display contrast remain separate checks.

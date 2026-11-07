@@ -8,6 +8,10 @@ Open Door is a SPECS room-layout rehearsal prototype with a web companion. Expli
 
 This is a provided model, not live scene recognition. A clear result applies to the modeled checks, not accessibility certification, comfortable transfers or a person's lived experience.
 
+![Verified web companion showing both modeled checks clear after the furniture edits.](devpost/media/companion-desktop.jpg)
+
+Actual web companion capture. The separate native Lens and its evidence are described below.
+
 ## Run locally
 
 Use Node.js 22, as pinned in `.nvmrc` and the package engine.
