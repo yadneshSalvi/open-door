@@ -1,23 +1,56 @@
 # Open Door
 
-Make a room work for the person using it.
+**Make room for your everyday.**
 
-Open Door is a planned SPECS Lens for activity-based room-layout rehearsal. Users specify a room, relevant device dimensions and personal priorities, inspect geometric obstacles, compare furniture changes and export a dimensioned plan.
+[Open the live companion](https://open-door-weld.vercel.app).
 
-The product is being developed for **Learn AR with SPECS** using Lens Studio, CLAD and the Lens Studio MCP. Its core workflow will run in Lens Studio Preview with an explicitly provided virtual room, without requiring physical glasses. Supporting AI and computation services will use an HTTPS backend.
+Open Door is a SPECS room-layout rehearsal prototype with a web companion. Explicit dimensions, an occupied device footprint and a chosen task produce inspectable geometric evidence. Moving the table clears the bedside route; the door still meets the bench. Moving the bench clears both checks while preserving the bed.
 
-**Status:** concept selected; detailed implementation plans prepared locally. No working Lens or deployed service is included yet.
+This is a provided model, not live scene recognition. A clear result applies to the modeled checks, not accessibility certification, comfortable transfers or a person's lived experience.
 
-## Configuration
+## Run locally
 
-`.env.example` lists the expected configuration names. Real API credentials belong in a local ignored `.env` and the backend's environment settings. Never embed credentials in Lens assets, scripts or a public client.
+Use Node.js 22 or later.
 
-Private implementation and submission planning is maintained locally in the ignored `plans/` directory. It is intentionally absent from GitHub.
+```sh
+npm ci
+npm run dev
+```
 
-## Submission
+Open [localhost:3102](http://localhost:3102). Geometry, editing, profile controls, undo/redo, comparison and SVG/JSON exports need no AI key. For reviewed language preferences, copy `.env.example` to `.env` and add a server-side `OPENAI_API_KEY`. Models never determine clearance results.
 
-The final repository will contain the Lens Studio project, publishable Devpost planning documents, reproducible examples, verification instructions and a link to the actual Preview demonstration. Incorporated assets and libraries will be attributed. The repository will be made public for judging when the submission is ready.
+```sh
+npm test
+npm run typecheck
+npm run verify:fixture
+npm run lens:bundle
+npm run build
+npx next start --port 3104
+```
 
-The intended product is a planning aid with explicit geometric assumptions. Device validation and user feedback will be documented separately from simulation results.
+Inspect the production build at [localhost:3104](http://localhost:3104). Deploy this repository root as a Next.js project on Vercel. Its HTTPS APIs use App Router Route Handlers. Keep vendor keys server-side; `.vercelignore` excludes private plans, credentials and native resources from web uploads.
 
-See the [hackathon requirements](https://learn-specs.devpost.com/rules) and [official resources](https://learn-specs.devpost.com/resources).
+## Open the actual Lens
+
+Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves SIK and UI Kit 2.0.0. Authored runtime source is in `lens/Assets/Scripts/OpenDoorExperience.ts`. Its `OpenDoorCore.js` is generated from the same numerical engine as the companion.
+
+Follow [native integration](lens-src/INTEGRATION.md) for inputs and Preview acceptance. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; copy it into native `Assets/Scripts/` after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
+
+The Lens has a three-action overview, contextual editing, floor-axis movement and rotation, locks, undo, comparison, profile review, miniature/1:1 inspection, witnesses and route playback. Set `companionBaseUrl` to deployed HTTPS for a revision-specific QR handoff. The companion validates and recomputes the encoded model before downloads.
+
+Native compilation and Preview are separate evidence from web/numerical checks. See [verification](devpost/verification.md). No physical glasses have been tested.
+
+## Source map
+
+| Location | Purpose |
+| --- | --- |
+| `src/engine/` | Geometry, continuous verification, planner, fixtures and sharing |
+| `src/components/` | Interactive studio and direct controls |
+| `src/app/api/` | Evaluation, export, fixture and language APIs |
+| `lens/` | Actual Lens project |
+| `lens-src/` | Controller, portable engine and integration contract |
+| `tests/` | Independent oracles and state/API regressions |
+| `examples/` | Original and revised room models |
+| `devpost/` | Curated design, methods, evidence and attribution |
+
+Read the [design brief](devpost/design-brief.md), [geometry note](devpost/geometry.md) and [API contract](devpost/api.md). Private plans, environment files and editor connection credentials remain ignored. Repository/video publication is a separate release action.

@@ -1,0 +1,119 @@
+{
+  "room": {
+    "schemaVersion": "1.0",
+    "id": "quiet-room-v1",
+    "name": "The quiet room",
+    "revision": 2,
+    "width": 4.2,
+    "depth": 3.4,
+    "provenance": "provided_fixture",
+    "objects": [
+      {
+        "id": "bed",
+        "name": "Oak bed",
+        "kind": "bed",
+        "pose": {
+          "x": 2.8,
+          "y": 2.32,
+          "theta": 0
+        },
+        "width": 1.6,
+        "depth": 2,
+        "height": 0.56,
+        "movable": true,
+        "locked": true,
+        "uncertainty": 0
+      },
+      {
+        "id": "table",
+        "name": "Bedside table",
+        "kind": "table",
+        "pose": {
+          "x": 3.88,
+          "y": 2.85,
+          "theta": 0
+        },
+        "width": 0.48,
+        "depth": 0.5,
+        "height": 0.5,
+        "movable": true,
+        "locked": false,
+        "uncertainty": 0
+      },
+      {
+        "id": "bench",
+        "name": "Entry bench",
+        "kind": "bench",
+        "pose": {
+          "x": 3.56,
+          "y": 0.48,
+          "theta": 0
+        },
+        "width": 0.8,
+        "depth": 0.34,
+        "height": 0.45,
+        "movable": true,
+        "locked": false,
+        "uncertainty": 0
+      },
+      {
+        "id": "wardrobe",
+        "name": "Wardrobe",
+        "kind": "wardrobe",
+        "pose": {
+          "x": 0.35,
+          "y": 2.66,
+          "theta": 0
+        },
+        "width": 0.62,
+        "depth": 1.2,
+        "height": 1.8,
+        "movable": true,
+        "locked": false,
+        "uncertainty": 0
+      }
+    ],
+    "door": {
+      "id": "door",
+      "name": "Bedroom door",
+      "hinge": {
+        "x": 0.16,
+        "y": 0.12
+      },
+      "width": 0.98,
+      "thickness": 0.04,
+      "closedAngle": 0,
+      "openAngle": 1.5707963267948966,
+      "fixedAngle": 1.5707963267948966,
+      "height": 2.05
+    }
+  },
+  "profile": {
+    "id": "provided-profile-v1",
+    "name": "Example device",
+    "width": 0.66,
+    "length": 1.05,
+    "height": 1.1,
+    "clearance": 0.03,
+    "uncertainty": 0,
+    "movement": "pivot",
+    "minimumTurningRadius": 0.65,
+    "allowReverse": true
+  },
+  "journey": {
+    "id": "bedside",
+    "name": "Reach the bedside",
+    "start": {
+      "x": 1.18,
+      "y": 1.45,
+      "theta": 1.5707963267948966
+    },
+    "goal": {
+      "x": 1.52,
+      "y": 2.63,
+      "theta": 1.5707963267948966
+    },
+    "positionTolerance": 0.06,
+    "headingTolerance": 0.1308996938995747
+  }
+}

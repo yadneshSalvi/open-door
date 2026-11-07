@@ -1,0 +1,38 @@
+{
+  "name": "open-door",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3102",
+    "build": "next build",
+    "start": "next start --port 3102",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify:fixture": "tsx scripts/verify-fixture.ts",
+    "lens:bundle": "node scripts/bundle-lens.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.2",
+    "lucide-react": "^0.577.0",
+    "lz-string": "^1.5.0",
+    "next": "16.4.5",
+    "openai": "^6.27.0",
+    "qrcode-generator": "^2.0.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "^0.183.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.15",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.183.1",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
