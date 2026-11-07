@@ -10,7 +10,7 @@ This is a provided model, not live scene recognition. A clear result applies to 
 
 ## Run locally
 
-Use Node.js 22 or later.
+Use Node.js 22, as pinned in `.nvmrc` and the package engine.
 
 ```sh
 npm ci
@@ -36,7 +36,7 @@ Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves SIK 
 
 Follow [native integration](lens-src/INTEGRATION.md) for inputs and Preview acceptance. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; copy it into native `Assets/Scripts/` after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
 
-The Lens has a three-action overview, contextual editing, floor-axis movement and rotation, locks, undo, comparison, profile review, miniature/1:1 inspection, witnesses and route playback. Set `companionBaseUrl` to deployed HTTPS for a revision-specific QR handoff. The companion validates and recomputes the encoded model before downloads.
+The Lens has a three-action overview, direct SIK furniture dragging, a Fine adjust submenu, locks, undo, comparison, profile review, miniature/1:1 inspection, witnesses and route playback. Set `companionBaseUrl` to deployed HTTPS for a revision-specific QR handoff. The companion validates and recomputes the encoded model before downloads.
 
 Native compilation and Preview are separate evidence from web/numerical checks. See [verification](devpost/verification.md). No physical glasses have been tested.
 

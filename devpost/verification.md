@@ -10,6 +10,8 @@ Two independently found defects were fixed and retained as regressions: an empty
 
 `npm run typecheck`, `npm run lens:bundle` and `npm run build` pass. The production build uses Next.js 16.4.5. The portable bundle has no browser/Node runtime dependencies. The native controller passes an esbuild syntax check; this does not substitute for Lens compilation.
 
+The final committed dependency state (including esbuild 0.28.2 and the Node.js 22 engine pin) was rechecked with the same 28 tests, TypeScript, portable bundle and production build. All passed. Node.js 22 is the supported judging/deployment runtime.
+
 ## Actual signature sequence
 
 | Revision | Edit | Bedside | Door | Witness |
