@@ -1,0 +1,58 @@
+- !<AssetImportMetadata/17aae1ad-4edb-4ad9-971f-d9bb6bbaaa06>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> d44e8646-31e5-401a-b02a-91641454917d
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> d44e8646-31e5-401a-b02a-91641454917d
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> e01d0c99-1517-4fc1-bdc0-db082a0e209d
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/e01d0c99-1517-4fc1-bdc0-db082a0e209d>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 3664c24f-e68f-460a-8228-acba83e3ed9c
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    baseMaterial: false
+    companionBaseUrl: false
+    cubeMesh: false
+    evidenceMaterial: false
+    font: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cubeMesh: !<reference.RenderMesh> 00000000-0000-0000-0000-000000000000
+      baseMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      font: !<reference.Font> 00000000-0000-0000-0000-000000000000
+      evidenceMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      companionBaseUrl: "https://open-door-weld.vercel.app"
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Asset.RenderMesh cubeMesh
+    - // @input Asset.Material baseMaterial
+    - // @input Asset.Font font
+    - // @input Asset.Material evidenceMaterial
+    - '// @input string companionBaseUrl = "https://open-door-weld.vercel.app"'
