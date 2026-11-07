@@ -1,0 +1,491 @@
+{
+  "recordedAtUtc": "2026-11-07T16:34:23.340Z",
+  "runtime": {
+    "node": "v22.22.3",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpuModel": "Apple M4 Pro"
+  },
+  "measurementNotes": [
+    "Single local Node run per case, sequential execution; not Lens Preview or hardware measurements.",
+    "step(6) is a cooperative elapsed-time target with at most 32 generator ticks, not a hard realtime deadline. Timing includes progress-copy cost.",
+    "Elapsed CPU loop runs steps back to back; native frame-scheduled completion can take longer."
+  ],
+  "settings": {
+    "maxObjects": 6,
+    "maxMoves": 3,
+    "beamWidth": 8,
+    "posesPerObject": 24,
+    "maxEvaluations": 400,
+    "maxRouteNodes": 12000,
+    "nodesPerEvaluation": 300,
+    "reserveTargets": [
+      0,
+      0.01,
+      0.03
+    ],
+    "rotationCostMPerRad": 0.15,
+    "maxTicksPerStep": 32,
+    "stepMillis": 6,
+    "maxAxisCoordinates": 128,
+    "maxPlacementCandidatesPerObject": 48000,
+    "radialStepM": 0.08,
+    "radialDirections": 24,
+    "maxRadiusM": 6,
+    "candidateYieldBatch": 32,
+    "contactPaddingM": 0.003,
+    "contactRule": "AABB face contacts and pairwise contact midpoints"
+  },
+  "cases": [
+    {
+      "id": "provided-fixture",
+      "sourceHash": "157d458020a00d14",
+      "sourceRevision": 0,
+      "metrics": {
+        "elapsedCpuLoopMs": 3379.0202090000002,
+        "stepCalls": 511,
+        "maxStepMs": 26.18316600000003,
+        "p95StepMs": 10.649457999999868,
+        "generated": 242218,
+        "evaluated": 4,
+        "status": "complete"
+      },
+      "proposals": [
+        {
+          "id": "73233103184c9aeb",
+          "moves": [
+            {
+              "objectId": "table",
+              "objectName": "Bedside table",
+              "from": {
+                "x": 1.62,
+                "y": 2.87,
+                "theta": 0
+              },
+              "to": {
+                "x": 0.9169999999999999,
+                "y": 2.87,
+                "theta": 0
+              },
+              "distanceM": 0.7030000000000002,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "bench",
+              "objectName": "Entry bench",
+              "from": {
+                "x": 0.78,
+                "y": 0.64,
+                "theta": 0
+              },
+              "to": {
+                "x": 1.46,
+                "y": 0.7219999999999999,
+                "theta": 0
+              },
+              "distanceM": 0.6849262734046636,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 1.3879262734046638,
+          "rotationRad": 0,
+          "movementCostM": 1.3879262734046638,
+          "reserveTargetM": 0,
+          "certifiedReserveM": 0.00005561002758014194,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        },
+        {
+          "id": "0dcedbb4f303e1d8",
+          "moves": [
+            {
+              "objectId": "table",
+              "objectName": "Bedside table",
+              "from": {
+                "x": 1.62,
+                "y": 2.87,
+                "theta": 0
+              },
+              "to": {
+                "x": 0.9069999999999999,
+                "y": 2.87,
+                "theta": 0
+              },
+              "distanceM": 0.7130000000000002,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "bench",
+              "objectName": "Entry bench",
+              "from": {
+                "x": 0.78,
+                "y": 0.64,
+                "theta": 0
+              },
+              "to": {
+                "x": 1.465,
+                "y": 0.7119999999999999,
+                "theta": 0
+              },
+              "distanceM": 0.6887735476918375,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 1.4017735476918376,
+          "rotationRad": 0,
+          "movementCostM": 1.4017735476918376,
+          "reserveTargetM": 0.01,
+          "certifiedReserveM": 0.010043655382584945,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        },
+        {
+          "id": "f2205efb0e49f663",
+          "moves": [
+            {
+              "objectId": "table",
+              "objectName": "Bedside table",
+              "from": {
+                "x": 1.62,
+                "y": 2.87,
+                "theta": 0
+              },
+              "to": {
+                "x": 0.5469999999999999,
+                "y": 1.8070000000000002,
+                "theta": 0
+              },
+              "distanceM": 1.5103966366487978,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "bench",
+              "objectName": "Entry bench",
+              "from": {
+                "x": 0.78,
+                "y": 0.64,
+                "theta": 0
+              },
+              "to": {
+                "x": 1.495,
+                "y": 0.692,
+                "theta": 0
+              },
+              "distanceM": 0.7168884153060364,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 2.2272850519548344,
+          "rotationRad": 0,
+          "movementCostM": 2.2272850519548344,
+          "reserveTargetM": 0.03,
+          "certifiedReserveM": 0.030426874516801088,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        }
+      ],
+      "reason": "Verified proposals from a finite contact/radial placement beam; no global optimum claimed."
+    },
+    {
+      "id": "renamed-rotated-translated-room",
+      "sourceHash": "1fe5821c4e8e3974",
+      "sourceRevision": 0,
+      "metrics": {
+        "elapsedCpuLoopMs": 4622.405500000001,
+        "stepCalls": 633,
+        "maxStepMs": 37.44737500000065,
+        "p95StepMs": 13.384417000000212,
+        "generated": 264386,
+        "evaluated": 4,
+        "status": "complete"
+      },
+      "proposals": [
+        {
+          "id": "bbdfc24fe9280d17",
+          "moves": [
+            {
+              "objectId": "piece-1",
+              "objectName": "Item 1",
+              "from": {
+                "x": 0.7299999999999998,
+                "y": 1.9200000000000002,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 0.7299999999999998,
+                "y": 1.217,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 0.7030000000000001,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "piece-2",
+              "objectName": "Item 2",
+              "from": {
+                "x": 2.96,
+                "y": 1.08,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 2.8779999999999997,
+                "y": 1.7600000000000002,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 0.6849262734046638,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 1.387926273404664,
+          "rotationRad": 0,
+          "movementCostM": 1.387926273404664,
+          "reserveTargetM": 0,
+          "certifiedReserveM": 0.00005561002758015061,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        },
+        {
+          "id": "697af1b5b250ccb1",
+          "moves": [
+            {
+              "objectId": "piece-1",
+              "objectName": "Item 1",
+              "from": {
+                "x": 0.7299999999999998,
+                "y": 1.9200000000000002,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 0.7299999999999998,
+                "y": 1.207,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 0.7130000000000001,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "piece-2",
+              "objectName": "Item 2",
+              "from": {
+                "x": 2.96,
+                "y": 1.08,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 2.888,
+                "y": 1.7650000000000001,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 0.6887735476918375,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 1.4017735476918376,
+          "rotationRad": 0,
+          "movementCostM": 1.4017735476918376,
+          "reserveTargetM": 0.01,
+          "certifiedReserveM": 0.010043655382584732,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        },
+        {
+          "id": "ee4c506f5ccfdc4f",
+          "moves": [
+            {
+              "objectId": "piece-1",
+              "objectName": "Item 1",
+              "from": {
+                "x": 0.7299999999999998,
+                "y": 1.9200000000000002,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 1.7929999999999995,
+                "y": 0.847,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 1.5103966366487975,
+              "rotationRad": 0
+            },
+            {
+              "objectId": "piece-2",
+              "objectName": "Item 2",
+              "from": {
+                "x": 2.96,
+                "y": 1.08,
+                "theta": 1.5707963267948966
+              },
+              "to": {
+                "x": 2.908,
+                "y": 1.795,
+                "theta": 1.5707963267948966
+              },
+              "distanceM": 0.7168884153060362,
+              "rotationRad": 0
+            }
+          ],
+          "translationM": 2.2272850519548335,
+          "rotationRad": 0,
+          "movementCostM": 2.2272850519548335,
+          "reserveTargetM": 0.03,
+          "certifiedReserveM": 0.030499999999999947,
+          "invariants": {
+            "sourceUnchanged": true,
+            "profileUnchanged": true,
+            "journeyIncludingTolerancesUnchanged": true,
+            "roomDimensionsUnchanged": true,
+            "stationaryFurnitureUnchanged": true,
+            "locksPreserved": true,
+            "allPlacementsValid": true,
+            "continuousRouteAtReserve": true,
+            "continuousDoorAtReserve": true,
+            "reserveBoundMatches": true,
+            "atomicAppliedRevisionIncrement": true
+          }
+        }
+      ],
+      "reason": "Verified proposals from a finite contact/radial placement beam; no global optimum claimed."
+    }
+  ],
+  "cancellation": {
+    "phaseBefore": "Generating furniture placements (0 cm reserve)",
+    "cancelCallMs": 0.29337499999928696,
+    "statusAfter": "cancelled",
+    "proposalsDiscarded": true,
+    "generatedUnchangedAfterCancelledStep": true,
+    "evaluatedUnchangedAfterCancelledStep": true
+  },
+  "finite24ObjectScope": {
+    "rawAxisContacts": 53,
+    "rawAxisEntriesIncludingPairwiseMidpoints": 2862,
+    "retainedAxisCoordinates": 128,
+    "maxCandidatesPerObjectPerReserve": 48000,
+    "maxSelectedObjects": 6,
+    "maxReserveTargets": 3,
+    "maxCandidateAttemptsAllReserves": 864000,
+    "maxLayoutExpansionsAllReserves": 5616,
+    "maxGeneratedIncludingLayoutExpansions": 869616,
+    "maxLiveNextLayouts": 960,
+    "maxFullEvaluations": 400,
+    "maxTotalExpandedRouteNodes": 12000
+  },
+  "limitations": [
+    "Placements are generated against every other object at its ORIGINAL position, including other movable objects. A vacated original footprint is therefore unavailable to another moved object; swaps and coordinated moves into vacated footprints are outside this candidate domain.",
+    "Only six unlocked objects nearest start, goal or door hinge are selected; at most three move.",
+    "Orientations are original and relative +/-90 degrees. Radial candidates stop at 6m; contact coordinates can be farther. Only 24 valid poses per selected object and reserve survive shortlist filtering.",
+    "A finite eight-layout beam and route-node/evaluation limits can miss feasible repairs. No global optimum or infeasibility claim.",
+    "Furniture relocation trajectories and physical comfort are not assessed."
+  ],
+  "apiAbort": {
+    "status": 499,
+    "totalElapsedMs": 37.305375,
+    "abortToResponseMs": 1.546750000000003,
+    "returnedProposalCount": 0
+  },
+  "apiAbortNotes": [
+    "Direct local handler invocation; request.signal is checked before each step(12), followed by setImmediate to allow abort delivery. No network/server disconnect behavior was measured.",
+    "A signal arriving during a step takes effect at the next outer-loop check; worker cancellation uses terminate() instead of this endpoint."
+  ],
+  "storedNativeRegressionCases": [
+    {
+      "revision": 11,
+      "source": "examples/native-preview-plan-r11.json",
+      "inputHash": "851f354fb4fef3b3",
+      "sameHash": true,
+      "tasks": [
+        {
+          "task": "journey",
+          "status": "verified_feasible",
+          "storedStatus": "verified_feasible",
+          "clearanceDelta": 0
+        },
+        {
+          "task": "door",
+          "status": "verified_feasible",
+          "storedStatus": "verified_feasible",
+          "clearanceDelta": 0
+        }
+      ]
+    },
+    {
+      "revision": 14,
+      "source": "examples/native-preview-plan-r14.json",
+      "inputHash": "72b5dad200d31552",
+      "sameHash": true,
+      "tasks": [
+        {
+          "task": "journey",
+          "status": "verified_feasible",
+          "storedStatus": "verified_feasible",
+          "clearanceDelta": 0
+        },
+        {
+          "task": "door",
+          "status": "verified_feasible",
+          "storedStatus": "verified_feasible",
+          "clearanceDelta": 0
+        }
+      ]
+    }
+  ],
+  "targetedTests": {
+    "command": "npm test -- tests/contracts.test.ts tests/planner.test.ts tests/repair.test.ts",
+    "passed": 25,
+    "files": 3
+  }
+}

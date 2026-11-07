@@ -10,9 +10,9 @@ Motion primitives contain signed distance and heading change. Rotation in place 
 
 Returned trajectories receive conservative continuous verification. Each footprint point moves at most `|arc length| + footprint radius × |angular change|` over an interval. Distance to a fixed obstacle is 1-Lipschitz: a midpoint gap larger than the maximum motion from that midpoint certifies the interval. Otherwise it is subdivided. A sampled collision yields a witness. An interval unresolved within 1 mm remains uncertain; dense sampling alone is not a proof.
 
-Minimum clearance is a certified lower bound **after buffer and uncertainty**, not an exact physical measurement. Centimetre input estimates do not become millimetre-accurate measurements.
+Minimum clearance is a certified lower bound **after buffer and uncertainty**, not an exact physical measurement. Adaptive subdivision can produce a loose positive lower bound. Repair alternatives separately verify an additional reserve target on their retained trajectory and the door sweep; that stronger certificate is preserved in the complete JSON export without changing the profile. Centimetre input estimates do not become millimetre-accurate measurements.
 
-Pivot profiles first try checked rotate/translate and orthogonal-waypoint routes. Fallback search uses constant-curvature/permitted pivot primitives, 16 cm steps, quantized visited states and at most 8,500 expanded nodes. Its result must pass trajectory validation and the goal predicate. Table/bench suggestions are authored fixture choices followed by real computation, not global optimization.
+Pivot profiles first try checked rotate/translate and orthogonal-waypoint routes. Fallback search uses constant-curvature/permitted pivot primitives, 16 cm steps, quantized visited states and at most 8,500 expanded nodes. Its result must pass trajectory validation and the goal predicate. The earlier table/bench suggestions remain reproducibility fixtures. The current Find changes action performs a separate bounded geometric repair search; it is described in [computed room changes](repair-search.md). It is not a global optimizer.
 
 | Status | Meaning |
 | --- | --- |

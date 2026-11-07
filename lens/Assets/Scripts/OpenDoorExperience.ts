@@ -14,7 +14,7 @@ const C = {
   brass: new vec4(.91,.77,.48,1), window: new vec4(.76,.90,.94,1),
 };
 
-/** Local, deterministic fixture experience. Attach once after the SIK prefab. */
+/** Deterministic local verification with an optional HTTPS candidate search. */
 @component
 export class OpenDoorExperience extends BaseScriptComponent {
   @input cubeMesh!: RenderMesh;
@@ -24,11 +24,28 @@ export class OpenDoorExperience extends BaseScriptComponent {
   @input companionBaseUrl: string = 'https://open-door-weld.vercel.app';
   public currentShareLink = '';
   public getVerificationState() {
-    return JSON.stringify({revision:this.currentRevision,inputHash:this.result?this.result.inputHash:null,journey:this.result?this.result.tasks.journey.status:null,door:this.result?this.result.tasks.door.status:null,objects:this.input?this.input.room.objects.map((o:any)=>({id:o.id,pose:o.pose,locked:o.locked})):[],profileReviewed:this.profileReviewed,miniature:this.miniature,playing:this.playing,menu:this.menu,shareCurrent:Boolean(this.currentShareLink),dragActive:Boolean(this.drag),dragCommitPending:Boolean(this.pendingDragCommit)});
+    return JSON.stringify({revision:this.currentRevision,inputHash:this.result?this.result.inputHash:null,journey:this.result?this.result.tasks.journey.status:null,door:this.result?this.result.tasks.door.status:null,objects:this.input?this.input.room.objects.map((o:any)=>({id:o.id,pose:o.pose,locked:o.locked})):[],profileReviewed:this.profileReviewed,miniature:this.miniature,playing:this.playing,menu:this.menu,shareCurrent:Boolean(this.currentShareLink),dragActive:Boolean(this.drag),dragCommitPending:Boolean(this.pendingDragCommit),repairSearching:Boolean(this.repairJob||this.repairRequest),repairTransport:this.repairTransport,repairRequestId:this.repairMetrics.requestId||null,repairRequestGeneration:this.repairMetrics.requestGeneration??null,repairProposals:this.repairProposals.map((p:any)=>({id:p.id,moves:p.moves,translationM:p.translationM,extraClearanceM:p.extraClearanceM,certifiedReserveM:p.certifiedReserveM})),repairIndex:this.repairIndex,repairPreview:this.repairPreview,repairApplyPending:this.pendingRepairApply,repairGenerated:this.repairProgress?this.repairProgress.generated:0,historyLength:this.history.length,profile:this.input?this.input.profile:null,repairSourceHash:this.repairProgress?this.repairProgress.sourceHash:null,repairMetrics:this.repairMetrics,acceptedRepair:this.acceptedRepair,displayedJourney:this.displayRepair()?this.displayRepair().evaluation.tasks.journey.status:(this.result?this.result.tasks.journey.status:null),displayedDoor:this.displayRepair()?this.displayRepair().evaluation.tasks.door.status:(this.result?this.result.tasks.door.status:null)});
   }
   private menuControls: {[menu:string]:SceneObject} = {};
   private furnitureRoots: {[id:string]:SceneObject} = {};
   private menu = 'overview';
+  private repairJob:any = null;
+  private internet:InternetModule | null = null;
+  private repairRequest:any = null;
+  private repairRequestSerial = 0;
+  private repairTransport = 'idle';
+  private repairError = '';
+  private repairProgress:any = null;
+  private repairProposals:any[] = [];
+  private repairIndex = 0;
+  private repairPreview = true;
+  private repairGeneration = -1;
+  private repairStatusAt = 0;
+  private repairStartedAt = 0;
+  private repairMetrics:any = {status:'idle',steps:0,elapsedSeconds:0,maxStepMs:0};
+  private pendingRepairApply = false;
+  private preferredMotions:any[] | null = null;
+  private acceptedRepair:any = null;
   private controls!: SceneObject;
   private sharePanel: SceneObject | null = null;
   /** True only after this exact revision has been evaluated. */
@@ -68,6 +85,7 @@ export class OpenDoorExperience extends BaseScriptComponent {
   onAwake() {
     this.createEvent('OnStartEvent').bind(()=>this.start());
     this.createEvent('UpdateEvent').bind(()=>this.update());
+    this.createEvent('OnDestroyEvent').bind(()=>this.resetRepair());
   }
   private start() {
     if (!this.cubeMesh || !this.baseMaterial || !this.font) {
@@ -78,16 +96,20 @@ export class OpenDoorExperience extends BaseScriptComponent {
     this.roomRoot = this.node('Room — provided fixture',this.sceneObject);
     this.uiRoot = this.node('Open Door controls',this.sceneObject);
     this.uiRoot.getTransform().setLocalPosition(new vec3(0,0,-95));
-    this.label(this.uiRoot,'OPEN DOOR',new vec3(0,18,0),105,C.chalk,46,3);
-    this.taskStatus=this.label(this.uiRoot,'',new vec3(0,22,0),38,C.chalk,46,2.5);
-    this.summary=this.label(this.uiRoot,'Evaluating…',new vec3(0,14.5,0),48,C.chalk,46,3);
-    this.detail=this.label(this.uiRoot,'',new vec3(0,10.5,0),37,C.chalk,46,4);
+    this.label(this.uiRoot,'Open Door · The quiet room',new vec3(0,21,0),45,C.chalk,46,3);
+    this.taskStatus=this.label(this.uiRoot,'',new vec3(0,17.5,0),38,C.chalk,46,2.5);
+    this.summary=this.label(this.uiRoot,'Evaluating…',new vec3(0,13.7,0),42,C.chalk,46,3);
+    this.detail=this.label(this.uiRoot,'',new vec3(0,10.5,0),34,C.chalk,46,4);
     this.footer=this.label(this.uiRoot,'',new vec3(0,-20,0),32,C.chalk,46,3.5);
     this.showMenu('overview');
     this.evaluateCurrent();
   }
   private showMenu(menu:string) {
     this.cancelFurnitureDrag();
+    const repairMenus=['search','repair','repairEmpty','repairScope','repairError'];
+    if(!repairMenus.includes(menu)&&(this.repairJob||this.repairRequest||this.repairProposals.length)) {
+      this.resetRepair();this.renderRoom();
+    }
     this.menu=menu;this.playing=false;
     if(this.controls)this.controls.enabled=false;
     if(this.sharePanel){this.sharePanel.destroy();this.sharePanel=null;}
@@ -95,35 +117,184 @@ export class OpenDoorExperience extends BaseScriptComponent {
     const newControls=!this.menuControls[menu];
     this.controls=this.menuControls[menu]||(this.menuControls[menu]=this.node('Context '+menu,this.uiRoot));
     this.controls.enabled=true;
-    const back: [string,()=>void]=['Back',()=>{this.pendingReplay=false;this.showMenu('overview');}];
-    let actions: [string,()=>void][];
-    if(menu==='edit')actions=[
-      ['Select item',()=>this.selectFurniture()],['Move table',()=>this.suggest('table')],['Move bench',()=>this.suggest('bench')],
-      ['Fine adjust',()=>this.showMenu('fine')],['Undo',()=>this.undo()],['Lock / unlock',()=>this.toggleLock()],back,
-    ];
+    const back:[string,()=>void]=['Back',()=>{this.pendingReplay=false;this.showMenu('overview');}];
+    let actions:[string,()=>void][];
+    if(menu==='edit')actions=[['Select item',()=>this.selectFurniture()],['Fine adjust',()=>this.showMenu('fine')],['Lock / unlock',()=>this.toggleLock()],['Undo',()=>this.undo()],back];
     else if(menu==='fine')actions=[
       ['−X 10cm',()=>this.nudge(-.1,0)],['+X 10cm',()=>this.nudge(.1,0)],['Rotate 15°',()=>this.rotateSelected()],
       ['−Y 10cm',()=>this.nudge(0,-.1)],['+Y 10cm',()=>this.nudge(0,.1)],['Back to edit',()=>this.showMenu('edit')],
     ];
-    else if(menu==='profile')actions=[['Use test profile',()=>{this.profileReviewed=true;const resume=this.pendingReplay;this.pendingReplay=false;this.showMenu('overview');if(resume)this.play();}],back];
-    else if(menu==='details')actions=[
-      ['Profile',()=>this.reviewProfile()],['Compare',()=>this.compare()],['Mini / 1:1',()=>this.toggleScale()],
-      ['Switch task',()=>this.selectTask()],back,
+    else if(menu==='profile')actions=[
+      ['Width −5cm',()=>this.adjustProfile('width',-5)],['Width +5cm',()=>this.adjustProfile('width',5)],['Use profile',()=>{this.profileReviewed=true;const resume=this.pendingReplay;this.pendingReplay=false;this.showMenu('overview');if(resume)this.play();}],
+      ['Buffer −1cm',()=>this.adjustProfile('clearance',-1)],['Buffer +1cm',()=>this.adjustProfile('clearance',1)],back,
     ];
+    else if(menu==='more')actions=[['Edit room',()=>this.showMenu('edit')],['Profile',()=>this.reviewProfile()],['Tasks / scale',()=>this.showMenu('details')],['Keep plan',()=>this.showMenu('keep')],['Undo',()=>this.undo()],back];
+    else if(menu==='details')actions=[['Switch task',()=>this.selectTask()],['Mini / 1:1',()=>this.toggleScale()],['Compare',()=>this.compare()],['Scope',()=>this.showMenu('about')],back];
     else if(menu==='keep')actions=[['Show QR',()=>this.keepPlan()],back];
-    else actions=[['Rehearse',()=>this.play()],['Edit room',()=>this.showMenu('edit')],['Keep / details',()=>this.showMenu('detailsKeep')]];
-    if(menu==='detailsKeep')actions=[['Keep plan',()=>this.showMenu('keep')],['Details',()=>this.showMenu('details')],back];
+    else if(menu==='search')actions=[['Cancel search',()=>this.cancelRepair()],['Profile',()=>this.reviewProfile()],['Edit locks',()=>this.showMenu('edit')]];
+    else if(menu==='repair')actions=[['Next option',()=>this.nextRepair()],['Apply',()=>{this.pendingRepairApply=true;}],['Original / new',()=>this.toggleRepairPreview()],['Search scope',()=>this.showMenu('repairScope')],['Mini / 1:1',()=>this.toggleScale()],['Cancel',()=>this.cancelRepair()]];
+    else if(menu==='repairScope')actions=[['Back to options',()=>this.showMenu('repair')],['Cancel',()=>this.cancelRepair()]];
+    else if(menu==='repairEmpty')actions=[['Edit locks',()=>this.showMenu('edit')],['Profile',()=>this.reviewProfile()],back];
+    else if(menu==='repairError')actions=[['Retry online',()=>this.findChanges()],['Try offline',()=>this.findChangesOffline()],back];
+    else if(menu==='about')actions=[back];
+    else actions=[['Find changes',()=>this.findChanges()],['Rehearse',()=>this.play()],['Room / plan',()=>this.showMenu('more')]];
     const rows=Math.ceil(actions.length/3),top=menu==='keep'?-15:-12;
     this.footer.sceneObject.getTransform().setLocalPosition(new vec3(0,Math.min(-20,top-(rows-1)*4.2-5.6),0));
     if(newControls)actions.forEach(([title,action],index)=>{
       const row=Math.floor(index/3),count=Math.min(3,actions.length-row*3);
       this.button(title,new vec3((index%3-(count-1)/2)*15.5,top-row*4.2,0),action);
     });
-    if(this.result)this.present(menu==='edit'?'Pinch-drag furniture on the floor. Fine adjust gives precise steps.':'');
-    if(menu==='profile'){const p=this.input.profile;this.detail.text=Math.round(p.width*100)+' × '+Math.round(p.length*100)+' cm occupied · '+Math.round(p.clearance*100)+' cm buffer';this.footer.text='Provided test profile · pivot and reverse allowed\nReview these assumptions before rehearsal.';}
+    if(this.result)this.present();
+    if(menu==='about'||menu==='repairScope') {
+      this.roomRoot.enabled=false;this.sharePanel=this.node('Scope details',this.uiRoot);
+      const body=menu==='repairScope'?
+        'Contact + 8cm radial placements\nOriginal and ±90° orientations\nUp to 6 unlocked pieces · 3 moves\n8-layout beam · 400 evaluations\n12,000 route nodes\n\nFewest pieces, then movement + rotation.\nOriginal occupied positions excluded.\nReserve exceeds buffer + uncertainty.\nNo global minimum is claimed.\nFurniture travel is not verified.':
+        'Provided dimensions · geometry only\n\nFull footprint + complete door sweep.\nNo camera-based room recognition.\nNo accessibility certification.\nComfort and door operation unassessed.\n\nRevision '+this.currentRevision+' · '+(this.miniature?'Miniature':'1:1 model')+'\nPhysical glasses remain untested.';
+      this.summary.text=menu==='repairScope'?'Search scope':'Scope & evidence';this.detail.text='';this.footer.text='';
+      this.label(this.sharePanel,body,new vec3(0,0,0),35,C.chalk,46,22);
+    }
+  }
+  private resetRepair() {
+    if(this.repairJob||this.repairRequest){this.repairMetrics.status='cancelled';this.repairMetrics.elapsedSeconds=getTime()-this.repairStartedAt;}
+    if(this.repairJob)this.repairJob.cancel();
+    // The installed fetch API has no AbortSignal option. Invalidate callbacks;
+    // the bounded server request may finish, but it can no longer affect this Lens.
+    this.repairRequestSerial++;this.repairRequest=null;this.repairTransport='idle';this.repairError='';
+    this.repairJob=null;this.repairProgress=null;this.repairProposals=[];this.repairIndex=0;this.repairPreview=true;this.pendingRepairApply=false;
+  }
+  private displayRepair() {
+    const proposal=this.repairProposals[this.repairIndex];
+    return this.repairPreview&&proposal&&proposal.sourceHash===Core.stableHash(this.input)?proposal:null;
+  }
+  public findChanges() {
+    this.beginRepair(false);
+  }
+  /** Explicit fallback: candidate generation can take minutes in native Preview. */
+  public findChangesOffline() {
+    this.beginRepair(true);
+  }
+  private beginRepair(offline:boolean) {
+    if(this.drag||this.pendingDragCommit||this.currentRevision!==this.input.room.revision)return;
+    this.cancelFurnitureDrag();this.resetRepair();this.playing=false;this.comparing=false;this.selected='journey';
+    this.repairStartedAt=getTime();this.repairGeneration=this.generation;
+    this.repairMetrics={status:'searching',mode:offline?'offline':'https',steps:0,elapsedSeconds:0,maxStepMs:0,validatedCandidates:0,localVerificationMs:0};
+    if(offline){
+      this.repairTransport='offline';this.repairJob=Core.createRepairSearch(this.input);this.repairProgress=this.repairJob.progress;
+    }else{
+      const snapshot=this.copy(this.input),serial=this.repairRequestSerial,sourceHash=Core.stableHash(snapshot);
+      const request={serial,requestId:'lens-'+serial+'-'+this.generation+'-'+Date.now(),generation:this.generation,sourceHash,sourceRevision:snapshot.room.revision,input:snapshot,response:null,verified:[] as any[]};
+      this.repairRequest=request;this.repairTransport='requesting';
+      this.repairMetrics.requestId=request.requestId;this.repairMetrics.requestGeneration=request.generation;
+      this.repairProgress={status:'searching',phase:'Online search',generated:0,evaluated:0,proposals:[],sourceHash,sourceRevision:request.sourceRevision,scope:Core.REPAIR_SETTINGS};
+    }
+    this.renderRoom();this.showMenu('search');
+    if(this.repairRequest)void this.fetchRepairs(this.repairRequest);
+  }
+  private requestIsCurrent(request:any) {
+    return this.repairRequest===request&&request.serial===this.repairRequestSerial&&request.generation===this.generation&&request.sourceRevision===this.input.room.revision&&request.sourceHash===Core.stableHash(this.input);
+  }
+  private async fetchRepairs(request:any) {
+    try{
+      const endpoint=this.companionBaseUrl.replace(/\/+$/,'');
+      if(!/^https:\/\/[^\s?#]+$/.test(endpoint))throw new Error('A valid HTTPS companion is required.');
+      this.internet=this.internet||require('LensStudio:InternetModule');
+      const response=await this.internet!.fetch(endpoint+'/api/v1/repairs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...request.input,requestId:request.requestId,generation:request.generation})});
+      if(!this.requestIsCurrent(request))return;
+      if(response.status!==200)throw new Error('HTTP '+response.status);
+      const contentType=response.headers.get('content-type')||'';
+      if(!contentType.includes('application/json'))throw new Error('Unexpected response type.');
+      const body=await response.text();
+      if(!this.requestIsCurrent(request))return;
+      if(body.length>524288)throw new Error('Repair response exceeds the size limit.');
+      const result=JSON.parse(body);
+      if(!result||result.requestId!==request.requestId||result.generation!==request.generation||result.sourceHash!==request.sourceHash||result.sourceRevision!==request.sourceRevision||result.status!=='complete'||!Array.isArray(result.proposals)||result.proposals.length>3||Core.stableHash(result.scope)!==Core.stableHash(Core.REPAIR_SETTINGS)||!Number.isInteger(result.generated)||result.generated<0||result.generated>1000000||!Number.isInteger(result.evaluated)||result.evaluated<0||result.evaluated>Core.REPAIR_SETTINGS.maxEvaluations)throw new Error('Repair response does not match this request.');
+      if(getTime()-this.repairStartedAt>25){this.failRepair('Online search timed out','timed_out');return;}
+      request.response=result;this.repairTransport='verifying';
+      this.repairProgress={...this.repairProgress,generated:result.generated,evaluated:result.evaluated,phase:'Checking returned geometry'};
+      this.repairMetrics.roundTripSeconds=getTime()-this.repairStartedAt;
+      // Verify one candidate per Update. Nothing returned by HTTP is rendered yet.
+    }catch(error){
+      if(!this.requestIsCurrent(request))return;
+      print('OPEN_DOOR_REPAIR '+String(error));this.failRepair('Online search unavailable','failed');
+    }
+  }
+  private verifyRemoteProposal(raw:any,request:any) {
+    const finite=(v:any,low:number,high:number)=>typeof v==='number'&&Number.isFinite(v)&&v>=low&&v<=high;
+    const pose=(v:any)=>v&&finite(v.x,-20,40)&&finite(v.y,-20,40)&&finite(v.theta,-Math.PI*4,Math.PI*4);
+    const motions=raw&&raw.evaluation&&raw.evaluation.tasks&&raw.evaluation.tasks.journey&&raw.evaluation.tasks.journey.motions;
+    if(!raw||raw.sourceHash!==request.sourceHash||raw.sourceRevision!==request.sourceRevision||!Array.isArray(raw.moves)||!raw.moves.length||raw.moves.length>Core.REPAIR_SETTINGS.maxMoves||!raw.input||!Array.isArray(motions)||!motions.length||motions.length>2048||!motions.every((m:any)=>m&&pose(m.start)&&finite(m.distance,-50,50)&&finite(m.angle,-Math.PI*2,Math.PI*2)))throw new Error('Invalid repair candidate.');
+    let translation=0,rotation=0;
+    for(const move of raw.moves){
+      const object=move&&request.input.room.objects.find((o:any)=>o.id===move.objectId);
+      if(!object||move.objectName!==object.name||!pose(move.from)||!pose(move.to))throw new Error('Invalid repair move.');
+      const distance=Math.hypot(move.to.x-move.from.x,move.to.y-move.from.y),angle=Math.abs(Core.normalizeAngle(move.to.theta-move.from.theta));
+      if(!finite(move.distanceM,0,100)||!finite(move.rotationRad,0,Math.PI)||Math.abs(move.distanceM-distance)>1e-8||Math.abs(move.rotationRad-angle)>1e-8)throw new Error('Invalid movement metrics.');
+      translation+=distance;rotation+=angle;
+    }
+    const cost=translation+rotation*Core.REPAIR_SETTINGS.rotationCostMPerRad;
+    if(!finite(raw.translationM,0,300)||!finite(raw.rotationRad,0,Math.PI*3)||!finite(raw.movementCostM,0,400)||Math.abs(raw.translationM-translation)>1e-8||Math.abs(raw.rotationRad-rotation)>1e-8||Math.abs(raw.movementCostM-cost)>1e-8||raw.id!==Core.stableHash({sourceHash:request.sourceHash,moves:raw.moves,reserve:raw.extraClearanceM}))throw new Error('Invalid repair evidence.');
+    // Reconstruct protected data and check every placement, motion and reserve
+    // locally before preview. Rebuild the displayed evaluation from those motions.
+    const input=Core.applyRepairProposal(request.input,raw);input.room.revision=request.sourceRevision;
+    const evaluation=Core.evaluate(input,motions);
+    if(evaluation.tasks.journey.status!=='verified_feasible'||evaluation.tasks.door.status!=='verified_feasible')throw new Error('Local task verification failed.');
+    return {...raw,input,evaluation,translationM:translation,rotationRad:rotation,movementCostM:cost};
+  }
+  private verifyNextRemoteProposal(request:any) {
+    try{
+      const result=request.response,index=request.verified.length;
+      if(index<result.proposals.length){
+        const started=Date.now(),proposal=this.verifyRemoteProposal(result.proposals[index],request),elapsed=Date.now()-started;
+        request.verified.push(proposal);this.repairMetrics.validatedCandidates++;
+        this.repairMetrics.localVerificationMs+=elapsed;this.repairMetrics.maxStepMs=Math.max(this.repairMetrics.maxStepMs,elapsed);this.repairMetrics.steps++;
+      }
+      if(request.verified.length!==result.proposals.length)return;
+      const ordered=request.verified.sort((a:any,b:any)=>a.moves.length-b.moves.length||a.movementCostM-b.movementCostM||b.certifiedReserveM-a.certifiedReserveM||a.id.localeCompare(b.id));
+      const proposals:any[]=[];let bestReserve=-Infinity;
+      for(const proposal of ordered){
+        if(proposals.length&&proposal.certifiedReserveM<bestReserve+.005)continue;
+        proposals.push({...proposal,label:proposals.length?'More modeled clearance':'Least movement found'});bestReserve=proposal.certifiedReserveM;
+      }
+      this.repairProgress={...this.repairProgress,status:'complete',phase:'Complete',proposals,reason:proposals.length?'Verified finite search; no global optimum claimed.':'No change found within this search. Check the current tasks or try different locks.'};
+      this.repairRequest=null;this.repairTransport='ready';this.finishRepair();
+    }catch(error){print('OPEN_DOOR_REPAIR '+String(error));this.failRepair('Returned geometry did not verify','failed');}
+  }
+  private failRepair(message:string,status:string) {
+    this.repairRequestSerial++;this.repairRequest=null;this.repairProposals=[];this.pendingRepairApply=false;
+    this.repairTransport=status;this.repairError=message;this.repairMetrics.status=status;this.repairMetrics.elapsedSeconds=getTime()-this.repairStartedAt;
+    if(this.repairProgress){this.repairProgress.status='cancelled';this.repairProgress.phase='Unavailable';this.repairProgress.proposals=[];}
+    this.renderRoom();this.showMenu('repairError');
+  }
+  private finishRepair() {
+    this.repairMetrics.status=this.repairProgress.status;this.repairMetrics.elapsedSeconds=getTime()-this.repairStartedAt;
+    this.repairJob=null;this.repairProposals=this.repairProgress.proposals;this.repairIndex=0;this.repairPreview=true;
+    this.renderRoom();this.showMenu(this.repairProposals.length?'repair':'repairEmpty');
+  }
+  public cancelRepair() {this.resetRepair();this.renderRoom();this.showMenu('overview');}
+  public nextRepair() {
+    if(!this.repairProposals.length)return;
+    this.repairIndex=(this.repairIndex+1)%this.repairProposals.length;this.repairPreview=true;this.renderRoom();this.present();
+  }
+  public toggleRepairPreview() {if(!this.repairProposals.length)return;this.repairPreview=!this.repairPreview;this.renderRoom();this.present();}
+  public applyRepair() {
+    const proposal=this.repairProposals[this.repairIndex];if(!proposal)return;
+    try {
+      const next=Core.applyRepairProposal(this.input,proposal),motions=proposal.evaluation.tasks.journey.motions;
+      this.history.push(this.copy(this.input));this.input=next;this.selected='journey';this.resetRepair();this.evaluateCurrent(motions);
+      this.acceptedRepair={schemaVersion:'1.0',inputHash:Core.stableHash(this.input),proposalId:proposal.id,sourceHash:proposal.sourceHash,sourceRevision:proposal.sourceRevision,extraClearanceM:proposal.extraClearanceM,certifiedReserveM:proposal.certifiedReserveM,moves:proposal.moves};
+      this.repairMetrics.status='applied';this.showMenu('overview');this.play();
+    }catch(error){this.resetRepair();this.renderRoom();this.showMenu('overview');this.present(String(error));}
+  }
+  public adjustProfile(field:string,deltaCm:number) {
+    if(field!=='width'&&field!=='clearance')return;
+    const low=field==='width'?.3:0,high=field==='width'?1.8:.4;
+    const next=Math.max(low,Math.min(high,this.input.profile[field]+deltaCm/100));
+    if(Math.abs(next-this.input.profile[field])<1e-8)return;
+    this.history.push(this.copy(this.input));this.input.profile[field]=next;this.input.room.revision++;
+    this.profileReviewed=false;this.evaluateCurrent();this.present();
   }
   public keepPlan() {
-    if(this.drag||this.pendingDragCommit){this.present('Release the furniture before keeping the plan.');return;}
+    if(this.drag||this.pendingDragCommit||this.repairJob||this.repairRequest||this.repairProposals.length){this.present('Finish or cancel the preview before keeping the plan.');return;}
     if(this.currentRevision!==this.input.room.revision)return;
     if(!/^https:\/\//.test(this.companionBaseUrl)) {
       this.present('The companion sharing address is unavailable. Your room stays here.');return;
@@ -156,9 +327,9 @@ export class OpenDoorExperience extends BaseScriptComponent {
       builder.updateMesh();
       const visual=this.node('QR modules',this.sharePanel).createComponent('Component.RenderMeshVisual');
       visual.mesh=builder.getMesh();visual.mainMaterial=this.material('qr-black',new vec4(0,0,0,1));
-      this.summary.text='KEEP PLAN · REVISION '+this.currentRevision;
+      this.summary.text='Keep plan · revision '+this.currentRevision;
       this.detail.text='';
-      this.footer.text='Scan in Preview · SVG / JSON downloads\n'+this.companionBaseUrl+' · geometry only';
+      this.footer.text=this.companionBaseUrl;
     } catch(error) {
       if(this.sharePanel){this.sharePanel.destroy();this.sharePanel=null;}
       this.roomRoot.enabled=true;this.present('Share link unavailable: '+String(error));
@@ -212,13 +383,13 @@ export class OpenDoorExperience extends BaseScriptComponent {
   private point(x:number,y:number,z:number) {
     return new vec3((x-this.input.room.width/2)*100,z*100,-(y-this.input.room.depth/2)*100);
   }
-  private evaluateCurrent() {
-    this.cancelFurnitureDrag();
+  private evaluateCurrent(preferredMotions:any[]|null=null) {
+    this.cancelFurnitureDrag();this.resetRepair();this.preferredMotions=preferredMotions;this.acceptedRepair=null;
     this.generation++;this.playing=false;this.planJSONexport='';this.currentShareLink='';this.currentRevision=-1;
     if(this.sharePanel){this.sharePanel.destroy();this.sharePanel=null;}
     this.roomRoot.enabled=true;
     const generation=this.generation,revision=this.input.room.revision;
-    this.result=Core.evaluate(this.input);
+    this.result=Core.evaluate(this.input,preferredMotions||undefined);
     if(generation!==this.generation || this.result.revision!==revision) return;
     if(Core.stableHash && this.result.inputHash!==Core.stableHash(this.input)) return;
     this.currentRevision=revision;this.renderRoom();this.present();
@@ -229,7 +400,7 @@ export class OpenDoorExperience extends BaseScriptComponent {
     for(const id of Object.keys(this.furnitureRoots))this.furnitureRoots[id].setParent(this.roomRoot);
     if(this.content)this.content.destroy();
     this.content=this.node('Evaluated revision '+this.currentRevision,this.roomRoot);
-    const r=this.input.room;
+    const preview=this.displayRepair(),r=preview?preview.input.room:this.input.room,evaluation=preview?preview.evaluation:this.result;
     // Architectural dressing is display-only. Collision uses the core's explicit footprints.
     this.softBox(this.content,'Architectural plinth',new vec3(0,-6,0),new vec3(r.width*100+8,10,r.depth*100+8),'plinth',C.linen);
     this.cube(this.content,'Floor',new vec3(0,-3,0),new vec3(r.width*100,6,r.depth*100),'floor',C.floor);
@@ -250,20 +421,22 @@ export class OpenDoorExperience extends BaseScriptComponent {
     this.cube(this.content,'Curtain rail',new vec3(windowX,75,windowZ+5),new vec3(162,1.6,1.6),'brass',C.brass);
     for(const side of [-1,1])for(let fold=0;fold<3;fold++)this.softBox(this.content,'Linen curtain fold',new vec3(windowX+side*(65+fold*4.5),47,windowZ+5+(fold%2)*1.5),new vec3(6,53,5),'curtain-'+(fold%2),fold%2?C.linen:new vec4(.89,.87,.78,1));
     for(const object of r.objects)this.furniture(object);
+    if(preview)this.drawRepairGhosts(preview);
     const d=r.door;
     this.doorRoot=this.node('Door fixed open during route',this.content);
     this.doorRoot.getTransform().setLocalPosition(this.point(d.hinge.x,d.hinge.y,0));
     this.doorRoot.getTransform().setLocalRotation(quat.angleAxis(d.fixedAngle,vec3.up()));
-    this.cube(this.doorRoot,'Door leaf',new vec3(d.width*50,27,0),new vec3(d.width*100,54,d.thickness*100),this.selected==='door'&&this.result.tasks.door.witness?'door-witness':'door',this.selected==='door'&&this.result.tasks.door.witness?C.amber:C.chalk);
+    this.cube(this.doorRoot,'Door leaf',new vec3(d.width*50,27,0),new vec3(d.width*100,54,d.thickness*100),this.selected==='door'&&evaluation.tasks.door.witness?'door-witness':'door',this.selected==='door'&&evaluation.tasks.door.witness?C.amber:C.chalk);
     this.routeRoot=this.node('Current route evidence',this.content);
     this.player=this.node('Occupied device footprint',this.routeRoot);
-    this.cube(this.player,'Occupied rectangle',new vec3(0,9,0),new vec3(this.input.profile.length*100,18,this.input.profile.width*100),'mint',C.mint);
-    this.cube(this.player,'Forward marker',new vec3(this.input.profile.length*45,20,0),new vec3(9,3,12),'chalk',C.chalk);
+    this.outline(this.player,'Occupied footprint',this.input.profile.length*100,this.input.profile.width*100,'mint',C.mint,2.5);
+    this.cube(this.player,'Forward marker',new vec3(this.input.profile.length*45,4,0),new vec3(9,3,12),'chalk',C.chalk);
     this.setPose(this.player,this.input.journey.start);
-    const task=this.result.tasks[this.selected];
+    const task=evaluation.tasks[this.selected];
     if(task.status==='verified_feasible' && this.selected==='journey') {
       task.path.forEach((pose:any,index:number)=>{
-        if(index%3===0)this.cube(this.routeRoot,'Verified path sample',this.point(pose.x,pose.y,.018),new vec3(5,2,5),'mint',C.mint);
+        if(index%3===0)this.cube(this.routeRoot,'Verified path sample',this.point(pose.x,pose.y,.018),new vec3(4,1,4),'mint',C.mint);
+        if(index%Math.max(1,Math.ceil(task.path.length/18))===0){const ribbon=this.node('Sampled occupied footprint',this.routeRoot);this.setPose(ribbon,pose);this.outline(ribbon,'Footprint ribbon',this.input.profile.length*100,this.input.profile.width*100,'ribbon',new vec4(.63,.86,.72,1),.7);}
       });
     }
     if(task.witness) {
@@ -281,6 +454,28 @@ export class OpenDoorExperience extends BaseScriptComponent {
       }
     }
     this.applyScale();
+  }
+  private outline(parent:SceneObject,name:string,width:number,depth:number,key:string,color:vec4,thickness:number) {
+    for(const sign of [-1,1]){
+      this.cube(parent,name,new vec3(0,1,sign*depth/2),new vec3(width,.8,thickness),key,color);
+      this.cube(parent,name,new vec3(sign*width/2,1,0),new vec3(thickness,.8,depth),key,color);
+    }
+  }
+  private floorLine(parent:SceneObject,a:any,b:any,key:string,color:vec4) {
+    const dx=b.x-a.x,dy=b.y-a.y;
+    const line=this.cube(parent,'Placement displacement',this.point((a.x+b.x)/2,(a.y+b.y)/2,.035),new vec3(Math.hypot(dx,dy)*100,1.2,1.6),key,color);
+    line.getTransform().setLocalRotation(quat.angleAxis(Math.atan2(dy,dx),vec3.up()));
+  }
+  private drawRepairGhosts(proposal:any) {
+    for(const move of proposal.moves){
+      const object=this.input.room.objects.find((o:any)=>o.id===move.objectId),ghost=this.node('Original '+object.name,this.content);
+      this.setPose(ghost,move.from);this.outline(ghost,'Original footprint',object.width*100,object.depth*100,'amber',C.amber,2);
+      this.floorLine(this.content,move.from,move.to,'mint',C.mint);
+      const angle=Math.atan2(move.to.y-move.from.y,move.to.x-move.from.x);
+      if(move.distanceM>.001)for(const side of [-1,1])this.floorLine(this.content,move.to,{x:move.to.x-.12*Math.cos(angle+side*.5),y:move.to.y-.12*Math.sin(angle+side*.5)},'mint',C.mint);
+      const words=Math.round(move.distanceM*100)+'cm'+(move.rotationRad>.001?' · '+Math.round(move.rotationRad*180/Math.PI)+'°':'');
+      this.label(this.content,words,this.point((move.from.x+move.to.x)/2,(move.from.y+move.to.y)/2,.62),this.miniature?250:45,C.chalk,this.miniature?95:25,this.miniature?18:6);
+    }
   }
   private furniture(object:any) {
     const existing=this.furnitureRoots[object.id];
@@ -369,7 +564,7 @@ export class OpenDoorExperience extends BaseScriptComponent {
     };
   }
   private beginFurnitureDrag(object:any, root:SceneObject, event:InteractorEvent) {
-    if (this.drag || this.pendingDragCommit) return;
+    if (this.drag || this.pendingDragCommit || this.repairJob || this.repairRequest || this.repairProposals.length) return;
     event.stopPropagation();
     this.selectedObject = object.id;
     const current = this.input.room.objects.find((item) => item.id === object.id);
@@ -395,11 +590,11 @@ export class OpenDoorExperience extends BaseScriptComponent {
       y: current.pose.y
     };
     this.routeRoot.enabled = false;
-    this.taskStatus.text = "Placement preview · results refer to the previous committed revision";
-    this.summary.text = "PLACEMENT PREVIEW \xB7 release to evaluate";
+    this.taskStatus.text = "Furniture preview";
+    this.summary.text = object.name;
     this.summary.textFill.color = C.amber;
-    this.detail.text = "Pinch-drag " + object.name + " on the floor. Model dimensions stay unchanged until release.";
-    this.footer.text = "Amber placement feedback \xB7 release commits once \xB7 cancel restores the original pose";
+    this.detail.text = "Release to check this placement";
+    this.footer.text = "";
   }
   private previewFurnitureDrag(event:InteractorEvent) {
     const drag = this.drag;
@@ -411,7 +606,7 @@ export class OpenDoorExperience extends BaseScriptComponent {
     drag.y = point.y - drag.offsetY;
     drag.root.getTransform().setLocalPosition(this.point(drag.x, drag.y, 0));
     const issue = Core.placementIssue(this.input.room, drag.id, drag.x, drag.y, drag.original.theta);
-    this.detail.text = issue ? issue + " Release to restore." : "Placement available. Release to evaluate both tasks.";
+    this.detail.text = issue ? issue + " Release to restore." : "Release to check both tasks";
     this.detail.textFill.color = issue ? C.amber : C.mint;
   }
   private finishFurnitureDrag(event:InteractorEvent) {
@@ -472,16 +667,36 @@ export class OpenDoorExperience extends BaseScriptComponent {
   }
   private status(task:any) {return task.status==='verified_feasible'?'Clear for model':task.status==='blocked_witness'?'Geometric interference':task.status==='no_path_found'?'No path found':'Uncertain';}
   private present(note='') {
-    const task=this.result.tasks[this.selected];
-    const short=(t:any)=>t.status==='verified_feasible'?'clear':t.status==='blocked_witness'?'interference':this.status(t);
-    this.taskStatus.text='Route: '+short(this.result.tasks.journey)+'  ·  Door: '+short(this.result.tasks.door);
-    this.summary.text=(this.selected==='journey'?'REACH THE BEDSIDE':'OPEN THE DOOR')+'  ·  '+this.status(task);
-    this.summary.textFill.color=task.status==='verified_feasible'?C.mint:C.amber;
-    this.detail.text=this.comparing?
-      'Baseline: '+this.status(this.baseline.tasks[this.selected])+' → Current: '+this.status(task):task.summary;
+    const proposal=this.repairProposals[this.repairIndex],preview=this.displayRepair(),evaluation=preview?preview.evaluation:this.result;
+    const task=evaluation.tasks[this.selected];
+    const short=(t:any)=>t.status==='verified_feasible'?'clear':t.status==='blocked_witness'?'blocked':this.status(t);
+    this.taskStatus.text=(preview?'Preview · ':'')+'Route '+short(evaluation.tasks.journey)+'   ·   Door '+short(evaluation.tasks.door);
+    this.summary.text='';this.detail.text='';this.footer.text=note;
+    this.summary.textFill.color=C.chalk;this.detail.textFill.color=C.chalk;
+    if(this.repairRequest){
+      this.summary.text=this.repairTransport==='verifying'?'Checking returned geometry…':'Finding changes…';
+      this.detail.text=this.repairTransport==='verifying'?this.repairMetrics.validatedCandidates+' alternatives checked locally':'Online search · room unchanged';return;
+    }
+    if(this.repairJob){
+      this.summary.text='Finding changes offline…';this.detail.text=(this.repairProgress?this.repairProgress.generated:0).toLocaleString()+' placements considered';this.footer.text='Offline search may take several minutes';return;
+    }
+    if(this.menu==='repair'&&proposal){
+      const reserve=proposal.certifiedReserveM,space=reserve<.001?'under 1mm':(Math.floor(reserve*1000)/10).toFixed(1)+'cm+';
+      this.summary.text=(this.repairIndex+1)+'/'+this.repairProposals.length+' · '+(this.repairPreview?proposal.label:'Original layout');
+      this.detail.text=proposal.moves.length+' pieces · '+Math.round(proposal.translationM*100)+'cm movement · '+space+' extra';
+      this.footer.text=reserve<.001?'Small margin · compare a higher-reserve option':'';return;
+    }
+    if(this.menu==='repairEmpty'){this.summary.text='No proposal found';this.detail.text='Finite search · no proof of impossibility';this.footer.text=this.repairProgress?this.repairProgress.reason:'';return;}
+    if(this.menu==='repairError'){this.summary.text=this.repairError;this.detail.text='Retry online, or choose offline search';this.footer.text='Room unchanged · offline may take minutes';return;}
     const furniture=this.input.room.objects.find((object:any)=>object.id===this.selectedObject);
-    const position=this.menu==='fine'?' · X '+furniture.pose.x.toFixed(2)+' / Y '+furniture.pose.y.toFixed(2)+' m':'';
-    this.footer.text=(note || ('Revision '+this.currentRevision+' · '+(this.miniature?'Miniature':'1:1 model')+' · '+furniture.name+(furniture.locked?' LOCKED':' selected')+position))+'\nProvided dimensions · geometry only';
+    if(this.menu==='edit'||this.menu==='fine'){
+      this.summary.text=furniture.name+(furniture.locked?' · locked':'');
+      this.detail.text=this.menu==='fine'?'X '+furniture.pose.x.toFixed(2)+'m · Y '+furniture.pose.y.toFixed(2)+'m · '+Math.round(furniture.pose.theta*180/Math.PI)+'°':'Pinch-drag to move';
+    }else if(this.menu==='profile'){
+      const p=this.input.profile;this.summary.text=Math.round(p.width*100)+' × '+Math.round(p.length*100)+'cm occupied';this.detail.text=Math.round(p.clearance*100)+'cm buffer · ±'+Math.round(p.uncertainty*100)+'cm uncertainty';this.footer.text='Example profile · pivot and reverse allowed';
+    }else if(this.menu==='details'){
+      this.summary.text=this.selected==='journey'?'Bedside journey':'Door swing';this.detail.text=this.comparing?'Original footprints shown':(this.miniature?'Miniature':'1:1 model');this.footer.text='Revision '+this.currentRevision+' · provided dimensions · geometry only';
+    }
   }
   public reviewProfile() {this.pendingReplay=false;this.showMenu('profile');}
   public selectTask() {this.selected=this.selected==='journey'?'door':'journey';this.playing=false;this.renderRoom();this.present();}
@@ -496,12 +711,31 @@ export class OpenDoorExperience extends BaseScriptComponent {
   }
   private update() {
     this.flushFurnitureDrag();
+    if(this.pendingRepairApply){this.pendingRepairApply=false;this.applyRepair();}
+    if(this.repairRequest){
+      const request=this.repairRequest;
+      if(!this.requestIsCurrent(request)){this.cancelRepair();return;}
+      this.repairMetrics.elapsedSeconds=getTime()-this.repairStartedAt;
+      if(this.repairMetrics.elapsedSeconds>25){this.failRepair('Online search timed out','timed_out');return;}
+      if(request.response)this.verifyNextRemoteProposal(request);
+      else if(getTime()-this.repairStatusAt>.12){this.repairStatusAt=getTime();this.present();}
+    }
+    if(this.repairJob){
+      if(this.repairGeneration!==this.generation||this.repairProgress.sourceHash!==Core.stableHash(this.input)){this.cancelRepair();return;}
+      const tickStarted=Date.now();this.repairProgress=this.repairJob.step(6);
+      this.repairMetrics.steps++;this.repairMetrics.maxStepMs=Math.max(this.repairMetrics.maxStepMs,Date.now()-tickStarted);this.repairMetrics.elapsedSeconds=getTime()-this.repairStartedAt;
+      if(this.repairProgress.status!=='searching'){
+        this.repairTransport='offline_complete';this.finishRepair();
+      }else if(getTime()-this.repairStatusAt>.12){this.repairStatusAt=getTime();this.present();}
+    }
     if(!this.playing||this.playbackGeneration!==this.generation)return;
     const path=this.result.tasks[this.selected].path;
-    if(!path.length){this.playing=false;return;}
+    if(!Array.isArray(path)||!path.length){this.playing=false;return;}
     // These are the core's sampled constant-curvature trajectories, not a new visual route.
-    const index=Math.min(path.length-1,Math.floor((getTime()-this.playbackStart)*12));
-    const pose=path[index];
+    const elapsed=getTime()-this.playbackStart;
+    const index=Math.min(path.length-1,Math.floor((Number.isFinite(elapsed)?Math.max(0,elapsed):0)*12));
+    const pose=path[index]||path[0];
+    if(!pose){this.playing=false;return;}
     if(this.selected==='journey')this.setPose(this.player,pose);
     else this.doorRoot.getTransform().setLocalRotation(quat.angleAxis(pose.theta,vec3.up()));
     if(index===path.length-1)this.playing=false;
@@ -519,7 +753,7 @@ export class OpenDoorExperience extends BaseScriptComponent {
     this.history.push(this.copy(this.input));this.input.room=next;this.evaluateCurrent();
   }
   public selectFurniture() {
-    const ids=['table','bench','wardrobe','bed'];this.selectedObject=ids[(ids.indexOf(this.selectedObject)+1)%ids.length];this.renderRoom();this.present();
+    const ids=this.input.room.objects.map((o:any)=>o.id);this.selectedObject=ids[(ids.indexOf(this.selectedObject)+1)%ids.length];this.renderRoom();this.present();
   }
   public toggleLock() {
     const object=this.input.room.objects.find((item:any)=>item.id===this.selectedObject);
@@ -542,9 +776,9 @@ export class OpenDoorExperience extends BaseScriptComponent {
   public toggleScale() {this.miniature=!this.miniature;this.renderRoom();this.present();}
   private baselineInput() {return Core.cloneInput();}
   public exportPlan() {
-    if(this.drag||this.pendingDragCommit){this.present('Release the furniture before exporting.');return;}
+    if(this.drag||this.pendingDragCommit||this.repairJob||this.repairRequest||this.repairProposals.length){this.present('Finish or cancel the preview before exporting.');return;}
     if(this.currentRevision!==this.input.room.revision){this.present('Evaluate the current revision before export.');return;}
-    this.planJSONexport=JSON.stringify({schemaVersion:'1.0',source:'provided_fixture',input:this.input,evaluation:this.result,limitations:['2D geometric simulation','No physical or accessibility certification','No measured live-room recognition']},null,2);
+    this.planJSONexport=JSON.stringify({schemaVersion:'1.0',source:'provided_fixture',input:this.input,evaluation:this.result,repair:this.acceptedRepair?{selection:this.acceptedRepair,method:'The retained trajectory and complete door sweep were independently checked at the extra reserve target. Ordinary adaptive bounds can be looser; the original profile is unchanged.'}:undefined,limitations:['2D geometric simulation','No physical or accessibility certification','No measured live-room recognition']},null,2);
     print('OPEN_DOOR_PLAN_JSON '+this.planJSONexport);
     this.present('Plan JSON ready for revision '+this.currentRevision+'.\nIncludes dimensions, poses, assumptions and matching evaluation. See Logger.');
   }

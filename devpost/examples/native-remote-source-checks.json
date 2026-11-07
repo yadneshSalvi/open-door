@@ -1,0 +1,69 @@
+{
+  "sourceOnly": true,
+  "notNativePreview": true,
+  "searchFrames": 369,
+  "searchAndStateChecksElapsedMs": 2159.405541,
+  "proposalCount": 3,
+  "checks": [
+    "source unchanged during search and preview",
+    "drag blocked during search and proposal preview",
+    "original/new toggles are visual only",
+    "apply queued to Update",
+    "all moves committed in one revision/history entry",
+    "preferred certified trajectory retained",
+    "profile review gates rehearsal",
+    "rehearsal handles negative/nonfinite elapsed time and reaches final sampled pose",
+    "undo restores original room under fresh revision",
+    "cancellation prevents remaining work",
+    "stale profile change invalidates search",
+    "native profile edit increments and rechecks"
+  ],
+  "remoteChecks": [
+    "HTTPS body binds exact model/requestId/generation",
+    "HTTP and verification do not mutate source",
+    "drag blocked during HTTP",
+    "one candidate locally checked per Update",
+    "HTTP paths and summaries discarded for local evaluation",
+    "all three alternatives locally verify before display",
+    "remote Apply remains one revision with original profile and reserve evidence",
+    "cancel ignores late HTTP",
+    "profile edit ignores late HTTP",
+    "raw source change invalidates pending HTTP",
+    "new search invalidates prior request even at same revision",
+    "cancel during local verification discards all candidates",
+    "25-second timeout ignores late completion",
+    "malformed envelope/candidate/JSON/size/status/type fail gracefully",
+    "no automatic offline work after failure",
+    "explicit offline search and cancellation"
+  ],
+  "malformedResponseCases": 16,
+  "sourceHashes": {
+    "OpenDoorExperience.ts": "ffcf5cb7341d60a3d13b5e49e1510e0265d04cc7d9df733e7e36f19f720bdbb0",
+    "OpenDoorCore.js": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e",
+    "ArchitecturalMeshes.ts": "099e1b16a2b5216beb0179ac1fb47ea12acbbae116289d8fa4135993928b6eef"
+  },
+  "productionAdapterCheck": {
+    "status": 200,
+    "roundTripAndSourceValidationMs": 3378.195375,
+    "sourceHash": "157d458020a00d14",
+    "proposals": [
+      {
+        "id": "73233103184c9aeb",
+        "translationM": 1.3879262734046638,
+        "certifiedReserveM": 5.561002758014194e-05
+      },
+      {
+        "id": "0dcedbb4f303e1d8",
+        "translationM": 1.4017735476918376,
+        "certifiedReserveM": 0.010043655382584945
+      },
+      {
+        "id": "f2205efb0e49f663",
+        "translationM": 2.2272850519548344,
+        "certifiedReserveM": 0.030426874516801088
+      }
+    ],
+    "environment": "Node source harness using a real HTTPS response, not Lens Preview; the final change afterward only guarded native playback elapsed time."
+  },
+  "sourceStage": "Source-harness revision before the final cosmetic footer change. Accepted native source 29c94a1b differs only by that copy change; actual native evidence is recorded separately."
+}

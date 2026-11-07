@@ -1,4 +1,6 @@
-# Accepted native Preview evidence
+# Original direct-edit native Preview evidence
+
+This record belongs to the accepted **original direct-edit release**. Its hashes and captures are historical evidence, not the current remote-search source. The [accepted computed-repair pass](native-repair-preview.md) is the current release evidence.
 
 Completed on 7 November 2026 in **Lens Studio 5.23.2.26081320**, **SPECS 27 Interactive Preview**, using its Plane scene and the installed SIK/UIKit packages. The runtime log reports SIK 0.18.0; this is a runtime identifier, not an assertion about Asset Library package numbering. The actual project is `lens/OpenDoor.esproj`.
 
@@ -40,7 +42,7 @@ Native Preview exposed two issues that source checks had not established. MeshBu
 
 The final-source QA interval examined **810,745 log bytes** with no E/F/W diagnostics or Preview error/exception prints, excluding editor transport and analytics payloads. After debugger cleanup, the editor emitted one `QObject::disconnect` warning about a destroyed QTcpSocket signal. Subsequent Preview error prints were empty. That editor teardown warning is disclosed; the clean claim is scoped to the actual QA interval.
 
-The [sanitized evidence record](media/native-verification.json) contains source hashes, observed assertions, QR/export comparisons and log scope. The accepted source mirrors in `lens-src/` and `lens/Assets/Scripts/` have these SHA-256 values:
+The [sanitized evidence record](media/native-verification.json) contains source hashes, observed assertions, QR/export comparisons and log scope. The source accepted for this original run had these SHA-256 values (current source has since changed):
 
 | File | SHA-256 |
 | --- | --- |

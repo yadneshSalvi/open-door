@@ -1,0 +1,248 @@
+{
+  "recordedOn": "2026-11-07",
+  "evidenceKind": "Actual SPECS 27 Interactive Preview, installed SIK mouse/far-ray gestures and independently checked captured data",
+  "project": "lens/OpenDoor.esproj",
+  "accepted": true,
+  "sourceSHA256": {
+    "OpenDoorExperience.ts": {
+      "authored": "29c94a1b7f538f2350cac24b629b034c64d7f02483e174514b7fa8ce1542494b",
+      "assets": "29c94a1b7f538f2350cac24b629b034c64d7f02483e174514b7fa8ce1542494b"
+    },
+    "OpenDoorCore.js": {
+      "authored": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e",
+      "assets": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e"
+    },
+    "ArchitecturalMeshes.ts": {
+      "authored": "099e1b16a2b5216beb0179ac1fb47ea12acbbae116289d8fa4135993928b6eef",
+      "assets": "099e1b16a2b5216beb0179ac1fb47ea12acbbae116289d8fa4135993928b6eef"
+    }
+  },
+  "copyOnlyFinalChange": "Removed the redundant normal proposal footer; retained the small-margin warning. Incoming ffcf5cb7 and accepted 29c94a1b controllers otherwise have the same behavior.",
+  "compile": "succeeded",
+  "startup": {
+    "status": "success",
+    "firstActivityAtMs": 129,
+    "errorCount": 0
+  },
+  "save": {
+    "via": "Editor.Model.IModel.project.save()",
+    "succeeded": true
+  },
+  "debugger": {
+    "daemon": "stopped",
+    "breakpointsRemoved": 0
+  },
+  "editorReleased": true,
+  "nativeTiming": {
+    "environment": "SPECS 27 Interactive Preview with debugger attached; not hardware or percentile results",
+    "clockCaveat": "Elapsed/round-trip use the native frame clock; local validation uses Date.now. They are separate observations, not an exact additive budget.",
+    "ordinarySearches": [
+      {
+        "case": "first accepted result",
+        "elapsedSeconds": 3.69701,
+        "roundTripSeconds": 3.265873,
+        "localVerificationMs": 470,
+        "maxCandidateMs": 165
+      },
+      {
+        "case": "changed 71 cm profile",
+        "elapsedSeconds": 3.926305,
+        "roundTripSeconds": 3.53807,
+        "localVerificationMs": 388,
+        "maxCandidateMs": 162
+      },
+      {
+        "case": "retry after controlled timeout, polished source",
+        "elapsedSeconds": 3.421109,
+        "roundTripSeconds": 3.134267,
+        "localVerificationMs": 292,
+        "maxCandidateMs": 124
+      },
+      {
+        "case": "final fresh production repair",
+        "elapsedSeconds": 3.248663,
+        "roundTripSeconds": 2.998103,
+        "localVerificationMs": 271,
+        "maxCandidateMs": 108
+      }
+    ],
+    "lockedNoProposalSeconds": 1.948128,
+    "explicitOfflineCancelled": {
+      "seconds": 3.056212,
+      "steps": 47,
+      "maxStepMs": 23,
+      "completedSearch": false
+    },
+    "earlierLocalOnlyIncomplete": {
+      "seconds": 312.067956083,
+      "steps": 2661,
+      "maxStepMs": 1085,
+      "completedSearch": false
+    }
+  },
+  "observationAssertions": {
+    "kind": "Post-processing assertions over recorded native observations; no runtime or solver invocation",
+    "passed": 28,
+    "checks": {
+      "three actual native alternatives": true,
+      "computed movement and reserve values": true,
+      "Apply release queued without mutation": true,
+      "Update committed exactly one revision and history entry": true,
+      "protected profile and goals unchanged": true,
+      "locks dimensions door and other room data unchanged": true,
+      "Undo exact geometry under fresh revision": true,
+      "profile request truly in flight": true,
+      "profile edit invalidated pending work": true,
+      "changed profile bound into next request": true,
+      "locked obstruction honest no proposal": true,
+      "native malformed responses rejected": true,
+      "actual legal drag deferred one commit": true,
+      "boundary drag refused": true,
+      "locked bed refused": true,
+      "original-confirmed-drag-refused-preview immutable": true,
+      "new-confirmed-drag-refused-preview immutable": true,
+      "search-drag-refused-preview immutable": true,
+      "stale response cannot reset newer request": true,
+      "explicit offline fallback cancelled briefly": true,
+      "real timeout and late response ignored": true,
+      "retry restored verified production results": true,
+      "Original/new presentation only": true,
+      "scale presentation only": true,
+      "retained route exact endpoint": true,
+      "persistent furniture identities survived final-source pass": true,
+      "stationary camera preserved": true,
+      "final accepted stable overview": true
+    }
+  },
+  "interactionMethod": {
+    "delivery": "InjectPreviewGesture through installed SIK mouse/far-ray interactor",
+    "setup": "Labeled cursorPosition setup while mouse up, followed by observed hover and separately injected start/move/release. No product handler invocation counts as a gesture.",
+    "cameraPosition": [
+      0,
+      0,
+      0
+    ],
+    "cameraRotationQuaternion": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "fullScaleBoundary": "Stationary limited viewpoint; whole room is not visible at 1:1. The extensive earlier full-scale drag matrix remains separate."
+  },
+  "supplementalTransportTests": {
+    "heldRealResponses": true,
+    "responseBodiesUnmodified": true,
+    "staleOldResponsePreservedNewRequest": true,
+    "timeoutSeconds": 25.001403,
+    "lateResponseIgnored": true,
+    "failureInjected": "QA simulated transport failure",
+    "explicitOfflineThenCancelViaSIK": true,
+    "nativeMalformedCandidateCases": 6,
+    "malformedCallsAreGestures": false,
+    "transportRestoredBeforeFinalProductionRepair": true
+  },
+  "acceptedPlan": {
+    "revision": 9,
+    "inputHash": "e0c04348bacddd78",
+    "nativeDiagnosticExactInput": true,
+    "selectedCertificateBoundToAcceptedHash": true,
+    "oneAtomicRevisionIndependentlyReconstructed": true,
+    "independentReserve": {
+      "acceptedRevision": 9,
+      "acceptedInputHash": "e0c04348bacddd78",
+      "route": "clear",
+      "door": "verified_feasible",
+      "reserveTargetM": 0.03,
+      "certifiedReserveM": 0.030426874516801088,
+      "journeyBufferM": 0.03,
+      "profileUncertaintyM": 0,
+      "translationM": 2.2272850519548344,
+      "rotationRad": 0,
+      "movementCostM": 2.2272850519548344,
+      "method": "The retained trajectory and complete door sweep were independently rechecked at the extra reserve target. Ordinary adaptive evaluation bounds can be looser; the original profile is unchanged.",
+      "routeResidualM": 0.000426874516801087,
+      "doorResidualM": 0.001549098518954432,
+      "recomputedCertifiedReserveM": 0.030426874516801088,
+      "claimTolerance": 1e-09
+    },
+    "nativeEvaluationMatch": {
+      "maximumNumericalDifference": 0,
+      "tolerance": 1e-12,
+      "durationMsExcluded": true
+    }
+  },
+  "actualQR": {
+    "fullFrame": true,
+    "dimensions": [
+      1392,
+      1910
+    ],
+    "decoder": "ZXing-C++",
+    "decodedCount": 1,
+    "exactMatch": true,
+    "length": 297,
+    "urlSHA256": "71fa2e1771a32217bff54b4cd8bbcb4c43e3a041b93af2ed65443c293ffe4abf",
+    "url": "https://open-door-weld.vercel.app/#plan=N4IgbgpgTgzglgewHYgFwCYA0IBmcAeALgK5QRogCOxcEhAtFAggLb1gCMI2AxgBYBDJAHMIMNAG0JIJqwB0ZMHHjJuATgC6mabJZyEAIwBWEHoRhyOcgA4IYEOfm4AGOQFYALADY1vv-78tHWY9QxMzCytbezkAT24rAA5nAHZndIzM9PQgmRD9Y1NzOXQbOwcnTCsPNTdc3QLw4tLoh3jMVx8crRBBGD4KCGceZw8AZg9EgwEeABN5lMSQAF8gA",
+    "screenshot": "native-repair-qr-r9.png",
+    "screenshotSHA256": "21a26726ca6c0c6bcd37a555c783d8c1bd6073961561e8662142330be366cc10"
+  },
+  "production": {
+    "status": "verified",
+    "companionGET": {
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 26103
+    },
+    "exportsPOST": {
+      "status": 200,
+      "exactInput": true,
+      "revision": 9,
+      "inputHash": "e0c04348bacddd78",
+      "repairCertificateIndependentlyReverifiedByBackend": true,
+      "svgBytes": 4135
+    },
+    "evaluationMatch": {
+      "maximumNumericalDifference": 0,
+      "tolerance": 1e-12,
+      "durationMsExcluded": true
+    }
+  },
+  "legacyRevision11": {
+    "legacyCompanionGET": {
+      "status": 200,
+      "bytes": 26103
+    },
+    "legacyExportsPOST": 200,
+    "revision": 11,
+    "hash": "851f354fb4fef3b3",
+    "exactInput": true,
+    "initialInvalidHarnessRequest": "Omitted required baseline and received422; correct legacy payload passed."
+  },
+  "independentBrowserHandoff": {
+    "checkedAt": "2026-11-07T17:35:58.557Z",
+    "revision": 9,
+    "inputHash": "e0c04348bacddd78",
+    "inputExact": true,
+    "journey": "verified_feasible",
+    "door": "verified_feasible",
+    "modelShareIntentionallyOmitsRepairCertificate": true
+  },
+  "runtimeAudit": {
+    "bytesExamined": 1118880,
+    "lensWarningErrorFatalCount": 0,
+    "unexpectedPreviewErrorPrintCount": 0,
+    "controlledFaultInjectionPrintCount": 1,
+    "hostWarningCount": 1,
+    "hostWarning": "Qt destroyed-QTcpSocket disconnect at debugger cleanup",
+    "scope": "Final-source startup through QA and cleanup; controlled fault-injection print retained, editor transport/analytics excluded"
+  },
+  "limits": [
+    "No physical glasses, LEAF pass, real handtracking or external user-study result",
+    "No physical phone QR scan or additive-display contrast test",
+    "No hardware frame-rate/thermal/comfort claim",
+    "Provided synthetic geometry, no recognition or accessibility certification",
+    "Furniture carrying trajectories, transfers and complete door operation unassessed",
+    "Model-only shares omit selected optimization certificate; actual diagnostic/backend export retains it"
+  ]
+}

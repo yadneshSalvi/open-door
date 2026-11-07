@@ -497,13 +497,17 @@ var require_lz_string = __commonJS({
 // src/engine/lens-entry.ts
 var lens_entry_exports = {};
 __export(lens_entry_exports, {
+  REPAIR_SETTINGS: () => REPAIR_SETTINGS,
   SETTINGS: () => SETTINGS,
   SOLVER_VERSION: () => SOLVER_VERSION,
+  applyRepairProposal: () => applyRepairProposal,
   cloneInput: () => cloneInput,
+  createRepairSearch: () => createRepairSearch,
   createShareLink: () => createShareLink,
   evaluate: () => evaluate,
   evaluateDoor: () => evaluateDoor,
   evaluateJourney: () => evaluateJourney,
+  evaluateSteps: () => evaluateSteps,
   fixture: () => fixture,
   lensToRoom: () => lensToRoom,
   moveObject: () => moveObject,
@@ -798,7 +802,7 @@ function reconstruct(node) {
   }
   return motions;
 }
-function search(input) {
+function* search(input, maxNodes = SETTINGS.maxNodes) {
   var _a, _b;
   const p = input.profile, local = rectangle(p.length, p.width), obstacles = routeObstacles(input), buffer = p.clearance + p.uncertainty;
   const heuristic = (q) => distance(q, input.journey.goal) + angleDistance(q.theta, input.journey.goal.theta) * 0.12;
@@ -807,7 +811,8 @@ function search(input) {
   frontier.push({ pose: input.journey.start, g: 0, f: heuristic(input.journey.start) });
   const best = /* @__PURE__ */ new Map();
   let explored = 0, uncertain = false;
-  while (frontier.values.length && explored < SETTINGS.maxNodes) {
+  while (frontier.values.length && explored < maxNodes) {
+    yield;
     const node = frontier.pop(), k = key(node.pose);
     if (((_a = best.get(k)) != null ? _a : Infinity) <= node.g) continue;
     best.set(k, node.g);
@@ -837,7 +842,7 @@ function search(input) {
   }
   return { explored, uncertain };
 }
-function evaluateJourneyCore(input) {
+function* evaluateJourneyCore(input, options = {}) {
   var _a, _b, _c;
   const { profile: p, journey: task } = input;
   const base = { id: task.id, name: task.name, path: [], motions: [], minimumClearance: null, explored: 0, assumptions: routeAssumptions(input), unknowns: ["Physical comfort, transfers, effort and real-world accuracy are not assessed."] };
@@ -846,13 +851,19 @@ function evaluateJourneyCore(input) {
     const c = clearanceAt(local, pose, obstacles, buffer, input.room);
     if (c.distance <= 0) return { ...base, status: "blocked_witness", summary: `${label} intersects ${(_b = (_a = c.witness) == null ? void 0 : _a.objectName.toLowerCase()) != null ? _b : "the room geometry"}${((_c = c.witness) == null ? void 0 : _c.kind) === "buffer" ? "\u2019s clearance buffer" : ""}.`, witness: c.witness };
   }
+  yield;
+  if (options.preferredMotions) {
+    const v = verifyTrajectory(input, options.preferredMotions);
+    if (v.status === "clear") return { ...base, status: "verified_feasible", summary: "The preferred continuous route reaches the requested goal.", motions: options.preferredMotions, path: sampleMotions(options.preferredMotions), minimumClearance: v.clearance };
+  }
   let candidates = [];
   if (p.movement === "pivot") candidates = [directMotions(task.start, task.goal), directMotions(task.start, task.goal, { x: task.goal.x, y: task.start.y }), directMotions(task.start, task.goal, { x: task.start.x, y: task.goal.y })];
   for (const motions of candidates) {
+    yield;
     const v = verifyTrajectory(input, motions);
     if (v.status === "clear") return { ...base, status: "verified_feasible", summary: "A continuous route reaches the bedside in the requested orientation.", motions, path: sampleMotions(motions), minimumClearance: v.clearance };
   }
-  const found = search(input);
+  const found = yield* search(input, options.maxNodes);
   if (found.motions) {
     const v = verifyTrajectory(input, found.motions);
     if (v.status === "clear") return { ...base, status: "verified_feasible", summary: "A verified route reaches the bedside in the requested orientation.", motions: found.motions, path: sampleMotions(found.motions), minimumClearance: v.clearance, explored: found.explored };
@@ -867,35 +878,49 @@ function evaluateJourneyCore(input) {
   }
   return { ...base, status: found.uncertain ? "uncertain" : "no_path_found", summary: found.uncertain ? "The search could not certify a route at the selected tolerance." : "No route found within this search resolution and node budget.", witness, explored: found.explored, unknowns: [...base.unknowns, "This search result does not prove every possible route is blocked."] };
 }
-function evaluateJourney(input) {
-  const result = evaluateJourneyCore(input);
-  if (result.status !== "verified_feasible" && (input.profile.uncertainty > 0 || input.room.objects.some((o) => o.uncertainty > 0))) {
+function drain(steps) {
+  let next = steps.next();
+  while (!next.done) next = steps.next();
+  return next.value;
+}
+function* journeySteps(input, options = {}) {
+  const result = yield* evaluateJourneyCore(input, options);
+  if (options.nominalFallback !== false && result.status !== "verified_feasible" && (input.profile.uncertainty > 0 || input.room.objects.some((o) => o.uncertainty > 0))) {
     const nominal = { ...input, profile: { ...input.profile, uncertainty: 0 }, room: { ...input.room, objects: input.room.objects.map((o) => ({ ...o, uncertainty: 0 })) } };
-    const nominalResult = evaluateJourneyCore(nominal);
+    const nominalResult = yield* evaluateJourneyCore(nominal, options);
     if (nominalResult.status === "verified_feasible") return { ...result, status: "uncertain", summary: "The nominal dimensions permit a route, but the stated uncertainty prevents certification.", unknowns: [...result.unknowns, "A route passed with measurement uncertainty removed; conservative geometry did not pass."] };
   }
   return result;
 }
-function evaluateDoorCore(input) {
+function evaluateJourney(input) {
+  return drain(journeySteps(input));
+}
+function evaluateDoorCore(input, reserveM = 0) {
   var _a;
   const d = input.room.door;
   const local = [{ x: 0, y: -d.thickness / 2 }, { x: d.width, y: -d.thickness / 2 }, { x: d.width, y: d.thickness / 2 }, { x: 0, y: d.thickness / 2 }];
   const obstacles = input.room.objects.map((o) => ({ id: o.id, name: o.name, polygon: objectPolygon(o), uncertainty: o.uncertainty }));
   const motion = { start: { ...d.hinge, theta: d.closedAngle }, distance: 0, angle: d.openAngle - d.closedAngle };
-  const v = verifyMotion(local, motion, obstacles, 0, void 0, SETTINGS.sweepTolerance);
+  const v = verifyMotion(local, motion, obstacles, reserveM, void 0, SETTINGS.sweepTolerance);
   return { id: "door-sweep", name: "Open the door", status: v.status === "clear" ? "verified_feasible" : v.status === "blocked" ? "blocked_witness" : "uncertain", summary: v.status === "clear" ? "The door leaf clears the furniture through its full specified swing." : v.status === "blocked" ? `The door leaf intersects ${(_a = v.witness) == null ? void 0 : _a.objectName.toLowerCase()} during its swing.` : "Door clearance could not be certified at the selected tolerance.", witness: v.witness, path: sampleMotions([motion]), motions: [motion], minimumClearance: v.status === "clear" ? v.clearance : null, explored: 0, assumptions: [`Door width ${(d.width * 100).toFixed(0)} cm, thickness ${(d.thickness * 100).toFixed(0)} cm.`, `Swing ${(d.closedAngle * 180 / Math.PI).toFixed(0)}\xB0 to ${(d.openAngle * 180 / Math.PI).toFixed(0)}\xB0 against all listed furniture.`, "Checks leaf-to-furniture clearance only."], unknowns: ["Handle reach, opening force and the person's complete door-opening maneuver are not assessed."] };
 }
-function evaluateDoor(input) {
-  const result = evaluateDoorCore(input);
+function evaluateDoor(input, reserveM = 0) {
+  const result = evaluateDoorCore(input, reserveM);
   if (result.status !== "verified_feasible" && input.room.objects.some((o) => o.uncertainty > 0)) {
-    const nominal = evaluateDoorCore({ ...input, room: { ...input.room, objects: input.room.objects.map((o) => ({ ...o, uncertainty: 0 })) } });
+    const nominal = evaluateDoorCore({ ...input, room: { ...input.room, objects: input.room.objects.map((o) => ({ ...o, uncertainty: 0 })) } }, reserveM);
     if (nominal.status === "verified_feasible") return { ...result, status: "uncertain", summary: "The nominal door swing clears, but the stated measurement uncertainty prevents certification." };
   }
   return result;
 }
-function evaluate(input) {
+function* evaluateSteps(input, options = {}) {
+  var _a;
   const start = Date.now();
-  return { schemaVersion: "1.0", solverVersion: SOLVER_VERSION, revision: input.room.revision, inputHash: stableHash(input), tasks: { journey: evaluateJourney(input), door: evaluateDoor(input) }, durationMs: Date.now() - start, settings: SETTINGS };
+  const journey = yield* journeySteps(input, options);
+  yield;
+  return { schemaVersion: "1.0", solverVersion: SOLVER_VERSION, revision: input.room.revision, inputHash: stableHash(input), tasks: { journey, door: evaluateDoor(input) }, durationMs: Date.now() - start, settings: { ...SETTINGS, maxNodes: (_a = options.maxNodes) != null ? _a : SETTINGS.maxNodes } };
+}
+function evaluate(input, preferredMotions) {
+  return drain(evaluateSteps(input, { preferredMotions }));
 }
 
 // src/engine/share.ts
@@ -2591,4 +2616,226 @@ function shareQRCode(input, baseUrl) {
   qr.make();
   const size = qr.getModuleCount();
   return Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_2, column) => qr.isDark(row, column)));
+}
+
+// src/engine/repair.ts
+var REPAIR_SETTINGS = { maxObjects: 6, maxMoves: 3, beamWidth: 8, posesPerObject: 24, maxEvaluations: 400, maxRouteNodes: 12e3, nodesPerEvaluation: 300, reserveTargets: [0, 0.01, 0.03], rotationCostMPerRad: 0.15, maxTicksPerStep: 32, stepMillis: 6, maxAxisCoordinates: 128, maxPlacementCandidatesPerObject: 48e3, radialStepM: 0.08, radialDirections: 24, maxRadiusM: 6, candidateYieldBatch: 32, contactPaddingM: 3e-3, contactRule: "AABB face contacts and pairwise contact midpoints" };
+var copy = (v) => JSON.parse(JSON.stringify(v));
+function bounds(poly) {
+  return { left: Math.min(...poly.map((p) => p.x)), right: Math.max(...poly.map((p) => p.x)), bottom: Math.min(...poly.map((p) => p.y)), top: Math.max(...poly.map((p) => p.y)) };
+}
+function validPlacements(input) {
+  return input.room.objects.every((o, i) => {
+    const p = objectPolygon(o);
+    return p.every((v) => Number.isFinite(v.x) && Number.isFinite(v.y) && v.x >= 0 && v.y >= 0 && v.x <= input.room.width && v.y <= input.room.depth) && input.room.objects.slice(i + 1).every((other) => !polygonsIntersect(p, objectPolygon(other)));
+  });
+}
+function deviceClear(input, reserve) {
+  const p = input.profile, local = rectangle(p.length, p.width), obstacles = routeObstacles(input);
+  return Math.min(...[input.journey.start, input.journey.goal].map((q) => clearanceAt(local, q, obstacles, p.clearance + p.uncertainty + reserve, input.room).distance));
+}
+function objectFits(input, o, pose, reserve) {
+  const poly = objectPolygon({ ...o, pose });
+  if (poly.some((v) => v.x < 1e-3 || v.y < 1e-3 || v.x > input.room.width - 1e-3 || v.y > input.room.depth - 1e-3)) return false;
+  if (input.room.objects.some((other) => other.id !== o.id && polygonDistance(poly, objectPolygon(other)) <= 1e-3)) return false;
+  const p = input.profile, buffer = p.clearance + p.uncertainty + o.uncertainty + reserve;
+  if ([input.journey.start, input.journey.goal].some((q) => polygonDistance(poly, transform(rectangle(p.length, p.width), q)) <= buffer + 2e-3)) return false;
+  const d = input.room.door;
+  return verifyMotion([{ x: 0, y: -d.thickness / 2 }, { x: d.width, y: -d.thickness / 2 }, { x: d.width, y: d.thickness / 2 }, { x: 0, y: d.thickness / 2 }], { start: { ...d.hinge, theta: d.closedAngle }, distance: 0, angle: d.openAngle - d.closedAngle }, [{ id: o.id, name: o.name, polygon: poly, uncertainty: o.uncertainty }], reserve + 2e-3, void 0).status === "clear";
+}
+function* poses(input, o, reserve, onGenerated) {
+  const result = [], seen = /* @__PURE__ */ new Set();
+  let attempted = 0;
+  const accept = function* (pose) {
+    if (attempted >= REPAIR_SETTINGS.maxPlacementCandidatesPerObject) return;
+    attempted++;
+    onGenerated();
+    if (attempted % REPAIR_SETTINGS.candidateYieldBatch === 0) yield;
+    const key = [pose.x, pose.y, pose.theta].map((v) => v.toFixed(5)).join(",");
+    if (seen.has(key)) return;
+    seen.add(key);
+    if (distance(o.pose, pose) < 1e-6 && angleDistance(o.pose.theta, pose.theta) < 1e-6) return;
+    if (objectFits(input, o, pose, reserve)) result.push(pose);
+  };
+  candidateGeneration: for (const theta of [o.pose.theta, normalizeAngle(o.pose.theta + Math.PI / 2), normalizeAngle(o.pose.theta - Math.PI / 2)]) {
+    const ext = bounds(objectPolygon({ ...o, pose: { x: 0, y: 0, theta } })), hx = ext.right, hy = ext.top;
+    const xs = [o.pose.x, hx + 3e-3, input.room.width - hx - 3e-3], ys = [o.pose.y, hy + 3e-3, input.room.depth - hy - 3e-3];
+    const obstacles = input.room.objects.filter((q) => q.id !== o.id).map((q) => ({ b: bounds(objectPolygon(q)), pad: 3e-3 }));
+    for (const q of [input.journey.start, input.journey.goal]) obstacles.push({ b: bounds(transform(rectangle(input.profile.length, input.profile.width), q)), pad: input.profile.clearance + input.profile.uncertainty + o.uncertainty + reserve + 3e-3 });
+    for (const { b, pad } of obstacles) {
+      xs.push(b.left - hx - pad, b.right + hx + pad);
+      ys.push(b.bottom - hy - pad, b.top + hy + pad);
+    }
+    const xContacts = [...xs], yContacts = [...ys];
+    for (const a of xContacts) for (const b of xContacts) xs.push((a + b) / 2);
+    for (const a of yContacts) for (const b of yContacts) ys.push((a + b) / 2);
+    const trim = (values, origin, max) => [...new Set(values.filter((v) => v > 0 && v < max))].sort((a, b) => Math.abs(a - origin) - Math.abs(b - origin)).slice(0, REPAIR_SETTINGS.maxAxisCoordinates);
+    for (const x of trim(xs, o.pose.x, input.room.width)) for (const y of trim(ys, o.pose.y, input.room.depth)) {
+      if (attempted >= REPAIR_SETTINGS.maxPlacementCandidatesPerObject) break candidateGeneration;
+      yield* accept({ x, y, theta });
+    }
+    for (let radius = REPAIR_SETTINGS.radialStepM; radius <= Math.min(REPAIR_SETTINGS.maxRadiusM, Math.hypot(input.room.width, input.room.depth)); radius += REPAIR_SETTINGS.radialStepM) for (let k = 0; k < REPAIR_SETTINGS.radialDirections; k++) {
+      if (attempted >= REPAIR_SETTINGS.maxPlacementCandidatesPerObject) break candidateGeneration;
+      yield* accept({ x: o.pose.x + radius * Math.cos(k * Math.PI / 12), y: o.pose.y + radius * Math.sin(k * Math.PI / 12), theta });
+    }
+  }
+  result.sort((a, b) => cost(o.pose, a) - cost(o.pose, b) || a.x - b.x || a.y - b.y || a.theta - b.theta);
+  const selected = result.slice(0, 12);
+  for (const q of result) if (selected.length < REPAIR_SETTINGS.posesPerObject && !selected.some((p) => distance(p, q) < 0.16 && angleDistance(p.theta, q.theta) < 0.1)) selected.push(q);
+  return selected;
+}
+var cost = (a, b) => distance(a, b) + angleDistance(a.theta, b.theta) * REPAIR_SETTINGS.rotationCostMPerRad;
+function createRepairSearch(source, options = {}) {
+  var _a, _b;
+  const original = copy(source), sourceHash = stableHash(original), sourceRevision = original.room.revision;
+  const progress = { status: "searching", phase: "Preparing geometry-derived candidates", generated: 0, evaluated: 0, proposals: [], sourceHash, sourceRevision, scope: copy(REPAIR_SETTINGS) };
+  const evaluationLimit = Math.min(REPAIR_SETTINGS.maxEvaluations, Math.max(0, (_a = options.maxEvaluations) != null ? _a : REPAIR_SETTINGS.maxEvaluations));
+  const nodeLimit = Math.min(REPAIR_SETTINGS.maxRouteNodes, Math.max(0, (_b = options.maxRouteNodes) != null ? _b : REPAIR_SETTINGS.maxRouteNodes));
+  let routeNodes = 0;
+  function* run() {
+    var _a2, _b2;
+    if (evaluationLimit > 0 && nodeLimit > 0) {
+      progress.phase = "Checking the current layout";
+      progress.evaluated++;
+      const initial = evaluateSteps(original, { maxNodes: Math.min(REPAIR_SETTINGS.nodesPerEvaluation, nodeLimit), nominalFallback: false });
+      let checked = initial.next();
+      while (!checked.done) {
+        yield;
+        checked = initial.next();
+      }
+      routeNodes += checked.value.tasks.journey.explored;
+      if (checked.value.tasks.journey.status === "verified_feasible" && checked.value.tasks.door.status === "verified_feasible") {
+        progress.reason = "The current layout already verifies both tasks; no furniture move is needed.";
+        return;
+      }
+    }
+    const movable = original.room.objects.filter((o) => o.movable && !o.locked).sort((a, b) => {
+      const proximity = (o) => Math.min(distance(o.pose, original.journey.start), distance(o.pose, original.journey.goal), distance(o.pose, original.room.door.hinge));
+      return proximity(a) - proximity(b) || a.id.localeCompare(b.id);
+    }).slice(0, REPAIR_SETTINGS.maxObjects);
+    if (!movable.length) {
+      progress.reason = "No unlocked movable furniture is available in this finite search.";
+      return;
+    }
+    for (const reserve of REPAIR_SETTINGS.reserveTargets) {
+      if (progress.evaluated >= evaluationLimit || routeNodes >= nodeLimit) break;
+      const candidates = /* @__PURE__ */ new Map();
+      for (const o of movable) {
+        progress.phase = `Generating furniture placements (${Math.round(reserve * 100)} cm reserve)`;
+        candidates.set(o.id, yield* poses(original, o, reserve, () => progress.generated++));
+      }
+      let beam = [{ input: original, moves: [], cost: 0, penalty: 0 }];
+      let best;
+      for (let depth = 1; depth <= Math.min(REPAIR_SETTINGS.maxMoves, movable.length); depth++) {
+        const next = [], seen = /* @__PURE__ */ new Set();
+        progress.phase = `Checking ${depth}-piece layouts (${Math.round(reserve * 100)} cm reserve)`;
+        for (const state of beam) for (const object of movable) {
+          if (state.moves.some((m) => m.objectId === object.id)) continue;
+          for (const pose of (_a2 = candidates.get(object.id)) != null ? _a2 : []) {
+            yield;
+            progress.generated++;
+            const input = { ...original, room: { ...original.room, objects: state.input.room.objects.map((o) => o.id === object.id ? { ...o, pose } : o) } };
+            const hash = stableHash(input);
+            if (seen.has(hash) || !validPlacements(input)) continue;
+            seen.add(hash);
+            const move = { objectId: object.id, objectName: object.name, from: copy(object.pose), to: copy(pose), distanceM: distance(object.pose, pose), rotationRad: angleDistance(object.pose.theta, pose.theta) };
+            const moves = [...state.moves, move], movementCost = state.cost + cost(object.pose, pose);
+            const door = evaluateDoor(input, reserve), endpoint = deviceClear(input, reserve);
+            const penalty = (door.status === "verified_feasible" ? 0 : 10) + (endpoint > 0 ? 0 : 10) + Math.max(0, -endpoint);
+            next.push({ input, moves, cost: movementCost, penalty });
+          }
+        }
+        next.sort((a, b) => a.penalty - b.penalty || a.cost - b.cost || stableHash(a.input).localeCompare(stableHash(b.input)));
+        for (const state of next) {
+          if (state.penalty > 0) continue;
+          if (best && state.cost >= best.movementCostM) continue;
+          if (progress.evaluated >= evaluationLimit || routeNodes >= nodeLimit) break;
+          progress.evaluated++;
+          const reserved = { ...state.input, profile: { ...state.input.profile, clearance: state.input.profile.clearance + reserve } };
+          const steps = evaluateSteps(reserved, { nominalFallback: false, maxNodes: Math.min(REPAIR_SETTINGS.nodesPerEvaluation, nodeLimit - routeNodes) });
+          let item = steps.next();
+          while (!item.done) {
+            yield;
+            item = steps.next();
+          }
+          routeNodes += item.value.tasks.journey.explored;
+          if (item.value.tasks.journey.status !== "verified_feasible") continue;
+          yield;
+          const motions = item.value.tasks.journey.motions;
+          const route = verifyTrajectory(reserved, motions), door = evaluateDoor(state.input, reserve);
+          if (route.status !== "clear" || door.status !== "verified_feasible") continue;
+          const evaluation = evaluate(state.input, motions);
+          if (evaluation.tasks.journey.status !== "verified_feasible" || evaluation.tasks.door.status !== "verified_feasible") continue;
+          const certifiedReserveM = reserve + Math.min(route.clearance, (_b2 = door.minimumClearance) != null ? _b2 : 0);
+          best = { id: stableHash({ sourceHash, moves: state.moves, reserve }), label: reserve === 0 ? "Less furniture movement" : `More clearance (${Math.round(reserve * 100)} cm reserve)`, sourceHash, sourceRevision, moves: state.moves, input: copy(state.input), evaluation, translationM: state.moves.reduce((s, m) => s + m.distanceM, 0), rotationRad: state.moves.reduce((s, m) => s + m.rotationRad, 0), movementCostM: state.cost, extraClearanceM: reserve, certifiedReserveM };
+        }
+        if (best) break;
+        beam = next.slice(0, REPAIR_SETTINGS.beamWidth);
+        if (!beam.length || progress.evaluated >= evaluationLimit || routeNodes >= nodeLimit) break;
+      }
+      if (best) {
+        const duplicate = progress.proposals.findIndex((p) => stableHash(p.input) === stableHash(best.input));
+        if (duplicate < 0) progress.proposals.push(best);
+        else if (best.certifiedReserveM > progress.proposals[duplicate].certifiedReserveM) progress.proposals[duplicate] = best;
+      }
+      yield;
+    }
+    progress.proposals = rankRepairProposals(progress.proposals);
+    progress.reason = progress.proposals.length ? "Verified proposals from a finite contact/radial placement beam; no global optimum claimed." : "No verified proposal found within the finite placement beam and route-node limits; this does not prove infeasibility.";
+  }
+  const iterator = run();
+  return { step(maxMillis = REPAIR_SETTINGS.stepMillis) {
+    if (progress.status !== "searching") return copy(progress);
+    const until = Date.now() + Math.max(0, Math.min(32, maxMillis));
+    for (let ticks = 0; ticks < REPAIR_SETTINGS.maxTicksPerStep; ticks++) {
+      if (iterator.next().done) {
+        progress.status = "complete";
+        progress.phase = "Complete";
+        break;
+      }
+      if (Date.now() >= until) break;
+    }
+    return copy(progress);
+  }, cancel() {
+    if (progress.status === "cancelled") return;
+    progress.status = "cancelled";
+    progress.phase = "Cancelled";
+    progress.proposals = [];
+    iterator.return(void 0);
+  }, get progress() {
+    return copy(progress);
+  } };
+}
+function rankRepairProposals(candidates) {
+  const ordered = [...candidates].sort((a, b) => a.moves.length - b.moves.length || a.movementCostM - b.movementCostM || b.certifiedReserveM - a.certifiedReserveM || a.id.localeCompare(b.id));
+  const retained = [];
+  let bestReserve = -Infinity;
+  for (const candidate of ordered) {
+    if (retained.length && candidate.certifiedReserveM < bestReserve + 5e-3) continue;
+    retained.push({ ...candidate, label: retained.length ? "More modeled clearance" : "Least movement found" });
+    bestReserve = candidate.certifiedReserveM;
+    if (retained.length === 3) break;
+  }
+  return retained;
+}
+function applyRepairProposal(current, proposal) {
+  var _a;
+  if (current.room.revision !== proposal.sourceRevision || stableHash(current) !== proposal.sourceHash) throw new Error("This proposal is stale; search again for the current room and profile.");
+  if (!proposal.moves.length || new Set(proposal.moves.map((m) => m.objectId)).size !== proposal.moves.length) throw new Error("Invalid repair moves.");
+  const next = copy(current);
+  for (const move of proposal.moves) {
+    const object = next.room.objects.find((o) => o.id === move.objectId);
+    if (!object || !object.movable || object.locked || stableHash(object.pose) !== stableHash(move.from) || ![move.to.x, move.to.y, move.to.theta].every(Number.isFinite)) throw new Error("A repair move is invalid or locked.");
+    object.pose = copy(move.to);
+  }
+  if (stableHash(next) !== stableHash(proposal.input) || !validPlacements(next)) throw new Error("The proposal changed protected data or has invalid furniture placements.");
+  const reserve = proposal.extraClearanceM;
+  if (!REPAIR_SETTINGS.reserveTargets.includes(reserve) || !Number.isFinite(proposal.certifiedReserveM)) throw new Error("Invalid claimed repair reserve.");
+  const reserved = { ...next, profile: { ...next.profile, clearance: next.profile.clearance + reserve } };
+  const route = verifyTrajectory(reserved, proposal.evaluation.tasks.journey.motions), door = evaluateDoor(next, reserve);
+  if (route.status !== "clear" || door.status !== "verified_feasible") throw new Error("The proposed route or door sweep no longer verifies at the claimed reserve.");
+  const bound = reserve + Math.min(route.clearance, (_a = door.minimumClearance) != null ? _a : 0);
+  if (Math.abs(bound - proposal.certifiedReserveM) > 1e-9) throw new Error("The claimed repair reserve has been altered.");
+  next.room.revision = current.room.revision + 1;
+  return next;
 }

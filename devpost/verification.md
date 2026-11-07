@@ -1,51 +1,69 @@
 # Verification record
 
-Recorded on 7 November 2026. Logic, browser behavior, native Preview and physical hardware are separate evidence.
+Recorded on 7 November 2026. Numerical logic, browser behavior, native Preview and physical hardware are separate evidence. The current web repair flow and [remote-search native revision](native-repair-preview.md) both have accepted evidence.
 
 ## Numerical and state checks
 
-`npm test` passes **34 tests** across four files. Independent numerical cases cover polygon geometry, intermediate collision, uncertainty, movement restrictions, final heading, fixture edits and coordinate mapping. Contract cases cover cancelled identical-input retries, stale revisions/profiles, duplicate responses, malformed model output, impossible placements, shared-plan round trips, export mismatch rejection and HTTP limits. Six focused navigation/lifetime tests cover same-tab fragments, back/forward/canonical transitions, captured input, stale success/failure completion and disposal.
+The suite contains **48 tests across seven files**: 34 existing geometry/planner/contracts/navigation cases, nine repair cases, three repair-certificate cases and two playback cases. The complete pre-certificate run and subsequent focused certificate/playback runs pass. TypeScript and the final production build pass on Node.js 22 / Next.js 16.4.5. The portable Lens core was rebuilt after the repair-engine changes and passes source checks without browser/Node dependencies.
 
-Two independently found defects were fixed and retained as regressions: an empty trajectory originally skipped initial occupancy validation; conservative-only interference originally failed to distinguish uncertainty from nominal collision.
+Independent geometry expectations include analytic interval gaps, diagonal separation, rectangle rotation, arc endpoints and rigid-transform invariance. Intermediate collisions, minimum turning radius, reverse permission, final heading and uncertainty are checked. The numerical reviewer found and retained regressions for initial occupancy on empty trajectories and nominal/conservative uncertainty classification.
 
-`npm run typecheck`, `npm run lens:bundle` and `npm run build` pass. The production build uses Next.js 16.4.5. The portable bundle has no browser/Node runtime dependencies. Source-only native checks were supplemented by the actual Lens compilation and interaction evidence below.
+Repair cases include renamed/rotated/translated rooms, immutable source snapshots, lock/profile/task preservation, final placement validity, continuous route and door verification, stale/canceled work, atomic application and ranking across all reserve domains. Independent probing also rejected a forged preferred route with a full colliding 360° pivot appended at its final pose. A found proposal must pass the actual motion verifier, not merely match its endpoint.
 
-The pinned dependency state (including esbuild 0.28.2 and Node.js 22) passed the original 28 tests, TypeScript, portable bundle and production build. After the final web navigation change, the expanded 34-test suite, TypeScript and a fresh production build passed. Native/core source was unchanged by that web fix. Node.js 22 is the supported judging/deployment runtime.
+Export-certificate tests reconstruct the source model, check both fingerprints and the one-revision transition, preserve original profile values, and recertify the retained route and door at the selected reserve. Altered reserve/move/identity evidence is rejected. Playback cases cover negative first-frame elapsed time, nonfinite progress and an empty or replaced path; these are regressions from an actual browser crash, not just defensive assertions.
 
-## Actual signature sequence
+## Computed fixture results
 
-| Revision | Edit | Bedside | Door | Witness |
-| --- | --- | --- | --- | --- |
-| 0 | Provided model | `blocked_witness` | `blocked_witness` | Table and bench respectively |
-| 1 | Table → (3.88, 2.85) m | `verified_feasible` | `blocked_witness` | Bench |
-| 2 | Bench → (3.56, 0.48) m | `verified_feasible` | `verified_feasible` | Both modeled checks clear |
+The unchanged baseline is revision 0, fingerprint `157d458020a00d14`, with table and bench witnesses. No furniture is moved while searching or comparing.
 
-The bed's pose/lock stay unchanged. An arbitrary bench edit into the goal causes a fresh blocked result. The valid route has 49 visualization poses derived from checked motion primitives.
+| Found alternative | Pieces | Translation | Certified extra reserve |
+| --- | --- | --- | --- |
+| Least movement found | 2 | 1.387926273 m | 0.000055610 m; the UI warns that it is under 1 mm |
+| 1 cm reserve target | 2 | 1.401773548 m | 0.010043655 m |
+| 3 cm reserve target | 2 | 2.227285052 m | 0.030426875 m |
 
-## Browser and HTTP evidence
+Accepting the third proposal produces revision 1, fingerprint **`d6a6c870b981f880`**, two modeled checks clear, and one history entry. The original 0.03 m profile buffer, task poses/tolerances and bed lock are unchanged. The certificate uses the retained continuously verified motions and complete door sweep. It does not claim physical measurement precision at the displayed arithmetic precision.
 
-The development browser exercised the full sequence, route playback, a live `gpt-6-astra` proposal, application of a 5 cm buffer, fresh revision, disabled bed controls while locked, direct X/Y editing, JSON download, reset and reimport. The imported final model reevaluated as two checks clear.
+[Exact search measurements](examples/repair-search-verification.json) include the transformed-room experiment and finite scope. Representative loaded Node runs took 3.379 s for the baseline and 4.622 s for the altered room; those are single source measurements, not native/hardware or percentile claims. The bounded candidate search is heuristic and excludes destinations occupied by other furniture's original footprints.
 
-Responsive inspection prompted larger/darker labels, viewport-fit cameras and clamped annotations. Nested Drei HTML roots were replaced after React unmount warnings. The fresh production browser session on port 3104 reported no error-console entries, passed the two edits, resumed replay after profile confirmation, and opened a copied plan link in a fresh tab with revision 2 and two checks clear. The mobile viewport was rechecked after the camera fix.
+The original authored table-then-bench sequence remains an independent engine regression: table `(3.88, 2.85)` m clears the route while the door remains blocked; bench `(3.56, 0.48)` m clears the door. Those diagnostic fixture moves are no longer the primary repair UI or evidence of optimization.
 
-The deployed companion at https://open-door-weld.vercel.app also passed the geometry flow and a live language proposal in a clean browser.
+## Actual browser and HTTPS checks
 
-Final local production regression on port 3104 passed canonical → shared revision 11 → same-tab revision 14 → Back to 11 → Forward to 14. Navigating while the export dialog was open closed it and cleared old history; removing the fragment restored revision 0 with Undo disabled. No error-console entries were observed. The fix listens to fragment/history changes, captures the fragment before asynchronous parsing and invalidates older model work, including errors and completion callbacks.
+The frozen local production browser on port 3104 passed baseline → Find changes → three alternatives, with source revision 0 unchanged. The +3 cm option showed Original 0/2 versus Preview 2/2. Apply plus profile acknowledgment produced revision 1 and playback reached the end of the retained trajectory. The [actual downloaded JSON](examples/repair-certified-plan-r1.json) contained the exact accepted fingerprint, two moves totaling 2.227285 m and independently reverified reserve 0.030426874516801088 m. Undo returned to blocked geometry under a new revision.
 
-Reviewed captures: [desktop companion](media/companion-desktop.jpg) shows revision 3 with a reviewed 5 cm buffer and both modeled checks clear; [mobile companion](media/companion-mobile.jpg) shows the fitted room at a 390 × 844 viewport. These are web captures, distinct from native Preview or hardware evidence.
+Further browser checks passed cancel without a source edit; locking the bedside table produced an honest no-proposal result with the lock intact; changing width to 70 cm, starting search and resetting discarded stale work and restored the 66 cm profile. The repaired model's share imported revision 1 and reevaluated both checks clear. At 390 px width, document scroll width remained 390 px with no horizontal overflow. Proposal controls and spatial arrows stayed visible together.
 
-The production HTTP sequence returned 200 for all three evaluations and matching revision-2 export. One loopback run took 15/27/17 ms end to end; these are single-run observations, not hosted latency or percentile claims. The SVG included the door dimension.
+A real production-bundle regression exposed an undefined footprint pose after Apply: the first animation timestamp could precede the captured start time, yielding a negative path index. Finite, nonnegative progress and safe path selection fixed it. The repeated apply/profile/playback/download/Undo flow passed without new console errors. The native controller now uses the same finite/nonnegative elapsed-time guard, with source regression coverage.
 
-The earlier two-suggestion fixture share at the test base URL was 270 characters and a 65 × 65 QR matrix; decoding restored its identical fingerprint. The final native arbitrary-edit share is a separate 311-character production URL, described below.
+The deployed repair endpoint returned HTTP 200 with the same three alternatives in a measured **4.26 s** round trip; production export independently reverified the selected certificate and exact accepted hash. A separate source-only native adapter harness fed a real production response through all local proposal checks in **3.38 s** in its latest Node run. These are distinct observations, not native request timing or an SLA.
 
-## Native and hardware boundary
+[Current proposal preview](media/companion-repair-preview.png) and [accepted footprint playback](media/companion-repaired.png) are actual deployed-browser captures. Earlier first-release desktop/mobile captures are retained and labeled separately in [media notes](media/README.md).
 
-The actual project is `lens/OpenDoor.esproj`, with the installed SIK/UIKit packages. Final compilation, fresh startup, rendering and native save succeeded in Lens Studio 5.23.2.26081320 / SPECS 27 Interactive Preview. Twelve observed assertions passed through the real installed SIK mouse/far-ray interactor: profile review, the two independent fixes, axis/rotation/undo controls, miniature and 1:1 drag transactions, boundary/overlap rollback, bed locks, playback, scale and comparison. Full-scale input tests used one disclosed setup call to move the bench into the unchanged viewport before actual injected gestures; that setup is not counted as a gesture.
+Existing shared-plan navigation remains compatible: canonical → revision 11 → same-tab revision 14 → Back/Forward, navigation with an open export dialog, and fragment removal all reset the appropriate model/history/proposal/export/playback context. The accepted original browser run had no console errors. Legacy revision-11/14 model/evaluation fingerprints remain unchanged by the repair API additions.
 
-The final native session's revision **11**, fingerprint **`851f354fb4fef3b3`**, was encoded in the actual rendered QR and decoded from the full screenshot with ZXing. The decoded model matched exact native input; public companion HTML and JSON/SVG export returned 200 with matching revision/hash. Numerical evaluations matched within `1e−12`, excluding timing. Separately, an earlier native revision **14** was imported in a fresh browser tab and downloaded through the UI with matching fingerprint **`72b5dad200d31552`** and a clean browser console. These are distinct evidence runs.
+Live structured language preference parsing was also exercised in the original release, including a reviewed 5 cm buffer and a preserved locked bed. Geometry is deterministic and does not rely on that service.
 
-Native Preview found and fixed the MeshBuilder upload format and stale SIK target-wrapper lifetime issues. The accepted controller preserves interaction-target identities. Its final QA interval examined **810,745 log bytes** with no E/F/W diagnostics or Preview error/exception prints, excluding editor transport/analytics payloads. One editor-only QTcpSocket disconnect warning followed debugger cleanup; subsequent Preview error prints were empty. The clean claim is scoped to that QA interval.
+## Accepted native repair
 
-[Native Preview evidence](native-preview.md), [sanitized measurements](media/native-verification.json) and [integration](../lens-src/INTEGRATION.md) provide the exact source hashes, captures, runtime boundaries and setup steps. Physical phone scanning and additive-display QR contrast remain untested; an earlier OpenCV detector failure is disclosed alongside the successful ZXing evidence.
+The local-only repair revision compiled and rendered in SPECS 27 Interactive Preview. Actual SIK Find/Cancel interactions preserved the model and target identities. A later run was deliberately interrupted while still incomplete after **312.07 runtime seconds**, at 2,661 cooperative steps. Debugger instrumentation was present for most observations; this is not an isolated production benchmark. It was too slow for the intended interaction and was not accepted as a completed repair flow.
 
-No LEAF run is recorded as passed here. No physical glasses, on-device frame-rate evidence, long-term comfort study or external user feedback have been obtained. Preview success does not establish those outcomes.
+The replacement controller uses supported `InternetModule.fetch` against the deployed geometry endpoint. Before display it checks the request ID, generation, source hash/revision, envelope/scope/size, at most three candidate shapes and all motion/metric constraints; it reconstructs each candidate and rechecks protected inputs, placements, route, door and reserve locally. Server display paths/results are replaced by fresh local results. One alternative is checked per Update; Apply rechecks the selected proposal again.
+
+The [source-only harness record](examples/native-remote-source-checks.json) passes 12 transaction scenarios, 16 remote/state scenarios and 16 malformed-response variants. Cancellation, identical-input retries, source/profile changes, stale completions, a 25-second timeout, partial verification and explicit offline fallback are covered. TypeScript against the actual installed Lens/SIK/UI Kit declarations passes. HTTP or verification failure never silently starts the slow local search; Try offline is an explicit action with a minutes-long notice.
+
+The final actual native pass completed the full flow and 28 assertions over its recorded observations. Final ordinary search elapsed **3.248663 s**, HTTPS/body **2.998103 s**, local checks **271 ms total / 108 ms maximum** in instrumented SPECS 27 Preview. Actual gestures covered comparison, one-revision Apply, profile/resumed playback, Undo, changed profile/lock results, direct drag/refusal, cancel/retry and Keep. Supplemental held-real-response, timeout and simulated-failure checks are explicitly distinguished from normal requests. Full-scale inspection used a stationary limited viewpoint, not a view of the whole room.
+
+The final controller is **`29c94a1b7f538f2350cac24b629b034c64d7f02483e174514b7fa8ce1542494b`**, differing from the source-harness revision only by removal of a redundant normal footer. Final native compilation and save passed. The current QA interval examined **1,118,880 log bytes** with zero Lens W/E/F diagnostics or unexpected Preview error prints. One controlled fault-injection print and one editor-only Qt cleanup warning are disclosed.
+
+The actual full-frame QR, independent browser download and certified backend export all preserve final **revision 9 / `e0c04348bacddd78`**. Independent route/door checks reproduced **0.030426874516801088 m** reserve and exact native evaluation, excluding timing. The browser share correctly omits the selected repair certificate; the [certified native JSON](../examples/native-repair-plan-r9.json) retains it. [Current native report](native-repair-preview.md) and [sanitized measurements](media/native-repair-verification.json) give the complete boundaries.
+
+## Accepted original native release
+
+The original direct-edit project compiled, started, rendered and saved in Lens Studio 5.23.2.26081320 / SPECS 27 Interactive Preview with installed SIK/UIKit. Twelve observed assertions used the real installed SIK mouse/far-ray interactor, covering profile, table/bench fixes, axis/rotation/Undo, miniature and 1:1 drag transactions, invalid-drop rollback, bed locks, playback, scale and comparison. Full-scale input checks used one disclosed setup call to bring the bench into the unchanged viewport before actual injected gestures; the setup is not counted as an interaction.
+
+Its final native revision **11**, fingerprint **`851f354fb4fef3b3`**, was decoded with ZXing from the full actual QR screenshot. Exact inputs and public JSON/SVG export matched, with numerical differences below `1e−12` excluding timing. Separately, an earlier revision **14** opened in a fresh companion tab and downloaded through the UI with fingerprint **`72b5dad200d31552`** and a clean console. These are distinct original-release evidence runs.
+
+Native Preview corrected MeshBuilder's flat interleaved upload and stale SIK target lifetimes. Persistent menu/furniture targets replaced destructive rebuilds. The final original-source QA interval examined **810,745 log bytes** with no E/F/W or Preview error/exception prints after excluding editor transport/analytics payloads. One editor-only QTcpSocket disconnect warning followed cleanup; subsequent Preview error prints were empty. That clean claim applies only to the recorded original interval.
+
+[Original native evidence](native-preview.md), [sanitized measurements](media/native-verification.json) and [integration](../lens-src/INTEGRATION.md) preserve source hashes and boundaries. No LEAF pass, physical glasses, phone QR scanning, on-device performance, comfort study or external user feedback is claimed. Preview success does not establish those outcomes.
