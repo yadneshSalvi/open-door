@@ -3,12 +3,16 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDownToLine, ArrowLeft, ArrowRight, ArrowUpRight, BedDouble, Box, Check, CheckCheck, ChevronDown, ChevronRight, CircleHelp, DoorOpen, Expand, Eye, FileJson, Footprints, Grip, Info, Layers3, LoaderCircle, LockKeyhole, Maximize2, MousePointer2, Move, Pause, Play, Redo2, RotateCcw, RotateCw, Ruler, SlidersHorizontal, Sparkles, Undo2, UnlockKeyhole, X } from "lucide-react";
-import { cloneInput, fixture, moveObject, placementIssue, suggestedPositions } from "@/engine/fixture";
+import { cloneInput, fixture, moveObject, placementIssue } from "@/engine/fixture";
 import { stableHash } from "@/engine/geometry";
-import type { DeviceProfile, Evaluation, EvaluationInput, EvaluationResponse, RoomObject, TaskResult } from "@/engine/types";
+import type { DeviceProfile, Evaluation, EvaluationInput, EvaluationResponse, Motion, RoomObject, TaskResult } from "@/engine/types";
 import { evaluationInputSchema } from "@/engine/schema";
 import { RequestGuard } from "@/lib/request-guard";
+import { playbackProgress } from "@/lib/playback";
 import { AsyncScope, watchPlanFragment } from "@/lib/plan-navigation";
+import RepairPanel from "./repair-panel";
+import { applyRepairProposal, type RepairProgress, type RepairProposal } from "@/engine/repair";
+import type { AcceptedRepairEvidence } from "@/lib/repair-evidence";
 import type { PreferenceProposal } from "@/lib/preferences";
 
 const RoomScene=dynamic(()=>import("./room-scene"),{ssr:false,loading:()=> <div className="scene-loading"><LoaderCircle className="spin" size={22}/><span>Setting out your room…</span></div>});
@@ -31,16 +35,21 @@ export default function Studio(){
   const [preferenceText,setPreferenceText]=useState("Keep the bed where it is. Use a 5 cm clearance buffer.");
   const [proposal,setProposal]=useState<{value:PreferenceProposal;hash:string;model:string}|null>(null),[parsing,setParsing]=useState(false);
   const [shareLink,setShareLink]=useState("");
+  const [repair,setRepair]=useState<RepairProgress|null>(null),[repairing,setRepairing]=useState(false);
+  const [repairIndex,setRepairIndex]=useState(0),[previewRepair,setPreviewRepair]=useState(true);
+  const repairWorker=useRef<Worker|null>(null),repairWork=useRef<ReturnType<AsyncScope["begin"]>|null>(null);
+  const preferred=useRef<{hash:string;motions:Motion[];repairEvidence?:AcceptedRepairEvidence}|null>(null);
   const importRef=useRef<HTMLInputElement>(null),exportGeneration=useRef(0),preferencesGeneration=useRef(0),shareGeneration=useRef(0),importGeneration=useRef(0);
   const scope=useRef(new AsyncScope());
   latestInput.current=input;
 
   const invalidateAsync=useCallback(()=>{
-    scope.current.invalidate();guard.current.cancel();
+    scope.current.invalidate();guard.current.cancel();repairWorker.current?.terminate();repairWorker.current=null;repairWork.current=null;
     exportGeneration.current++;preferencesGeneration.current++;shareGeneration.current++;importGeneration.current++;
   },[]);
   const clearDerived=useCallback(()=>{
     setProposal(null);setParsing(false);setExportData(null);setExporting(false);setShareLink("");
+    setRepair(null);setRepairing(false);setRepairIndex(0);setPreviewRepair(true);preferred.current=null;
     setError(null);setResult(null);setCheckState("checking");setPlaying(false);setProgress(0);
   },[]);
   const replacePlan=useCallback((next:EvaluationInput,message:string,acknowledged:boolean)=>{
@@ -70,7 +79,7 @@ export default function Studio(){
     setCheckState("checking");setError(null);setPlaying(false);setProgress(0);setExportData(null);exportGeneration.current++;
     const timeout=setTimeout(async()=>{
       try{
-        const response=await fetch("/api/v1/evaluations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...input,...active}),signal:work.signal});
+        const response=await fetch("/api/v1/evaluations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...input,...active,preferredMotions:preferred.current?.hash===stableHash(input)?preferred.current.motions:undefined}),signal:work.signal});
         const data=await response.json();if(!response.ok)throw new Error(data.error??"The room could not be checked.");
         if(!disposed&&work.isCurrent()&&guard.current.accepts(data as EvaluationResponse)){setResult(data.evaluation);setCheckState("ready");}
       }catch(e){if(disposed||!work.isCurrent())return;setCheckState("error");setError(e instanceof Error?e.message:"The connection was interrupted. Your edits are kept.");}finally{work.finish();}
@@ -81,17 +90,17 @@ export default function Studio(){
   useEffect(()=>{
     if(!playing)return;
     const work=scope.current.begin(),start=performance.now()-progress*6500;let frame:number;
-    const tick=(now:number)=>{if(!work.isCurrent())return;const next=Math.min(1,(now-start)/6500);setProgress(next);if(next<1)frame=requestAnimationFrame(tick);else setPlaying(false);};
+    const tick=(now:number)=>{if(!work.isCurrent())return;const next=playbackProgress(now,start,6500);setProgress(next);if(next<1)frame=requestAnimationFrame(tick);else setPlaying(false);};
     frame=requestAnimationFrame(tick);return()=>{cancelAnimationFrame(frame);work.cancel();};
     // Progress is deliberately captured at the start of playback, not every frame.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[playing]);
-  const commit=useCallback((next:EvaluationInput,message?:string)=>{
+  const commit=useCallback((next:EvaluationInput,message?:string,preferredMotions?:Motion[])=>{
     if(next===latestInput.current)return;
     invalidateAsync();clearDerived();
     const previous=latestInput.current;setHistory(prev=>[...prev.slice(-39),previous]);setFuture([]);
     revision.current++;const updated={...next,room:{...next.room,revision:revision.current}};
-    latestInput.current=updated;setInput(updated);setCheckState("checking");setCompare(false);
+    latestInput.current=updated;if(preferredMotions)preferred.current={hash:stableHash(updated),motions:preferredMotions};setInput(updated);setCheckState("checking");setCompare(false);
     if(message)setNotice(message);
   },[invalidateAsync,clearDerived]);
   function undo(){const previous=history.at(-1);if(!previous)return;invalidateAsync();clearDerived();setFuture(prev=>[input,...prev]);setHistory(prev=>prev.slice(0,-1));revision.current++;latestInput.current={...previous,room:{...previous.room,revision:revision.current}};setInput(latestInput.current);setCheckState("checking");setNotice("Previous layout restored. Checking this revision.");}
@@ -115,14 +124,51 @@ export default function Studio(){
   const witness=currentResult?.tasks[task].witness;
   const nextObject=currentResult?.tasks.journey.witness?.objectId??currentResult?.tasks.door.witness?.objectId;
   const nextMovable=input.room.objects.find(o=>o.id===nextObject);
-  const suggestion=nextObject?suggestedPositions[nextObject]:undefined;
+  const currentRepair=repair?.sourceHash===stableHash(input)?repair:null;
+  const activeRepair=!repairing?currentRepair?.proposals[repairIndex]:undefined;
+  const sceneRepair=previewRepair?activeRepair:undefined;
+  const displayedResult=sceneRepair?.evaluation??currentResult;
+  const displayedClearCount=Number(isClear(displayedResult?.tasks.journey))+Number(isClear(displayedResult?.tasks.door));
+
+  function cancelRepair(){
+    repairWorker.current?.terminate();repairWorker.current=null;repairWork.current?.cancel();repairWork.current=null;
+    setRepair(null);setRepairing(false);setRepairIndex(0);setProgress(0);setPlaying(false);
+  }
+  function findRepairs(){
+    if(!currentResult)return;
+    cancelRepair();setSelected(null);setEditing(false);setCompare(false);setPreviewRepair(true);pendingReplay.current=false;
+    const snapshot=latestInput.current,hash=stableHash(snapshot),work=scope.current.begin();repairWork.current=work;
+    setRepairing(true);
+    try{
+      const worker=new Worker(new URL("../workers/repair.worker.ts",import.meta.url),{type:"module"});repairWorker.current=worker;
+      const current=()=>work.isCurrent()&&repairWorker.current===worker&&stableHash(latestInput.current)===hash;
+      worker.onmessage=({data}:{data:{progress?:RepairProgress;error?:string}})=>{
+        if(!current())return;
+        if(data.error){setNotice(data.error);cancelRepair();return;}
+        if(!data.progress||data.progress.sourceHash!==hash)return;
+        setRepair(data.progress);
+        if(data.progress.status!=="searching"){setRepairing(false);setRepairIndex(0);worker.terminate();repairWorker.current=null;repairWork.current=null;work.finish();}
+      };
+      worker.onerror=()=>{if(current()){setNotice("The layout search could not finish. Your room is unchanged.");cancelRepair();}};
+      worker.postMessage({input:snapshot});
+    }catch{setNotice("The layout search is unavailable in this browser. You can still edit the room directly.");cancelRepair();}
+  }
+  function acceptRepair(candidate:RepairProposal){
+    try{
+      const next=applyRepairProposal(latestInput.current,candidate);
+      commit(next,`${candidate.moves.length} pieces moved in one change.`,candidate.evaluation.tasks.journey.motions);
+      if(preferred.current)preferred.current.repairEvidence={schemaVersion:"1.0",inputHash:stableHash(latestInput.current),proposalId:candidate.id,sourceHash:candidate.sourceHash,sourceRevision:candidate.sourceRevision,extraClearanceM:candidate.extraClearanceM,certifiedReserveM:candidate.certifiedReserveM,moves:candidate.moves};
+      setSelected(null);setTask("journey");pendingReplay.current=true;
+      if(!profileAcknowledged)setModal("profile");
+    }catch(e){cancelRepair();setNotice(e instanceof Error?e.message:"The room changed. Find fresh changes before applying.");}
+  }
 
   async function exportPlan(){
     if(!currentResult)return;setModal("export");setExporting(true);setExportData(null);setShareLink("");setError(null);
     const generation=++exportGeneration.current,hash=currentResult.inputHash,work=scope.current.begin();
     const current=()=>work.isCurrent()&&generation===exportGeneration.current&&stableHash(latestInput.current)===hash;
     try{
-      const response=await fetch("/api/v1/exports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({input,expectedHash:hash,baseline:fixture.room,requestId:`export-${generation}`}),signal:work.signal});
+      const response=await fetch("/api/v1/exports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({input,expectedHash:hash,baseline:fixture.room,preferredMotions:preferred.current?.hash===hash?preferred.current.motions:undefined,repairEvidence:preferred.current?.hash===hash?preferred.current.repairEvidence:undefined,requestId:`export-${generation}`}),signal:work.signal});
       const data=await response.json();if(!response.ok)throw new Error(data.error);
       if(current())setExportData(data);
     }catch(e){if(current())setError(e instanceof Error?e.message:"The plan could not be exported. Please retry.");}
@@ -177,47 +223,44 @@ export default function Studio(){
   }
 
   return <div className="app-shell">
-    <header className="site-header"><a href="/" className="brand" aria-label="Open Door home"><span className="brand-mark"><DoorOpen size={25} strokeWidth={1.4}/></span>open door</a><nav aria-label="Main navigation"><button className="nav-active" onClick={()=>setModal(null)}>Your studio</button><button onClick={()=>setModal("method")}>How it works<ArrowUpRight size={12}/></button><button onClick={()=>setModal("lens")}>Made for SPECS<ArrowUpRight size={12}/></button></nav><div className="header-caption"><span className="small-dot"/>A little space. More possibility.</div></header>
+    <header className="site-header"><a href="/" className="brand" aria-label="Open Door home"><span className="brand-mark"><DoorOpen size={25} strokeWidth={1.4}/></span>open door</a><nav aria-label="Main navigation"><button className="nav-active" onClick={()=>setModal(null)}>Studio</button><button onClick={()=>setModal("method")}>How it works<ArrowUpRight size={12}/></button><button onClick={()=>setModal("lens")}>SPECS Lens<ArrowUpRight size={12}/></button></nav></header>
     <main>
-      <section className="studio-heading"><div><div className="eyebrow"><span>THE ROOM STUDIO</span><span className="eyebrow-rule"/>DESIGNED AROUND YOU</div><h1>Make room for <em>your everyday.</em></h1><p>Rehearse a journey. Understand a constraint. Find a little more possibility.</p></div><button className="quiet-button help-button" onClick={()=>setModal("method")}><CircleHelp size={17}/>A quick introduction</button></section>
       <section className="workspace" aria-label="Room design workspace">
         <div className="model-panel">
-          <div className="model-header"><div className="room-heading"><span className="room-icon"><BedDouble size={18}/></span><div><h2>{input.room.name}</h2><p>Bedroom<span>·</span>{(input.room.width*input.room.depth).toFixed(1)} m²</p></div><span className="provided-badge">{input.room.provenance==="provided_fixture"?"Provided room":"User measurements"}</span></div><div className="model-actions"><input ref={importRef} type="file" accept="application/json,.json" className="sr-only" aria-label="Import room JSON" onChange={e=>void importRoom(e.target.files?.[0])}/><button title="Import an Open Door JSON room" onClick={()=>importRef.current?.click()}><FileJson size={16}/><span>Import</span></button><button className="icon-button" title="Reset to provided room" aria-label="Reset to provided room" onClick={()=>commit(cloneInput(),"Provided room restored.")}><RotateCcw size={16}/></button></div></div>
+          <div className="model-header"><div className="room-heading"><div><h1>{input.room.name}</h1><p>{(input.room.width*input.room.depth).toFixed(1)} m²<span>·</span>{cm(input.room.width)} × {cm(input.room.depth)} cm</p></div><span className="provided-badge">{input.room.provenance==="provided_fixture"?"Provided room":"User measurements"}</span></div><div className="model-actions"><input ref={importRef} type="file" accept="application/json,.json" className="sr-only" aria-label="Import room JSON" onChange={e=>void importRoom(e.target.files?.[0])}/><button title="Import an Open Door JSON room" onClick={()=>importRef.current?.click()}><FileJson size={16}/><span>Import</span></button><button className="icon-button" title="Reset to provided room" aria-label="Reset to provided room" onClick={()=>commit(cloneInput(),"Provided room restored.")}><RotateCcw size={16}/></button></div></div>
           <div className="scene-area">
             <div className="view-switch"><button className={!planView?"active":""} onClick={()=>setPlanView(false)}><Box size={14}/>3D room</button><button className={planView?"active":""} onClick={()=>setPlanView(true)}><Layers3 size={14}/>Floor plan</button></div>
-            <div className="scene-tools" aria-label="Room tools"><Tool active={!editing} label="Inspect room" onClick={()=>setEditing(false)}><MousePointer2 size={18}/></Tool><Tool active={editing} label="Move furniture" onClick={()=>setEditing(true)}><Move size={18}/></Tool><div className="tool-divider"/><Tool active={dimensions} label="Show dimensions" onClick={()=>setDimensions(v=>!v)}><Ruler size={18}/></Tool><Tool active={compare} label="Compare original positions" onClick={()=>setCompare(v=>!v)}><Layers3 size={18}/></Tool></div>
-            <RoomScene input={input} result={currentResult} selected={selected} task={task} onSelect={setSelected} onMove={move} editing={editing} planView={planView} progress={progress} compare={compare} dimensions={dimensions}/>
-            <div className="scene-corner"><span className="north-marker">↑<small>N</small></span><span>MODEL 01<span className="tiny-line"/>METRES</span></div>
+            <div className="scene-tools" aria-label="Room tools"><Tool active={!editing} label="Inspect room" onClick={()=>setEditing(false)}><MousePointer2 size={18}/></Tool><Tool active={editing} label="Move furniture" onClick={()=>{cancelRepair();setEditing(true);}}><Move size={18}/></Tool><div className="tool-divider"/><Tool active={dimensions} label="Show dimensions" onClick={()=>setDimensions(v=>!v)}><Ruler size={18}/></Tool><Tool active={compare} label="Compare original positions" onClick={()=>setCompare(v=>!v)}><Layers3 size={18}/></Tool></div>
+            <RoomScene input={input} result={currentResult} repair={sceneRepair??null} selected={selected} task={task} onSelect={id=>{if(!activeRepair)setSelected(id);}} onMove={move} editing={editing&&!activeRepair} planView={planView} progress={progress} compare={compare} dimensions={dimensions}/>
+            {sceneRepair?<div className="repair-preview-badge"><span/>{sceneRepair.moves.length} changes · preview</div>:null}
+
             <div className="scene-instruction"><Grip size={14}/>{editing?"Drag furniture to edit · locked pieces stay put":"Drag to look around · scroll to move closer"}</div>
             {checkState==="checking"?<div className="checking-pill"><LoaderCircle size={14} className="spin"/>Checking revision {input.room.revision}</div>:null}
           </div>
-          <div className="playback-bar"><div className="history-controls"><Tool label="Undo change" disabled={!history.length} onClick={undo}><Undo2 size={17}/></Tool><Tool label="Redo change" disabled={!future.length} onClick={redo}><Redo2 size={17}/></Tool></div><button className={`play-button ${isClear(currentResult?.tasks.journey)||task==="door"?"":"inspect-play"}`} onClick={play} disabled={!currentResult}>{playing?<Pause size={15} fill="currentColor"/>:isClear(currentResult?.tasks.journey)||task==="door"?<Play size={15} fill="currentColor"/>:<Eye size={16}/>}<span>{playing?"Pause":task==="door"?"Rehearse door":isClear(currentResult?.tasks.journey)?"Rehearse journey":"Inspect the approach"}</span></button><input aria-label="Rehearsal progress" className="timeline" type="range" min="0" max="1" step=".005" value={progress} disabled={!currentResult||(task==="journey"&&!isClear(currentResult.tasks.journey))} onChange={e=>{setPlaying(false);setProgress(Number(e.target.value));}}/><span className="revision-label">REV {String(input.room.revision).padStart(2,"0")}</span></div>
-          <div className="object-strip"><span>IN YOUR ROOM</span>{input.room.objects.map(o=><button className={selected===o.id?"selected":""} key={o.id} onClick={()=>setSelected(selected===o.id?null:o.id)}>{o.kind==="bed"?<BedDouble size={15}/>:<Box size={14}/>}<span>{o.name}</span>{o.locked?<LockKeyhole size={11}/>:null}</button>)}</div>
+          <div className="playback-bar"><div className="history-controls"><Tool label="Undo change" disabled={!history.length} onClick={undo}><Undo2 size={17}/></Tool><Tool label="Redo change" disabled={!future.length} onClick={redo}><Redo2 size={17}/></Tool></div><button className={`play-button ${isClear(currentResult?.tasks.journey)||task==="door"?"":"inspect-play"}`} onClick={play} disabled={!currentResult||Boolean(activeRepair)||repairing}>{playing?<Pause size={15} fill="currentColor"/>:isClear(currentResult?.tasks.journey)||task==="door"?<Play size={15} fill="currentColor"/>:<Eye size={16}/>}<span>{playing?"Pause":task==="door"?"Rehearse door":isClear(currentResult?.tasks.journey)?"Rehearse journey":"Inspect the approach"}</span></button><input aria-label="Rehearsal progress" className="timeline" type="range" min="0" max="1" step=".005" value={progress} disabled={!currentResult||Boolean(activeRepair)||repairing||(task==="journey"&&!isClear(currentResult.tasks.journey))} onChange={e=>{setPlaying(false);setProgress(Number(e.target.value));}}/><span className="revision-label">REV {String(input.room.revision).padStart(2,"0")}</span></div>
+          <div className="object-strip" aria-label="Furniture">{input.room.objects.map(o=><button className={selected===o.id?"selected":""} key={o.id} onClick={()=>{cancelRepair();setSelected(selected===o.id?null:o.id);}}>{o.kind==="bed"?<BedDouble size={15}/>:<Box size={14}/>}<span>{o.name}</span>{o.locked?<LockKeyhole size={11}/>:null}</button>)}</div>
         </div>
 
-        <aside className="inspector" aria-label="Tasks and room editing">
-          <div className="inspector-heading"><span className="eyebrow">YOUR EVERYDAY, REHEARSED</span><h2>Small changes.<br/>{" "}Meaningful space.</h2><p>Two moments to try in this room.</p></div>
+        <aside className={`inspector ${repairing||currentRepair?"repair-open":""}`} aria-label="Tasks and room editing">
+          <div className="inspector-heading"><h2>{sceneRepair?"Preview":"Checks"}</h2><span className={`check-count ${displayedClearCount===2?"complete":""}`} aria-label={`${displayedClearCount} of 2 checks clear`}>{checkState==="checking"?"…":`${displayedClearCount}/2`}</span></div>
           <div className="profile-card"><span className="profile-icon"><Footprints size={19}/></span><div><strong>{input.profile.name}</strong><small>{cm(input.profile.width)} × {cm(input.profile.length)} cm<span>·</span>{cm(input.profile.clearance)} cm buffer</small></div><button aria-label="Edit device profile and assumptions" onClick={()=>setModal("profile")}><SlidersHorizontal size={16}/></button></div>
-          <div className="task-list"><TaskCard number="01" icon={<Footprints size={18}/>} active={task==="journey"} task={currentResult?.tasks.journey} title="Reach the bedside" subtitle="Entrance landing → bedside" onClick={()=>{setTask("journey");setProgress(0);setPlaying(false);setSelected(currentResult?.tasks.journey.witness?.objectId??null);}}/><TaskCard number="02" icon={<DoorOpen size={18}/>} active={task==="door"} task={currentResult?.tasks.door} title="Open the door" subtitle="A full 90° swing" onClick={()=>{setTask("door");setProgress(0);setPlaying(false);setSelected(currentResult?.tasks.door.witness?.objectId??null);}}/></div>
+          <div className="task-list"><TaskCard number="01" icon={<Footprints size={18}/>} active={task==="journey"} task={displayedResult?.tasks.journey} title="Reach the bedside" subtitle="Entrance landing → bedside" onClick={()=>{setTask("journey");setProgress(0);setPlaying(false);setSelected(activeRepair?null:currentResult?.tasks.journey.witness?.objectId??null);}}/><TaskCard number="02" icon={<DoorOpen size={18}/>} active={task==="door"} task={displayedResult?.tasks.door} title="Open the door" subtitle="A full 90° swing" onClick={()=>{setTask("door");setProgress(0);setPlaying(false);setSelected(activeRepair?null:currentResult?.tasks.door.witness?.objectId??null);}}/></div>
 
-          {checkState==="error"?<div className="connection-error"><Info size={19}/><strong>Your layout is kept.</strong><p>{error}</p><button className="primary-button" onClick={()=>setRetry(v=>v+1)}>Retry check<RotateCw size={16}/></button></div>:selectedObject?<ObjectEditor object={selectedObject} onClose={()=>setSelected(null)} onLock={()=>lock(selectedObject)} onMove={(x,y,theta)=>move(selectedObject.id,x,y,theta)} roomWidth={input.room.width} roomDepth={input.room.depth}/>:<div className={`next-step ${clearCount===2?"complete":""}`}>
-            <div className="next-step-label">{clearCount===2?<CheckCheck size={15}/>:<span className="small-asterisk">✳</span>}{checkState==="checking"?"CHECKING YOUR ROOM":clearCount===2?"A LITTLE MORE POSSIBILITY":"A PLACE TO START"}</div>
-            <h3>{checkState==="checking"?"Every change deserves a fresh look.":clearCount===2?"Both moments have room.":nextObject==="bench"?"Give the door its space.":"A little shift. A clearer approach."}</h3>
-            <p>{checkState==="checking"?"We’re checking the full footprint and door swing against this revision.":clearCount===2?"The route and door swing pass these geometric checks, with your locked furniture preserved.":nextObject==="bench"?"The bedside route is clear. The entry bench still meets the door during its swing.":currentResult?.tasks.journey.summary??"Review your dimensions, then inspect the modeled journey."}</p>
-            {suggestion&&nextMovable?<button className="primary-button" onClick={()=>{move(nextMovable.id,suggestion.x,suggestion.y);setSelected(null);if(nextMovable.id==="table")setTask("journey");}} disabled={checkState!=="ready"||nextMovable.locked}>{nextMovable.locked?`${nextMovable.name} is locked`:`Move ${nextMovable.name.toLowerCase()}`}<ArrowRight size={17}/></button>:clearCount===2?<button className="primary-button" onClick={()=>{setTask("journey");if(!profileAcknowledged){pendingReplay.current=true;setModal("profile");}else{setProgress(0);setPlaying(true);}}}>Try the whole journey<Play size={14}/></button>:null}
-            {suggestion&&nextMovable?<small className="suggestion-caption">Suggested placement · you choose what changes</small>:null}
+          {repairing||currentRepair?<RepairPanel progress={currentRepair} searching={repairing} selected={repairIndex} preview={previewRepair} onSelect={index=>{setRepairIndex(index);setPreviewRepair(true);setProgress(0);}} onPreview={setPreviewRepair} onApply={acceptRepair} onClose={cancelRepair}/>:checkState==="error"?<div className="connection-error"><Info size={19}/><strong>Your layout is kept.</strong><p>{error}</p><button className="primary-button" onClick={()=>setRetry(v=>v+1)}>Retry check<RotateCw size={16}/></button></div>:selectedObject?<ObjectEditor object={selectedObject} onClose={()=>setSelected(null)} onLock={()=>lock(selectedObject)} onMove={(x,y,theta)=>move(selectedObject.id,x,y,theta)} roomWidth={input.room.width} roomDepth={input.room.depth}/>:<div className={`next-step ${clearCount===2?"complete":""}`}>
+            <h3>{checkState==="checking"?"Checking geometry…":clearCount===2?"Ready to rehearse":nextMovable?`${nextMovable.name} is in the way`:"Review the layout"}</h3>
+            <p>{checkState==="checking"?"Verifying the footprint and door swing.":clearCount===2?"Both tasks pass with these dimensions.":currentResult?.tasks[task].summary??"Review your dimensions and the modeled journey."}</p>
+            {clearCount===2?<button className="primary-button" onClick={()=>{setTask("journey");if(!profileAcknowledged){pendingReplay.current=true;setModal("profile");}else{setProgress(0);setPlaying(true);}}}>Rehearse journey<Play size={14}/></button>:<button className="primary-button" onClick={findRepairs} disabled={checkState!=="ready"}><Move size={16}/>Find changes<ArrowRight size={17}/></button>}
           </div>}
-          <div className="check-progress"><div><span>{checkState==="checking"?"Checking your changes":`${clearCount} of 2 checks clear`}</span><strong>{checkState==="checking"?"—":`${clearCount}/2`}</strong></div><div className="progress-track"><span style={{width:`${clearCount/2*100}%`}}/></div><p><LockKeyhole size={12}/>{input.room.objects.filter(o=>o.locked).length} {input.room.objects.filter(o=>o.locked).length===1?"piece":"pieces"} held in place<span>·</span>Revision {input.room.revision}</p></div>
-          <button className="export-button" onClick={()=>void exportPlan()} disabled={!currentResult}><ArrowDownToLine size={17}/>Keep this plan<ArrowUpRight size={16}/></button>
-          <button className="preference-link" onClick={()=>{setError(null);setModal("preferences");}}><Sparkles size={13}/>Tell us what matters to you<ChevronRight size={13}/></button>
+          <div className="check-progress"><p><LockKeyhole size={13}/>{input.room.objects.filter(o=>o.locked).length} {input.room.objects.filter(o=>o.locked).length===1?"piece":"pieces"} locked</p></div>
+          <button className="export-button" onClick={()=>void exportPlan()} disabled={!currentResult||Boolean(activeRepair)||repairing}><ArrowDownToLine size={17}/>Keep this plan<ArrowUpRight size={16}/></button>
+          <button className="preference-link" onClick={()=>{setError(null);setModal("preferences");}}><Sparkles size={13}/>Set preferences<ChevronRight size={13}/></button>
         </aside>
       </section>
-      <section className="bottom-notes"><div><span className="outline-circle"><Check size={13}/></span><p><strong>Your choices, made visible.</strong> A model to think with. Your lived experience comes first.</p></div><button onClick={()=>setModal("method")}>What these checks mean<ArrowUpRight size={13}/></button></section>
-      <footer><span>OPEN DOOR<span className="footer-dot">·</span>LEARN AR WITH SPECS</span><span>Provided room. Explicit dimensions. Geometric evidence.</span></footer>
+      <footer className="workspace-footer"><span>Geometry only</span><button onClick={()=>setModal("method")}>Scope & evidence<ArrowUpRight size={13}/></button></footer>
     </main>
     {notice?<div className="toast" role="status"><Check size={15}/>{notice}<button aria-label="Dismiss notification" onClick={()=>setNotice(null)}><X size={14}/></button></div>:null}
 
-    {modal?<Dialog title={modal==="profile"?"Your dimensions. Your assumptions.":modal==="method"?"A room to think with.":modal==="lens"?"Made for a different point of view.":modal==="export"?"A plan worth keeping.":"What matters in your room?"} onClose={()=>{if(modal==="profile")pendingReplay.current=false;setModal(null);setError(null);}}>
+    {modal?<Dialog title={modal==="profile"?"Device & clearance":modal==="method"?"Scope & evidence":modal==="lens"?"SPECS Lens":modal==="export"?"Keep this plan":"Preferences"} onClose={()=>{if(modal==="profile")pendingReplay.current=false;setModal(null);setError(null);}}>
       {modal==="profile"?<ProfileForm profile={input.profile} acknowledged={profileAcknowledged} onSubmit={profile=>{setProfileAcknowledged(true);if(JSON.stringify(profile)!==JSON.stringify(input.profile))commit({...input,profile},"Profile updated. Checking your dimensions.");setModal(null);}}/>:null}
       {modal==="method"?<div className="method-content"><p className="modal-intro">Open Door helps you inspect whether a measured arrangement supports two specific geometric tasks. You stay in charge of what moves.</p><div className="method-steps"><div><span>01</span><div><h3>Start with explicit dimensions</h3><p>This example is a provided 420 × 340 cm room and a synthetic device profile. Nothing has been scanned or inferred from a camera.</p></div></div><div><span>02</span><div><h3>Rehearse the entire footprint</h3><p>The solver checks oriented rectangles through translation and rotation, including the final bedside heading. A separate calculation checks the door leaf throughout its swing.</p></div></div><div><span>03</span><div><h3>Change, compare, keep</h3><p>Move a piece, retain what matters, and see a fresh check. Export the exact revision with its dimensions, evidence and unassessed questions.</p></div></div></div><div className="scope-note"><Info size={18}/><p>A clear result applies to these modeled checks. It does not certify accessibility, comfortable transfers, reach, door force or real-world safety. No route found means the bounded search found none; it does not prove all routes impossible.</p></div><details><summary>Numerical method and evidence<ChevronDown size={14}/></summary><p>Every accepted motion interval is certified using a bound on the movement of every footprint point. Intervals unresolved within 1 mm remain uncertain. Search uses 16 cm motion primitives and at most 8,500 expanded states; verified trajectories are independently checked. Measurement uncertainty expands the occupied space; nominal-only clearance is shown as uncertain.</p><p>Solver {currentResult?.solverVersion??"open-door/1.0.0"}. Current result {currentResult?.inputHash??"pending"}. {currentResult?`${currentResult.durationMs} ms for the current evaluation.`:""}</p></details></div>:null}
       {modal==="lens"?<div className="method-content"><div className="lens-illustration"><DoorOpen size={48} strokeWidth={1}/><span>MINIATURE → INTENDED SCALE</span></div><p className="modal-intro">The companion makes room editing comfortable on a screen. The SPECS Lens brings the same geometric model into your space.</p><p>Inspect the miniature, choose a task, move the table or bench, then expand the model for a different spatial perspective. The native Lens runs the same portable numerical engine.</p><div className="scope-note"><Info size={18}/><p>The demonstration uses Lens Studio Preview and a provided room. Physical glasses, tracking comfort and on-device performance have not been validated.</p></div><a className="text-link" href="https://github.com/yadneshSalvi/open-door" target="_blank" rel="noreferrer">Project source and build notes<ArrowUpRight size={15}/></a></div>:null}
@@ -229,18 +272,18 @@ export default function Studio(){
 
 function Tool({children,label,active,disabled,onClick}:{children:React.ReactNode;label:string;active?:boolean;disabled?:boolean;onClick:()=>void}){return <button type="button" className={`tool-button ${active?"active":""}`} aria-label={label} title={label} aria-pressed={active} disabled={disabled} onClick={onClick}>{children}</button>;}
 function TaskCard({number,icon,active,task,title,subtitle,onClick}:{number:string;icon:React.ReactNode;active:boolean;task:TaskResult|undefined;title:string;subtitle:string;onClick:()=>void}){
-  const clear=isClear(task),label=!task?"Checking":clear?"Clear for model":task.status==="uncertain"?"Uncertain":task.status==="no_path_found"?"No path found":"Needs a little room";
-  return <button className={`task-card ${active?"active":""} ${clear?"clear":""}`} onClick={onClick} aria-pressed={active}><span className="task-icon">{icon}</span><div><strong>{title}</strong><small>{subtitle}</small><span className={`task-status ${!task?"pending":clear?"clear":"blocked"}`}>{!task?<LoaderCircle size={11} className="spin"/>:clear?<Check size={12}/>:<span className="status-diamond"/>}{label}</span></div><span className="task-number">{number}</span></button>;
+  const clear=isClear(task),label=!task?"Checking":clear?"Clear for model":task.status==="uncertain"?"Uncertain":task.status==="no_path_found"?"No path found":"Blocked";
+  return <button className={`task-card ${active?"active":""} ${clear?"clear":""}`} onClick={onClick} aria-pressed={active} title={subtitle}><span className="task-icon">{icon}</span><div><strong>{title}</strong><span className={`task-status ${!task?"pending":clear?"clear":"blocked"}`}>{!task?<LoaderCircle size={11} className="spin"/>:clear?<Check size={12}/>:<span className="status-diamond"/>}{label}</span></div><span className="task-number">{number}</span></button>;
 }
 function ObjectEditor({object,onClose,onLock,onMove,roomWidth,roomDepth}:{object:RoomObject;onClose:()=>void;onLock:()=>void;onMove:(x:number,y:number,theta?:number)=>void;roomWidth:number;roomDepth:number}){
   const [draftX,setDraftX]=useState(String(cm(object.pose.x))),[draftY,setDraftY]=useState(String(cm(object.pose.y)));
   useEffect(()=>{setDraftX(String(cm(object.pose.x)));setDraftY(String(cm(object.pose.y)));},[object.id,object.pose.x,object.pose.y]);
-  return <div className="object-editor"><div className="editor-title"><span className="eyebrow">SELECTED PIECE</span><button aria-label="Close object controls" onClick={onClose}><X size={15}/></button></div><div className="object-name"><h3>{object.name}</h3><button className={object.locked?"locked":""} onClick={onLock} title={object.locked?"Unlock object":"Lock object"}>{object.locked?<LockKeyhole size={17}/>:<UnlockKeyhole size={17}/>}</button></div><p>{cm(object.width)} × {cm(object.depth)} cm<span>·</span>{object.locked?"Held in place":"Move it to make room"}</p><div className="position-fields"><label>X position<input aria-label={`${object.name} X position in centimetres`} type="number" min="0" max={cm(roomWidth)} step="5" value={draftX} disabled={object.locked} onChange={e=>setDraftX(e.target.value)} onBlur={()=>{if(draftX.trim())onMove(Number(draftX)/100,object.pose.y);setDraftX(String(cm(object.pose.x)));}} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.blur();}}/><span>cm</span></label><label>Y position<input aria-label={`${object.name} Y position in centimetres`} type="number" min="0" max={cm(roomDepth)} step="5" value={draftY} disabled={object.locked} onChange={e=>setDraftY(e.target.value)} onBlur={()=>{if(draftY.trim())onMove(object.pose.x,Number(draftY)/100);setDraftY(String(cm(object.pose.y)));}} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.blur();}}/><span>cm</span></label></div><div className="nudge-controls"><button aria-label="Move selected object left 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x-.1,object.pose.y)}><ArrowLeft size={15}/></button><button aria-label="Move selected object back 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y+.1)}><ArrowRight size={15} style={{transform:"rotate(-90deg)"}}/></button><button aria-label="Move selected object forward 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y-.1)}><ArrowRight size={15} style={{transform:"rotate(90deg)"}}/></button><button aria-label="Move selected object right 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x+.1,object.pose.y)}><ArrowRight size={15}/></button><button aria-label="Rotate selected object 15 degrees" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y,object.pose.theta+Math.PI/12)}><RotateCw size={15}/></button></div><small className="editor-hint">Arrows move 10 cm. Rotation turns 15°.</small></div>;
+  return <div className="object-editor"><div className="editor-title"><span>Furniture</span><button aria-label="Close object controls" onClick={onClose}><X size={15}/></button></div><div className="object-name"><h3>{object.name}</h3><button className={object.locked?"locked":""} onClick={onLock} title={object.locked?"Unlock object":"Lock object"}>{object.locked?<LockKeyhole size={17}/>:<UnlockKeyhole size={17}/>}</button></div><p>{cm(object.width)} × {cm(object.depth)} cm<span>·</span>{object.locked?"Held in place":"Movable"}</p><div className="position-fields"><label>X position<input aria-label={`${object.name} X position in centimetres`} type="number" min="0" max={cm(roomWidth)} step="5" value={draftX} disabled={object.locked} onChange={e=>setDraftX(e.target.value)} onBlur={()=>{if(draftX.trim())onMove(Number(draftX)/100,object.pose.y);setDraftX(String(cm(object.pose.x)));}} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.blur();}}/><span>cm</span></label><label>Y position<input aria-label={`${object.name} Y position in centimetres`} type="number" min="0" max={cm(roomDepth)} step="5" value={draftY} disabled={object.locked} onChange={e=>setDraftY(e.target.value)} onBlur={()=>{if(draftY.trim())onMove(object.pose.x,Number(draftY)/100);setDraftY(String(cm(object.pose.y)));}} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.blur();}}/><span>cm</span></label></div><div className="nudge-controls"><button aria-label="Move selected object left 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x-.1,object.pose.y)}><ArrowLeft size={15}/></button><button aria-label="Move selected object back 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y+.1)}><ArrowRight size={15} style={{transform:"rotate(-90deg)"}}/></button><button aria-label="Move selected object forward 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y-.1)}><ArrowRight size={15} style={{transform:"rotate(90deg)"}}/></button><button aria-label="Move selected object right 10 centimetres" disabled={object.locked} onClick={()=>onMove(object.pose.x+.1,object.pose.y)}><ArrowRight size={15}/></button><button aria-label="Rotate selected object 15 degrees" disabled={object.locked} onClick={()=>onMove(object.pose.x,object.pose.y,object.pose.theta+Math.PI/12)}><RotateCw size={15}/></button></div><small className="editor-hint">Arrows move 10 cm. Rotation turns 15°.</small></div>;
 }
 function Dialog({title,children,onClose}:{title:string;children:React.ReactNode;onClose:()=>void}){
   const ref=useRef<HTMLDialogElement>(null);
   useEffect(()=>{ref.current?.showModal();return()=>ref.current?.close();},[]);
-  return <dialog ref={ref} className="modal" onCancel={onClose} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className="modal-inner"><div className="modal-heading"><span className="eyebrow">OPEN DOOR STUDIO</span><button className="icon-button" aria-label="Close dialog" onClick={onClose}><X size={20}/></button></div><h2>{title}</h2>{children}</div></dialog>;
+  return <dialog ref={ref} className="modal" onCancel={onClose} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className="modal-inner"><div className="modal-heading"><button className="icon-button" aria-label="Close dialog" onClick={onClose}><X size={20}/></button></div><h2>{title}</h2>{children}</div></dialog>;
 }
 function ProfileForm({profile,acknowledged,onSubmit}:{profile:DeviceProfile;acknowledged:boolean;onSubmit:(profile:DeviceProfile)=>void}){
   const [draft,setDraft]=useState(profile);

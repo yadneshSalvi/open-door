@@ -70,13 +70,14 @@ class MinHeap<T extends {f:number}> {
 }
 interface Node{pose:Pose;g:number;f:number;parent?:Node;motion?:Motion}
 function reconstruct(node:Node):Motion[]{const motions:Motion[]=[];while(node.motion){motions.unshift(node.motion);node=node.parent!;}return motions;}
-function search(input:EvaluationInput):{motions?:Motion[];explored:number;uncertain:boolean} {
+function* search(input:EvaluationInput,maxNodes=SETTINGS.maxNodes):Generator<void,{motions?:Motion[];explored:number;uncertain:boolean}> {
   const p=input.profile,local=rectangle(p.length,p.width),obstacles=routeObstacles(input),buffer=p.clearance+p.uncertainty;
   const heuristic=(q:Pose)=>distance(q,input.journey.goal)+angleDistance(q.theta,input.journey.goal.theta)*.12;
   const key=(q:Pose)=>`${Math.round(q.x/.08)},${Math.round(q.y/.08)},${Math.round(normalizeAngle(q.theta)/(Math.PI/12))}`;
   const frontier=new MinHeap<Node>();frontier.push({pose:input.journey.start,g:0,f:heuristic(input.journey.start)});
   const best=new Map<string,number>();let explored=0,uncertain=false;
-  while(frontier.values.length && explored<SETTINGS.maxNodes){
+  while(frontier.values.length && explored<maxNodes){
+    yield;
     const node=frontier.pop()!,k=key(node.pose);
     if((best.get(k)??Infinity)<=node.g)continue;best.set(k,node.g);explored++;
     if(goalReached(node.pose,input.journey)){return {motions:reconstruct(node),explored,uncertain};}
@@ -103,7 +104,7 @@ function search(input:EvaluationInput):{motions?:Motion[];explored:number;uncert
   }
   return{explored,uncertain};
 }
-function evaluateJourneyCore(input:EvaluationInput):TaskResult {
+function* evaluateJourneyCore(input:EvaluationInput,options:EvaluationOptions={}):Generator<void,TaskResult> {
   const {profile:p,journey:task}=input;
   const base={id:task.id,name:task.name,path:[] as Pose[],motions:[] as Motion[],minimumClearance:null,explored:0,assumptions:routeAssumptions(input),unknowns:["Physical comfort, transfers, effort and real-world accuracy are not assessed."]};
   const local=rectangle(p.length,p.width),obstacles=routeObstacles(input),buffer=p.clearance+p.uncertainty;
@@ -111,13 +112,19 @@ function evaluateJourneyCore(input:EvaluationInput):TaskResult {
     const c=clearanceAt(local,pose,obstacles,buffer,input.room);
     if(c.distance<=0) return {...base,status:"blocked_witness",summary:`${label} intersects ${c.witness?.objectName.toLowerCase()??"the room geometry"}${c.witness?.kind==="buffer"?"’s clearance buffer":""}.`,witness:c.witness};
   }
+  yield;
+  if(options.preferredMotions){
+    const v=verifyTrajectory(input,options.preferredMotions);
+    if(v.status==="clear")return {...base,status:"verified_feasible",summary:"The preferred continuous route reaches the requested goal.",motions:options.preferredMotions,path:sampleMotions(options.preferredMotions),minimumClearance:v.clearance};
+  }
   let candidates:Motion[][]=[];
   if(p.movement==="pivot")candidates=[directMotions(task.start,task.goal),directMotions(task.start,task.goal,{x:task.goal.x,y:task.start.y}),directMotions(task.start,task.goal,{x:task.start.x,y:task.goal.y})];
   for(const motions of candidates){
+    yield;
     const v=verifyTrajectory(input,motions);
     if(v.status==="clear")return{...base,status:"verified_feasible",summary:"A continuous route reaches the bedside in the requested orientation.",motions,path:sampleMotions(motions),minimumClearance:v.clearance};
   }
-  const found=search(input);
+  const found=yield* search(input,options.maxNodes);
   if(found.motions){
     const v=verifyTrajectory(input,found.motions);
     if(v.status==="clear")return{...base,status:"verified_feasible",summary:"A verified route reaches the bedside in the requested orientation.",motions:found.motions,path:sampleMotions(found.motions),minimumClearance:v.clearance,explored:found.explored};
@@ -127,32 +134,38 @@ function evaluateJourneyCore(input:EvaluationInput):TaskResult {
   for(const motions of candidates){const v=verifyTrajectory(input,motions);if("witness" in v && v.witness){witness=v.witness;break;}}
   return{...base,status:found.uncertain?"uncertain":"no_path_found",summary:found.uncertain?"The search could not certify a route at the selected tolerance.":"No route found within this search resolution and node budget.",witness,explored:found.explored,unknowns:[...base.unknowns,"This search result does not prove every possible route is blocked."]};
 }
-export function evaluateJourney(input:EvaluationInput):TaskResult {
-  const result=evaluateJourneyCore(input);
-  if(result.status!=="verified_feasible" && (input.profile.uncertainty>0 || input.room.objects.some(o=>o.uncertainty>0))){
+export interface EvaluationOptions {maxNodes?:number;preferredMotions?:Motion[];nominalFallback?:boolean}
+function drain<T>(steps:Generator<void,T>):T {let next=steps.next();while(!next.done)next=steps.next();return next.value;}
+function* journeySteps(input:EvaluationInput,options:EvaluationOptions={}):Generator<void,TaskResult> {
+  const result=yield* evaluateJourneyCore(input,options);
+  if(options.nominalFallback!==false && result.status!=="verified_feasible" && (input.profile.uncertainty>0 || input.room.objects.some(o=>o.uncertainty>0))){
     const nominal={...input,profile:{...input.profile,uncertainty:0},room:{...input.room,objects:input.room.objects.map(o=>({...o,uncertainty:0}))}};
-    const nominalResult=evaluateJourneyCore(nominal);
+    const nominalResult=yield* evaluateJourneyCore(nominal,options);
     if(nominalResult.status==="verified_feasible")return{...result,status:"uncertain",summary:"The nominal dimensions permit a route, but the stated uncertainty prevents certification.",unknowns:[...result.unknowns,"A route passed with measurement uncertainty removed; conservative geometry did not pass."]};
   }
   return result;
 }
-function evaluateDoorCore(input:EvaluationInput):TaskResult {
+export function evaluateJourney(input:EvaluationInput):TaskResult {return drain(journeySteps(input));}
+function evaluateDoorCore(input:EvaluationInput,reserveM=0):TaskResult {
   const d=input.room.door;
   const local=[{x:0,y:-d.thickness/2},{x:d.width,y:-d.thickness/2},{x:d.width,y:d.thickness/2},{x:0,y:d.thickness/2}];
   const obstacles=input.room.objects.map(o=>({id:o.id,name:o.name,polygon:objectPolygon(o),uncertainty:o.uncertainty}));
   const motion={start:{...d.hinge,theta:d.closedAngle},distance:0,angle:d.openAngle-d.closedAngle};
-  const v=verifyMotion(local,motion,obstacles,0,undefined,SETTINGS.sweepTolerance);
+  const v=verifyMotion(local,motion,obstacles,reserveM,undefined,SETTINGS.sweepTolerance);
   return {id:"door-sweep",name:"Open the door",status:v.status==="clear"?"verified_feasible":v.status==="blocked"?"blocked_witness":"uncertain",summary:v.status==="clear"?"The door leaf clears the furniture through its full specified swing.":v.status==="blocked"?`The door leaf intersects ${v.witness?.objectName.toLowerCase()} during its swing.`:"Door clearance could not be certified at the selected tolerance.",witness:v.witness,path:sampleMotions([motion]),motions:[motion],minimumClearance:v.status==="clear"?v.clearance:null,explored:0,assumptions:[`Door width ${(d.width*100).toFixed(0)} cm, thickness ${(d.thickness*100).toFixed(0)} cm.`,`Swing ${(d.closedAngle*180/Math.PI).toFixed(0)}° to ${(d.openAngle*180/Math.PI).toFixed(0)}° against all listed furniture.`,"Checks leaf-to-furniture clearance only."],unknowns:["Handle reach, opening force and the person's complete door-opening maneuver are not assessed."]};
 }
-export function evaluateDoor(input:EvaluationInput):TaskResult {
-  const result=evaluateDoorCore(input);
+export function evaluateDoor(input:EvaluationInput,reserveM=0):TaskResult {
+  const result=evaluateDoorCore(input,reserveM);
   if(result.status!=="verified_feasible" && input.room.objects.some(o=>o.uncertainty>0)){
-    const nominal=evaluateDoorCore({...input,room:{...input.room,objects:input.room.objects.map(o=>({...o,uncertainty:0}))}});
+    const nominal=evaluateDoorCore({...input,room:{...input.room,objects:input.room.objects.map(o=>({...o,uncertainty:0}))}},reserveM);
     if(nominal.status==="verified_feasible")return{...result,status:"uncertain",summary:"The nominal door swing clears, but the stated measurement uncertainty prevents certification."};
   }
   return result;
 }
-export function evaluate(input:EvaluationInput):Evaluation {
+export function* evaluateSteps(input:EvaluationInput,options:EvaluationOptions={}):Generator<void,Evaluation> {
   const start=Date.now();
-  return {schemaVersion:"1.0",solverVersion:SOLVER_VERSION,revision:input.room.revision,inputHash:stableHash(input),tasks:{journey:evaluateJourney(input),door:evaluateDoor(input)},durationMs:Date.now()-start,settings:SETTINGS};
+  const journey=yield* journeySteps(input,options);
+  yield;
+  return {schemaVersion:"1.0",solverVersion:SOLVER_VERSION,revision:input.room.revision,inputHash:stableHash(input),tasks:{journey,door:evaluateDoor(input)},durationMs:Date.now()-start,settings:{...SETTINGS,maxNodes:options.maxNodes??SETTINGS.maxNodes}};
 }
+export function evaluate(input:EvaluationInput,preferredMotions?:Motion[]):Evaluation {return drain(evaluateSteps(input,{preferredMotions}));}

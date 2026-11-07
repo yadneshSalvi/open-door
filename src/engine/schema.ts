@@ -34,4 +34,6 @@ export const profileSchema=z.object({
 }).strict();
 export const journeySchema=z.object({id,name,start:pose,goal:pose,positionTolerance:finite.min(.01).max(.2),headingTolerance:finite.min(.01).max(.5)}).strict();
 export const evaluationInputSchema=z.object({room:roomSchema,profile:profileSchema,journey:journeySchema}).strict();
-export const evaluationRequestSchema=z.object({room:roomSchema,profile:profileSchema,journey:journeySchema,requestId:z.string().min(1).max(100),generation:z.number().int().nonnegative()}).strict();
+export const motionSchema=z.object({start:pose,distance:finite.min(-50).max(50),angle:finite.min(-Math.PI*2).max(Math.PI*2)}).strict();
+export const preferredMotionsSchema=z.array(motionSchema).max(2048).optional();
+export const evaluationRequestSchema=z.object({room:roomSchema,profile:profileSchema,journey:journeySchema,preferredMotions:preferredMotionsSchema,requestId:z.string().min(1).max(100),generation:z.number().int().nonnegative()}).strict();
