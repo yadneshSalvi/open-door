@@ -1,0 +1,20 @@
+{
+  "revision": "native-delta-08",
+  "state": "frozen-for-editor-owner-integration",
+  "files": [
+    {
+      "file": "OpenDoorExperience.ts",
+      "sha256": "f16e0bb7ee14e16573179afb0f5ac44261bcb422b838626849477a95bbf8714c"
+    },
+    {
+      "file": "leaf/OpenDoorDragScenario.ts",
+      "sha256": "b0fa2cad0f9fce968d4ce09c7f1ba2051734ccc05d79e006ff34dbd78035fac7"
+    }
+  ],
+  "validation": {
+    "nativeLeafTypecheck": "pass",
+    "diffCheck": "pass",
+    "fullSuite": "64/64 passed before this test-contract/default-value-only delta; engine and presentation logic unchanged"
+  },
+  "note": "Controller changes only three inspector defaults to the actual accepted scene inputs. Drag test accepts exactly one end OR endOutside release, rejects any cancellation, preserves exact Direct/Indirect requirements, checks original source/revision/history plus pending commit at release, then one commit and actual Undo. No SDK, runtime gesture or engine behavior changed."
+}

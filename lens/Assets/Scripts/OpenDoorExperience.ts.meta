@@ -29,10 +29,20 @@
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
     baseMaterial: false
+    clearSound: false
     companionBaseUrl: false
+    contactSound: false
     cubeMesh: false
     evidenceMaterial: false
     font: false
+    fullScaleOverlay: false
+    fullSizeStartPositionCm: false
+    fullSizeYawDegrees: false
+    miniatureSurfacePositionCm: false
+    miniatureYawDegrees: false
+    placementConfirmed: false
+    placementDescription: false
+    wheelSound: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -47,6 +57,16 @@
       font: !<reference.Font> 00000000-0000-0000-0000-000000000000
       evidenceMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
       companionBaseUrl: "https://open-door-weld.vercel.app"
+      miniatureSurfacePositionCm: !<Vec3> {x: -48.000000, y: -62.500000, z: -318.000000}
+      miniatureYawDegrees: !<float> 45.000000
+      fullSizeStartPositionCm: !<Vec3> {x: -320.000000, y: -135.800003, z: -550.000000}
+      fullSizeYawDegrees: !<float> 0.000000
+      placementConfirmed: false
+      placementDescription: Provided room · placement not yet aligned
+      fullScaleOverlay: false
+      clearSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      contactSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      wheelSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
   ScriptTypes:
     -
       {}
@@ -56,3 +76,13 @@
     - // @input Asset.Font font
     - // @input Asset.Material evidenceMaterial
     - '// @input string companionBaseUrl = "https://open-door-weld.vercel.app"'
+    - "// @input vec3 miniatureSurfacePositionCm = {-30,-142.9,-474}"
+    - // @input float miniatureYawDegrees
+    - "// @input vec3 fullSizeStartPositionCm = {-92,-172.7,-175}"
+    - // @input float fullSizeYawDegrees
+    - // @input bool placementConfirmed
+    - '// @input string placementDescription = "Provided room · placement not yet aligned"'
+    - // @input bool fullScaleOverlay
+    - // @input Asset.AudioTrackAsset clearSound
+    - // @input Asset.AudioTrackAsset contactSound
+    - // @input Asset.AudioTrackAsset wheelSound

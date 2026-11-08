@@ -1,6 +1,32 @@
 # Changes driven by actual checks
 
-Recorded during the 7 November 2026 build. These changes came from numerical review, browser use and Lens Studio Preview; physical glasses and external user feedback were not part of this iteration.
+Recorded during the 7–8 November 2026 build. These changes came from review, numerical checks, browser use and Lens Studio Preview; physical glasses and external user feedback were not part of this iteration.
+
+## Final observed spatial closure — 8 November
+
+[Current spatial acceptance](spatial-release.md) records the final exact Direct and far transaction passes, observed G2 composition, accepted real-time sources, full-size03/main/share equality and actual production QR handoff. Failed Direct04 and rejected staging/takes remain failures. Production has no active test indices/bridge/helpers. Final encoded-film QA and user approval remain pending; optional WorldQuery, unfilmed proximity/lazy-follow and physical glasses remain untested.
+
+The following table preserves progress-stage observations from before that closure; its "await" wording is historical, not the current release status.
+
+## Spatial source revision — 8 November
+
+| Observation | Implemented source change | Evidence boundary |
+| --- | --- | --- |
+| A tilted floating miniature and large status panel did not use the furnished Preview world. | Level surface placement, an explicit horizontal-hit confirmation, measured manual fallback and full-size supplied-room floor anchor. | Display transform tests pass. Actual multi-view alignment and Spectacles Center framing await the coordinated native pass. The model is not a measured twin of environment furniture. |
+| The rectangle alone did not explain the occupied chair profile; global text separated the obstruction from its cause. | Add an envelope-constrained schematic chair and witness-driven furniture glow/labels. Remove the permanent header and raw coordinate readout. | Sixteen presentation tests include chair bounds and actual witness labels; no deficit number is invented. The v5 miniature subsequently passed independent filming review. |
+| Direct manipulation should remain responsive and numerical state must change only on release. | Enable direct and indirect targets; keep cheap placement feedback during drag and slice the existing complete evaluator afterward. | Revision/generation/hash and canceled-slice tests pass. Native hand behavior and atomic-step duration still require observation. |
+| Paged choices and repeated menu rows hid the physical comparison. | Display computed ghost sets with up to three tags, then only Use / Before–After / Cancel for the selected option. Put locks on pieces and profile controls by the chair. | Menu count and source checks pass; actual target overlap and reachability await G1/G2. |
+| A runtime-created UIKit layout can be configured before its OnStart event. | Disable automatic item discovery and wait for the replaying initialization event before forced layout; keep bounded target identities. | Installed package lifecycle was inspected; native compile/interaction remains required. |
+| Another native project exposed audio-player errors with live track reassignment. | Use the installed UIKit pattern of a persistent component/stream per cue, assigning each track only once. | Audio source typechecks. Actual audible playback, spatialization and error logs remain pending. |
+| Source review found candidate reserve on Before, a door completion labeled Turn clear, and an already-clear search presented as failure. | Bind reserve labels to After, completion to the independently verified task, and zero-move success to No changes needed. | Four focused presentation regressions pass. The follow-up native LEAF run passed Before/After and already-clear assertions in its 14.058-second journey. Door-only native reproduction remains a separate check. |
+| Persistent controls could execute a new command substituted while a pinch was held. | Capture semantic identity at down and require the same enabled action at release; preserve SIK target objects. | Identity tests and independent source review pass. Near event traces then showed a framing issue, not a reason to weaken the guard. The correctly aimed bare-IK near-control repeat passed with actual Poke mode. |
+| The colorful initial tabletop competed with the model; a wide dock clipped in a side view and a persistent hint covered too much of the room. | Stage the model on the measured plain Sunlit sideboard, narrow the dock along the viewer-facing edge and make the hint smaller and time-bounded. | Independent native front/side image review passes those three findings. Full G2 remains open for Center, approach, full-size and proposal/interaction states. |
+| Transient generic Turn blocked and Door blocked plates hid the chair and repeated specific obstruction labels. | Use compact task-sized feedback and suppress a generic blocked label when the actual object witness is already visible; place a brief supplied-room label away from the dock. | The feedback regression passes; the revised v5 miniature was accepted for the complete paced film run. |
+| A floor point near the initial full-size pose appeared plausible, but a wide view showed the model crossing a background wall. | Reject that pose and stage the same exact supplied room on surveyed open Sunlit Outdoor ground. Use a 0.1 cm full-size floor because Preview exposed the thick slab's below-ground sides. | The miniature floor and engine remain unchanged. A branch regression passes, and independent outdoor support views were accepted. Full-size trajectory and capture equality remain separate checks. |
+| The LEAF avatar factory rendered a head at the Preview camera and added visual interference. | Use the supported bare IKBodyInteractor in test scenarios, with no functional fallback, explicit teardown and both hand parents restored before shared-hand input. | The near UIKit run passed in 7.788 seconds with actual Poke mode. The exact Direct furniture transaction remains unresolved and now reports bounded raw event/transaction evidence before assertions. |
+| Fixed ending padding extended a successful rehearsal after its useful endpoint hold. | Remove the duration target; keep the real causal workflow, complete path and meaningful reading holds. | The revised rehearsal passed in 65.556 seconds. The actual main take reported 65.100 seconds and 84 moving poses; recording-clock acceptance is separately required. |
+
+## Accepted earlier iterations
 
 | Observation | Change | Evidence boundary |
 | --- | --- | --- |

@@ -1,0 +1,33 @@
+{
+  "revision": "native-delta-05",
+  "state": "frozen-for-editor-owner-integration",
+  "files": [
+    {
+      "file": "OpenDoorExperience.ts",
+      "sha256": "25eb6be5f5452475a5eff88633d3cec15562ff4d18379d9ccd5a41dbe96080d4"
+    },
+    {
+      "file": "SpatialPresentation.ts",
+      "sha256": "749d9bdb324dd138c936f6df049c15102031b53f3beca3394a2844dbb667dc1e"
+    },
+    {
+      "file": "leaf/OpenDoorReachScenario.ts",
+      "sha256": "c717b5a7319fbbdc578f4dd59a27561400e593766d6d3e34221195a1d31ee9aa"
+    },
+    {
+      "file": "leaf/OpenDoorDragScenario.ts",
+      "sha256": "fb76d57e24dbfacd531844448a5c71d8df78df3f8874a95a6f5df7e4dd8048da"
+    },
+    {
+      "file": "leaf/OpenDoorFullSizeFilmScenario.ts",
+      "sha256": "a1dd22f08ddd411e9b53c3618fd1cb6a1d3c39360d810c5cf845624ab6b70f59"
+    }
+  ],
+  "validation": {
+    "focusedPresentationTests": "16/16 pass",
+    "appTypecheck": "pass",
+    "nativeLeafTypecheck": "pass",
+    "diffCheck": "pass"
+  },
+  "note": "Five-file delta from native sync 04. No avatar in IK tests, explicit cleanup retained; thin full-size floor; actual revision-preserving setup in full-size film. No engine changes."
+}

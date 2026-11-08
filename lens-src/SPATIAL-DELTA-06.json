@@ -1,0 +1,16 @@
+{
+  "revision": "native-delta-06",
+  "state": "frozen-for-editor-owner-integration",
+  "files": [
+    {
+      "file": "leaf/OpenDoorDragScenario.ts",
+      "sha256": "caa77998556ea8f940c7570ec69e807c4e8941d6975f6422d0fb59b75f081401"
+    }
+  ],
+  "validation": {
+    "nativeLeafTypecheck": "pass",
+    "diffCheck": "pass",
+    "newNumericalTests": "not needed: observer and assertion-message changes only"
+  },
+  "note": "One-file test-only delta from sync 05. Records bounded raw SIK modes/start/update/end/outside/cancel, preview count and release/transaction state before assertions. Exact Direct requirement, gesture inputs, cleanup and all transaction invariants are unchanged."
+}

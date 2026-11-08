@@ -1,26 +1,32 @@
 # Open Door
 
-A room can fit every piece of furniture and still block an everyday task. Open Door makes that conflict visible, then computes changes the person can compare.
+Open Door is for a person who uses a mobility device, planning a bedroom with a designer or trusted collaborator. Before anyone moves the furniture, they can compare changes and rehearse a chosen bedside turn using their supplied dimensions.
 
-The SPECS Lens presents a warm architectural miniature with an explicit occupied footprint and two independent checks: reach a chosen bedside pose, and clear a complete door-leaf sweep. **Find changes** searches unlocked furniture positions without changing the person's dimensions, buffer, task or locks. Amber ghosts and centimetre arrows reveal the alternatives in the room. The person chooses less movement or more modeled clearance, accepts one revision and rehearses the actual verified footprint trajectory. The bed stays where it is.
+## Designed for glasses
 
-For the provided room, the finite search found two-piece changes totaling approximately 139, 140 and 223 cm. Their extra reserve certificates are respectively under 1 mm, at least 1.004 cm and at least 3.043 cm beyond the supplied 3 cm buffer. The smallest margin is explicitly flagged. These are computed examples, not fixed move buttons or a claim of global optimality.
+- **Information on the thing:** the checked blocking table and door obstruction carry their own highlights and labels; a schematic wheelchair makes the occupied footprint visible.
+- **Show it when needed:** the permanent header is gone; choosing a spatial alternative reveals Before/After, Use this layout and Cancel.
+- **A few big targets:** three primary actions at a time, three spatial option tags and direct furniture manipulation replace a grid of small controls.
+- **Keep it where you look:** a level miniature sits on a Preview sideboard; the same supplied layout can replay at full size on separately staged open ground. An actual orbit shows depth.
 
-The TypeScript engine checks the full oriented footprint, intermediate motion, goal heading and door sweep. The browser searches in a worker. The Lens requests candidates from the HTTPS geometry endpoint, then independently verifies every alternative locally before showing it. Request identity, source fingerprints, one-revision commits and Undo protect the interaction. Direct SIK furniture editing remains available. Native 1:1 inspection uses the same numerical geometry without moving the camera.
+## How Devpost Learn shaped the plan
 
-A companion supports dimensions, model import, SVG/JSON downloads and reviewed language preferences. A native QR hands off the exact model and revision for fresh companion evaluation. Shared links carry model inputs; the complete repair-aware JSON separately retains and rechecks the chosen reserve certificate. AI may propose preferences, but it never decides clearance.
+The Learn AR with SPECS planning skill and its glasses-design guidance shaped the [design brief](design-brief.md): choose one concrete room task, state what Preview can demonstrate, and keep dimensions and needs explicit. The subsequent design review pushed the plan from a floating diorama and permanent text toward a surface-placed miniature, object-attached feedback, progressive controls and an honestly labeled supplied-room full-size view. The brief preserves these decisions and the limits of simulation.
 
-The dimensions are provided synthetic geometry. This prototype does not scan a real room or certify accessibility. Complete door operation, reach, transfers, comfort and hardware remain outside the demonstrated evidence. No participant quotation or external-study outcome is claimed.
+## How it works
 
-## Release fields and current evidence
+A TypeScript geometry engine checks an oriented occupied footprint through a complete bedside trajectory and independently checks the door-leaf sweep. Find changes searches unlocked furniture while preserving the profile, buffer, task and locks. The Lens requests alternatives through HTTPS and independently verifies them locally before display and Apply. Spatial ghosts expose the choice between furniture movement and additional modeled clearance; Undo makes edits reversible.
 
-- Lens project: `lens/OpenDoor.esproj`.
-- Companion: [open-door-weld.vercel.app](https://open-door-weld.vercel.app).
-- Methods and reproduction: [repair search](repair-search.md), [geometry](geometry.md), [verification](verification.md).
-- Web: computed repair, reserve comparison, preview/apply/rehearse, cancel/stale/lock cases, export certificate and model sharing verified.
-- Native: the [computed-repair Preview pass](native-repair-preview.md) is accepted, with 28 recorded assertions, a final 3.249 s search, atomic Apply/replay, recovery and exact revision-9 QR/export. The [original direct-edit run](native-preview.md) remains historical evidence.
-- Recording: follow the [proposed 2:40 working demonstration](demo-story.md), capture the accepted current Lens flow, then add its public YouTube link. No recording or publication is implied by this draft.
+CLAD and the Lens Studio MCP supported building and inspecting the actual Lens project. LEAF exercises real SIK input in native Preview, including release-only drag transactions, rollback, locked furniture, search, comparison, Apply and complete playback. The current suite has 64 passing tests across eight files; source checks and native observations are recorded separately in [verification](verification.md).
 
-The official criteria give equal weight to Design, Technical Implementation, Innovation/Idea and Presentation, with Design first for ties. The intended demonstration makes the spatial choice legible, shows its computed evidence and completes a useful workflow. [Official rules](https://learn-specs.devpost.com/rules).
+Save & share displays a real QR for the exact model. The production companion reconstructs it and runs fresh checks; complete repair-aware JSON retains the separate repair evidence. The accepted miniature, full-size and share takes match at revision 3. [Spatial evidence and gallery](spatial-release.md) document the observed scope.
 
-This is a draft, not a published Devpost submission. The repository and video have not been made public by this document.
+## What we learned and what comes next
+
+Putting the warning on the obstruction and separating option selection from review made the spatial choice easier to inspect in Preview. A floor hit alone did not prove a usable full-size composition: a wall-intersecting staging attempt was rejected and replaced. Next comes testing real Spectacles hand tracking, readability, placement, latency and comfort with people who can judge the task from their own experience.
+
+## Scope and release status
+
+This is supplied synthetic geometry, manually placed in Lens Studio Preview, with disclosed automated SIK input. It does not scan or recognize the background room. A clear modeled route is not accessibility certification, complete door operation, reach, transfer ability or comfort. No physical glasses test, participant quotation or user-study benefit is claimed. Optional WorldQuery placement and unfilmed proximity/lazy-follow transitions remain unverified.
+
+Lens: `lens/OpenDoor.esproj`. Companion: [Open Door](https://open-door-weld.vercel.app). The source footage and observed presentation are accepted; the 149.5-second film assembly still requires encoded QA and user approval. This draft does not publish a repository/video or submit Devpost.

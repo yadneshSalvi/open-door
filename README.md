@@ -6,11 +6,11 @@ Open Door is a SPECS room-layout rehearsal prototype with a web companion. Expli
 
 This is a provided model, not live scene recognition. A clear result applies to the modeled checks, not accessibility certification, comfortable transfers or a person's lived experience.
 
-| SPECS Lens — actual native Preview | Web companion |
-| --- | --- |
-| ![Actual native computed proposal with ghosts, movement arrows and a verified clearance choice.](devpost/media/native-repair-preview.png) | ![Actual computed repair preview with spatial moves and a choice of additional reserve.](devpost/media/companion-repair-preview.png) |
+![Actual supplied-room full-size replay, manually staged in Sunlit Outdoor Preview.](devpost/media/spatial-full-size-r002.png)
 
-Actual computed-repair captures. The native image trims only outer margins; [accepted native evidence](devpost/native-repair-preview.md) records actual SIK gestures, source hashes, timing and the exact production handoff.
+![Selected computed proposal on the Sunlit Room tabletop miniature.](devpost/media/spatial-options-r002.png)
+
+Actual recorded 8 November Preview frames, cropped to the accepted native viewport. Input is automated SIK; the full-size scene is a separately staged supplied model. [Gallery provenance](devpost/media/spatial-gallery-provenance.json) binds the source and image hashes. [Spatial release evidence](devpost/spatial-release.md) separates accepted source footage from the final film review. The [7 November release](devpost/native-repair-preview.md) remains historical evidence.
 
 ## Run locally
 
@@ -36,13 +36,17 @@ Inspect the production build at [localhost:3104](http://localhost:3104). Deploy 
 
 ## Open the actual Lens
 
-Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves the installed SIK and UI Kit packages. Authored runtime source is in `lens/Assets/Scripts/OpenDoorExperience.ts`. Its `OpenDoorCore.js` is generated from the same numerical engine as the companion.
+Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves the installed SIK and UI Kit packages. Canonical runtime source lives in `lens-src/`; `lens/Assets/Scripts/` is its coordinated editor copy. `OpenDoorCore.js` is generated from the same numerical engine as the companion.
 
-Follow [native integration](lens-src/INTEGRATION.md) for inputs and Preview acceptance. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; copy it into native `Assets/Scripts/` after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
+Follow the [spatial integration contract](lens-src/SPATIAL-INTEGRATION.md) for the current canonical source set, measured table/floor placements, audio inputs and LEAF registration. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; coordinate native copies after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
 
-The Lens source has a three-action overview, computed alternatives with spatial ghosts, direct SIK furniture dragging, Fine adjust, locks, Undo, profile review, miniature/1:1 inspection and occupied-footprint playback. Fast search uses the public HTTPS geometry endpoint; every returned alternative is independently verified locally before display and again before Apply. Network failure offers explicit retry or slower offline search. Set `companionBaseUrl` to deployed HTTPS for a revision-specific QR handoff. The companion validates and recomputes the encoded model before downloads.
+The 8 November canonical source places a level miniature on a supplied or explicitly confirmed surface. A schematic wheelchair stays inside the unchanged occupied profile; actual obstruction witnesses light the furniture. Near/far SIK dragging has release-only evaluation, alternatives appear as spatial ghost sets, locks sit on pieces and contextual controls show at most three actions. Full size places the same supplied room on manually configured Preview ground, with lazy-follow controls and detail on approach. This is a supplied model in a simulated environment, not a reconstruction of that environment's furniture.
 
-The computed-repair Lens completed native compilation and actual Preview acceptance: search/cancel/retry, all alternatives, Original/new, atomic Apply, profile acknowledgment, retained playback, Undo, changed inputs, direct editing and QR handoff. Its final search took 3.249 s with 271 ms of local checks in instrumented Preview. [The certified revision-9 plan](examples/native-repair-plan-r9.json) preserves the accepted model and reserve evidence; a fresh launch starts at the provided baseline. See [verification](devpost/verification.md) for exact scope and historical evidence. No physical glasses have been tested.
+Fast search uses the public HTTPS geometry endpoint; every returned alternative is independently verified locally before display and again before Apply. Network failure offers explicit retry or slower offline search. Locks, Undo, profile dimensions, preferred trajectories, complete repair evidence and the model-only QR handoff retain their existing contracts. The companion validates and recomputes the encoded model before downloads.
+
+The spatial source passes 64 tests across eight files, application/native TypeScript and the unchanged fixture regression. Exact Direct furniture transactions, far transactions, near UIKit Poke and the complete native rehearsal passed. Independent G2 review accepted the observed miniature, orbit, Center contrast/framing and separate outdoor replay. Main/full-size/share retain the exact revision-3 input and accepted repair; the actual QR decodes to the matching production companion model. The production scene is saved without active test indices or LEAF bridge. See [spatial acceptance and reproduction](devpost/spatial-release.md) and [verification](devpost/verification.md).
+
+Final encoded-film QA and user approval remain pending. Optional WorldQuery placement, unfilmed proximity/lazy-follow transitions and physical glasses remain untested. Center footage shows the initial arrangement with unverified exact input identity; it proves contrast/framing only.
 
 ## Source map
 

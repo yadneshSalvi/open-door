@@ -1,0 +1,100 @@
+{
+  "revision": "spatial-defaults-and-release-contract-7",
+  "state": "frozen-for-coordinated-native-integration",
+  "sourceOnlyValidation": {
+    "tests": 64,
+    "testFiles": 8,
+    "appTypecheck": "pass",
+    "fixture": "pass",
+    "nativeLeafTypecheck": "pass after anchor defaults and legitimate release observer update",
+    "focusedPresentationTests": "16/16 pass after feedback and floor branches",
+    "fullSuite": "64/64 pass across eight files; fresh run after feedback/floor changes"
+  },
+  "files": [
+    {
+      "file": "OpenDoorExperience.ts",
+      "sha256": "f16e0bb7ee14e16573179afb0f5ac44261bcb422b838626849477a95bbf8714c"
+    },
+    {
+      "file": "OpenDoorSpatialUI.ts",
+      "sha256": "2f7a0230097ff29621c3c452d8b90d3fa5bd63528679637d0dc269a04e8bed98"
+    },
+    {
+      "file": "OpenDoorSurfacePlacement.ts",
+      "sha256": "0cb78e56eb2ca413c124c729b7379e8549e476eb3813f9a06720a39878abfdd4"
+    },
+    {
+      "file": "OpenDoorAudio.ts",
+      "sha256": "c6de0e5a25d2f36cbb8ba9869620614437314351ef7e640788753623ad5cea2e"
+    },
+    {
+      "file": "SpatialPresentation.ts",
+      "sha256": "749d9bdb324dd138c936f6df049c15102031b53f3beca3394a2844dbb667dc1e"
+    },
+    {
+      "file": "ArchitecturalMeshes.ts",
+      "sha256": "099e1b16a2b5216beb0179ac1fb47ea12acbbae116289d8fa4135993928b6eef"
+    },
+    {
+      "file": "OpenDoorCore.js",
+      "sha256": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e"
+    },
+    {
+      "file": "leaf/OpenDoorScenarioSupport.ts",
+      "sha256": "20c977b7e5ba55cf0c7a269833e46fed41ed304736e7d665c3d328251dff9f9e"
+    },
+    {
+      "file": "leaf/OpenDoorRepairScenario.ts",
+      "sha256": "8fde181b60fc82240d216d92de7d09917544b33c67393a1c7a77c34381e43424"
+    },
+    {
+      "file": "leaf/OpenDoorReachScenario.ts",
+      "sha256": "c717b5a7319fbbdc578f4dd59a27561400e593766d6d3e34221195a1d31ee9aa"
+    },
+    {
+      "file": "leaf/OpenDoorLeafIndex.ts",
+      "sha256": "a171fc065eb7ef47f846a8fa6c6099acb8a0761aa6c4b8b2f24346273310af5d"
+    },
+    {
+      "file": "Audio/turn-clear.wav",
+      "sha256": "ac4c4f4f690c6ab91ebb80c96f9223174e11f4e3f032a1802b73a70cda3bf8b0"
+    },
+    {
+      "file": "Audio/contact-soft.wav",
+      "sha256": "b081cfe08805bc8bd4d9e520eb4c78fedbe31d29c0b2cf8573ac3a14b236f72e"
+    },
+    {
+      "file": "Audio/wheel-roll.wav",
+      "sha256": "1beec55cd97b284a69efe6086ce3e104457fd15c420f895dd9c38a6804f6cc1d"
+    },
+    {
+      "file": "Audio/provenance.json",
+      "sha256": "caef98fb142c282d7149bf640de24a4926771009fcfe42e67a693951d8a04b24"
+    },
+    {
+      "file": "leaf/OpenDoorDragScenario.ts",
+      "sha256": "b0fa2cad0f9fce968d4ce09c7f1ba2051734ccc05d79e006ff34dbd78035fac7"
+    },
+    {
+      "file": "leaf/OpenDoorScaleScenario.ts",
+      "sha256": "95f1f2c81817d2512a92bf4110ddc17b8fc1cf50b057c9abd97dd8d9021ceeb8"
+    },
+    {
+      "file": "leaf/OpenDoorFilmScenario.ts",
+      "sha256": "26445194198f627a5b341e35ab2bde2dcf0bebb3f4c42d0a3be513cf1cafd9f2"
+    },
+    {
+      "file": "leaf/OpenDoorFullSizeFilmScenario.ts",
+      "sha256": "a1dd22f08ddd411e9b53c3618fd1cb6a1d3c39360d810c5cf845624ab6b70f59"
+    },
+    {
+      "file": "leaf/OpenDoorShareFilmScenario.ts",
+      "sha256": "21ea1e1769cfcc611ee651d0914a89b426a67f2d837237578c6bd4fd74794118"
+    },
+    {
+      "file": "leaf/OpenDoorFilmIndex.ts",
+      "sha256": "9eee78893cbc5729259a427183fc80402f67489974e9d584a289805712590aa4"
+    }
+  ],
+  "note": "Controller changes only three inspector defaults to the actual accepted scene inputs. Drag test accepts exactly one end OR endOutside release, rejects any cancellation, preserves exact Direct/Indirect requirements, checks original source/revision/history plus pending commit at release, then one commit and actual Undo. No SDK, runtime gesture or engine behavior changed."
+}

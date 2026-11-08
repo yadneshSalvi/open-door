@@ -1,0 +1,70 @@
+{
+  "schema": "open-door.public-gallery/v1",
+  "date": "2026-11-08",
+  "scope": "Actual recorded Preview frames; fixed crop only, no invented UI, no resizing or overlays. Automated SIK input; provided geometry, manual placement; no physical glasses evidence.",
+  "acceptedPicturePlan": "accepted-plan-002.json",
+  "acceptedCaptureManifest": "capture-manifest-002.json",
+  "model": {
+    "revision": 3,
+    "inputHash": "d80f2566c8606cae",
+    "mainFullSizeShareInputAndAcceptedRepairEqual": true
+  },
+  "frames": [
+    {
+      "file": "spatial-full-size-r002.png",
+      "sha256": "61ff8fe6902f528f1471036efe363c7b11b8f2b8c8d343aa5591b7206353c90e",
+      "source": "open-door-fullsize-take03.mp4",
+      "sourceSha256": "aa9c308b353eea02210341002627a5ebbf169471a24e082358f896c30c40a3bc",
+      "sourceSeconds": 50,
+      "cropXYWH": [
+        256,
+        326,
+        2192,
+        1232
+      ],
+      "caption": "Separate manually staged Sunlit Outdoor supplied-room replay."
+    },
+    {
+      "file": "spatial-options-r002.png",
+      "sha256": "8a211ce4fe75ecf68ab20655b853a676deea5c34e45716da7608ef770e43caa5",
+      "source": "open-door-main-take01.mp4",
+      "sourceSha256": "d445aeb1be78d1b23e3e2568a53496cc8eb3fde71b8bfe5ed71ea13cff4e2638",
+      "sourceSeconds": 56,
+      "cropXYWH": [
+        256,
+        326,
+        2192,
+        1232
+      ],
+      "caption": "Selected +3.0 cm proposal in After view with its three review actions, in Sunlit Room."
+    },
+    {
+      "file": "spatial-route-r002.png",
+      "sha256": "d0c61725d6427844a217a7c524893849bf7bbc7a164032c68c11186d154b756e",
+      "source": "open-door-main-take01.mp4",
+      "sourceSha256": "d445aeb1be78d1b23e3e2568a53496cc8eb3fde71b8bfe5ed71ea13cff4e2638",
+      "sourceSeconds": 75,
+      "cropXYWH": [
+        256,
+        326,
+        2192,
+        1232
+      ],
+      "caption": "Accepted miniature route replay in Sunlit Room."
+    },
+    {
+      "file": "spatial-share-r002.png",
+      "sha256": "cff0ce460641cd493a42367d77231fdf4c44e583bd6997dac1a9a503c7b50fa5",
+      "source": "open-door-share-take01.mp4",
+      "sourceSha256": "ffea70145c7c43db3b05c7a471a17685e43aa46360935cc20b009ddd05480dc1",
+      "sourceSeconds": 34.3666667,
+      "cropXYWH": [
+        256,
+        326,
+        2192,
+        1232
+      ],
+      "caption": "Actual native model-only QR in a fresh matching revision-3 take."
+    }
+  ]
+}

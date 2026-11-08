@@ -1,0 +1,52 @@
+{
+  "revision": "spatial-defaults-and-release-contract-5",
+  "state": "frozen-for-editor-owner-integration",
+  "baseControllerSha256": "f16e0bb7ee14e16573179afb0f5ac44261bcb422b838626849477a95bbf8714c",
+  "scenarios": [
+    "open-door-paced-preview",
+    "open-door-full-size-clear-film",
+    "open-door-full-size-film",
+    "open-door-share-film"
+  ],
+  "validation": {
+    "presentationTests": "16/16 pass",
+    "appTypecheck": "pass",
+    "nativeLeafTypecheck": "pass",
+    "diffCheck": "pass",
+    "nativeExecution": "Paced miniature rehearsal passed 65.556 s, recorded take 65.100 s; new share and full-size scenarios remain subject to actual runs.",
+    "captureAcceptance": "pending",
+    "allTests": "64/64 pass across eight files"
+  },
+  "files": [
+    {
+      "file": "OpenDoorExperience.ts",
+      "sha256": "f16e0bb7ee14e16573179afb0f5ac44261bcb422b838626849477a95bbf8714c"
+    },
+    {
+      "file": "SpatialPresentation.ts",
+      "sha256": "749d9bdb324dd138c936f6df049c15102031b53f3beca3394a2844dbb667dc1e"
+    },
+    {
+      "file": "leaf/OpenDoorDragScenario.ts",
+      "sha256": "b0fa2cad0f9fce968d4ce09c7f1ba2051734ccc05d79e006ff34dbd78035fac7"
+    },
+    {
+      "file": "leaf/OpenDoorFilmScenario.ts",
+      "sha256": "26445194198f627a5b341e35ab2bde2dcf0bebb3f4c42d0a3be513cf1cafd9f2"
+    },
+    {
+      "file": "leaf/OpenDoorFilmIndex.ts",
+      "sha256": "9eee78893cbc5729259a427183fc80402f67489974e9d584a289805712590aa4"
+    },
+    {
+      "file": "leaf/OpenDoorFullSizeFilmScenario.ts",
+      "sha256": "a1dd22f08ddd411e9b53c3618fd1cb6a1d3c39360d810c5cf845624ab6b70f59"
+    },
+    {
+      "file": "leaf/OpenDoorShareFilmScenario.ts",
+      "sha256": "21ea1e1769cfcc611ee651d0914a89b426a67f2d837237578c6bd4fd74794118"
+    }
+  ],
+  "note": "Recorded controller differs only in three inspector defaults from the post-capture source; actual serialized scene inputs already used the accepted Sunlit poses. Direct transaction observer now handles the already-supported endOutside release. Numerical engine and recorded film interactions unchanged.",
+  "captureControllerSha256": "25eb6be5f5452475a5eff88633d3cec15562ff4d18379d9ccd5a41dbe96080d4"
+}

@@ -1,3 +1,9 @@
+# Public spatial gallery and historical captures
+
+The current 8 November gallery comprises `spatial-full-size-r002.png`, `spatial-options-r002.png`, `spatial-route-r002.png` and `spatial-share-r002.png`. These are four actual recorded frames with only the accepted native viewport crop, no resizing, invented UI or overlays. [SHA-bound provenance](spatial-gallery-provenance.json) records source names, hashes, times and crop; [spatial acceptance](../spatial-release.md) provides captions and scope. The options frame shows a selected proposal in After view, not all three option tags. Full size is separately staged supplied geometry; all input is automated SIK Preview, not physical glasses.
+
+## Historical 7 November evidence
+
 # Reviewed interface and Preview captures
 
 Captured from the working Open Door companion and native Preview on 7 November 2026 and reviewed before inclusion. These screenshots contain the application only, without browser account panels or developer credentials.
@@ -15,7 +21,7 @@ Captured from the working Open Door companion and native Preview on 7 November 2
 
 Native images came from SPECS 27 Interactive Preview with its Plane scene. None of these images is physical-device evidence or independently sufficient proof of interaction behavior; the [verification record](../verification.md) and [native record](../native-preview.md) describe the checks separately.
 
-## Current accepted native repair
+## Historical accepted native repair — 7 November
 
 - `native-repair-preview.png`, `native-repair-original.png`, `native-repair-playback.png` and `native-repair-overview-r9.png`: actual +3 cm proposal, Original view, turning footprint and final accepted overview. Only outer margins were trimmed using the rectangle x=90, y=380, width=1212, height=1060 from 1392 × 1910 captures. No application content was changed.
 - `native-repair-preview-full.png`: the complete original proposal capture for comparison with its crop.

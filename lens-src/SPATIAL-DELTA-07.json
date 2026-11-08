@@ -1,0 +1,22 @@
+{
+  "revision": "native-delta-07",
+  "state": "frozen-for-editor-owner-integration",
+  "files": [
+    {
+      "file": "leaf/OpenDoorShareFilmScenario.ts",
+      "sha256": "21ea1e1769cfcc611ee651d0914a89b426a67f2d837237578c6bd4fd74794118"
+    },
+    {
+      "file": "leaf/OpenDoorFilmIndex.ts",
+      "sha256": "9eee78893cbc5729259a427183fc80402f67489974e9d584a289805712590aa4"
+    }
+  ],
+  "validation": {
+    "allTests": "64/64 pass across eight files",
+    "appTypecheck": "pass",
+    "nativeLeafTypecheck": "pass",
+    "fixture": "pass",
+    "diffCheck": "pass"
+  },
+  "note": "Two test-only files. Adds open-door-share-film with real SIK drag/Undo, fresh HTTPS repair, Apply and actual Save & share/Show QR. Requires observed main hash d80f2566c8606cae at natural revision 3; 3 s prehold and 8 s QR hold. Delta 06 direct-drag trace is a separate one-file sync. Runtime and core are unchanged."
+}

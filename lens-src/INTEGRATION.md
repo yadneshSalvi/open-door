@@ -1,5 +1,7 @@
 # Native Lens integration
 
+**Current spatial revision:** use [SPATIAL-INTEGRATION.md](SPATIAL-INTEGRATION.md) for the coordinated helper files, measured table/floor placement, audio and LEAF setup. Canonical source now implements that presentation; its new Preview acceptance is a separate gate. The settings and results below describe the **earlier accepted computed-repair release** and remain as historical evidence, not instructions to restore its floating panel.
+
 `OpenDoorExperience.ts` is authored runtime source, copied to the generated project's `Assets/Scripts/OpenDoorExperience.ts`. It is not an edited Lens scene or project manifest. Copy **`ArchitecturalMeshes.ts`** and the generated **`OpenDoorCore.js`** beside it. Rebuild the core with `npm run lens:bundle` from `open-door/`. Copy these files as one revision, then refresh Preview; do not copy an older Assets controller back over authored source.
 
 ## Minimal editor setup

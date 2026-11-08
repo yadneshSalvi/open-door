@@ -2,13 +2,13 @@
 
 ## The spatial moment
 
-The room looks plausible, but the occupied footprint meets the bedside table and the door meets the bench. **Find changes** turns those two obstructions into a spatial choice: move less furniture, or make a larger change that leaves more modeled clearance. Original positions remain as amber outlines; centimetre arrows show each proposed move. The person compares the alternatives, accepts one revision and watches the actual footprint follow its verified route. The bed stays locked.
+The level miniature sits on a table. Its example wheelchair and outline make the task visible; actual collision witnesses light the bedside table and bench. Pinch the table, move it and release: the chair shows that the room is checking, then the current route and obstruction feedback update. **Find changes** adds up to three computed ghost sets. Pinch a tag, compare Before/After and use that layout. The chair follows the retained verified route and finishes at the bedside heading. The bed stays locked.
 
 Open Door is a room-layout rehearsal prototype for a person using a mobility device, optionally with a designer or trusted collaborator. Dimensions and priorities come from the person. The prototype does not infer their needs or speak for their lived experience.
 
 ## Why glasses
 
-A miniature makes the entire arrangement editable. A 1:1 view exposes the same occupied footprint, turn and final heading in space. Scale changes the model, never the viewer's camera or the numerical dimensions. Furniture, ghosts, displacement arrows and sampled swept footprints explain the choice where it occurs.
+A surface-placed miniature makes the entire arrangement editable. Full size exposes the same footprint, turn and final heading on open floor in a furnished Preview environment. The selected implementation is a supplied model placed by hand (Option C), not a measured twin of the surrounding furniture. One horizontal WorldQuery hit can place the miniature after explicit confirmation; it neither scans a room nor establishes table extent. Scale changes the display, never the viewer's camera or the numerical dimensions.
 
 The SPECS Lens is the spatial deliverable. Its companion supports comfortable dimension entry, import/export, a separate browser repair worker and reviewed language preferences. A website alone would not demonstrate the intended spatial interaction.
 
@@ -22,11 +22,13 @@ The repair searches finite destinations and orientations for unlocked furniture.
 
 ## Interaction and visual language
 
-The room dominates the interface. The native overview has three actions: Find changes, Rehearse, and Room / plan. Editing, profile assumptions, search scope and export details appear contextually. The web proposal inspector is compact enough to keep the spatial changes and Apply action together. Redundant taglines, section eyebrows and repeated explanatory paragraphs were removed.
+The room dominates the interface. The native overview has three actions: Find changes, Rehearse and More. The option-selection state has only the up-to-three spatial tags; choosing one replaces them with Use this layout, Before/After and Cancel. Locks appear on pieces, the profile is attached to the chair, and a short About card contains the scope. There is no permanent header or raw coordinate display. The web proposal inspector keeps the spatial changes and Apply action together.
 
 Pale timber, linen, bright chalk text and mint/amber evidence form a warm architectural model. Decorative bedding, lamp and trim never affect collision geometry. Text accompanies color. Light native lettering is intentional for an additive display; physical readability still needs hardware testing.
 
-Standard SIK far-ray pinch-drag edits unlocked furniture on the model floor. Preview positions do not mutate the source. Release queues one validated commit; illegal drops roll back. Search and proposal review temporarily disable furniture dragging so a ghost can never become an unintended source edit. Fine adjust, locks and Undo remain available in contextual modes.
+Standard SIK near and far pinch-drag edits unlocked furniture on the model floor. Preview positions do not mutate the source. Release queues one validated commit; illegal drops roll back. A cooperative slice advances the unchanged route evaluator after release, with a checking state until a complete result exists. Starting an actual edit cancels a pending search; proposal review refuses furniture edits so a ghost cannot become an unintended source change. Fine adjust, locks and Undo remain contextual.
+
+The translucent chair is a schematic, with no human figure and no solid outside the supplied occupied envelope. Actual trajectory samples drive its motion and wheel animation. Spatial rolling, contact and completion cues supplement visible feedback. Close approach reveals a line between the nearest sampled footprint/furniture edges and the independently certified layout reserve. The line is an illustration; the reserve remains a whole-layout certificate, not a newly invented local deficit. Full-size controls use a bounded lazy follow below eye level while the room remains anchored.
 
 An online native search has a timeout and explicit retry/offline recovery. Every returned alternative is independently rechecked locally before display and again before Apply. Direct editing and evaluation remain local. A canceled or superseded response cannot change the room.
 
@@ -34,10 +36,10 @@ An online native search has a timeout and explicit retry/offline recovery. Every
 
 1. Review the provided profile and inspect the actual table/footprint and bench/door witnesses.
 2. Find computed alternatives without changing the source; compare displacement and certified extra reserve, including the small-margin warning.
-3. Toggle Original/Preview, choose an alternative, preserve the bed lock and commit all moves in one revision. Rehearse the retained verified trajectory after profile acknowledgment.
+3. Toggle Before/After, choose an alternative, preserve the bed lock and commit all moves in one revision. Rehearse the retained verified trajectory after one profile acknowledgment.
 4. Change a profile, lock or arbitrary furniture pose; invalidate old proposals, recompute and Undo. Canceled and superseded requests cannot reappear.
 5. Keep the exact committed model through a QR handoff and matching downloads. A model-only share is distinguished from the complete repair certificate retained by a repair-aware JSON export.
 
-The web flow, source checks and [current native repair acceptance](native-repair-preview.md) pass. Actual native search, spatial comparison, atomic Apply, playback, cancellation and production handoff were observed. Numerical checks, Preview behavior, feedback and hardware are distinct evidence. No glasses, external user study, testimonial, accessibility certification or live recognition is claimed.
+The web flow, earlier native release and current spatial native/source acceptance pass at their separately recorded scope. The spatial source passes 64 tests across eight files and application/native TypeScript. Exact Direct and far furniture transactions, Poke controls, complete rehearsal, observed G2 presentation and matching QR handoff have accepted evidence. [Current acceptance](spatial-release.md) preserves the failed takes and limits: optional WorldQuery, unfilmed proximity/lazy-follow transitions and physical glasses remain untested; final encoded-film QA and user approval are pending. No user study, testimonial, accessibility certification or live recognition is claimed.
 
 The planning follows the [Learn AR with SPECS resources](https://learn-specs.devpost.com/resources). The four equally weighted criteria are addressed through spatial clarity, reproducible geometry, computed choices and an actual working journey; Design is also the first published tie-break criterion. [Official rules](https://learn-specs.devpost.com/rules).

@@ -1,0 +1,30 @@
+{
+  "generator": "scripts/generate-native-audio.cjs",
+  "engine": "CLAD build-sfx (Apache-2.0)",
+  "cues": [
+    {
+      "file": "turn-clear.wav",
+      "sampleRate": 44100,
+      "channels": 1,
+      "samples": 76608,
+      "durationSeconds": 1.737142857142857,
+      "source": "Original algorithmic synthesis using CLAD build-sfx; no sample recordings"
+    },
+    {
+      "file": "contact-soft.wav",
+      "sampleRate": 44100,
+      "channels": 1,
+      "samples": 34727,
+      "durationSeconds": 0.7874603174603174,
+      "source": "Original algorithmic synthesis using CLAD build-sfx; no sample recordings"
+    },
+    {
+      "file": "wheel-roll.wav",
+      "sampleRate": 44100,
+      "channels": 1,
+      "samples": 70560,
+      "durationSeconds": 1.6,
+      "source": "Original algorithmic synthesis using CLAD build-sfx; no sample recordings"
+    }
+  ]
+}
