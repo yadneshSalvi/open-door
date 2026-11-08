@@ -1,6 +1,6 @@
 # Spatial release acceptance — 8 November 2026
 
-The observed native spatial presentation and recorded sources are accepted for assembly. This record supersedes pending spatial gates in earlier progress notes without relabeling the 7 November release or failed takes. The 149.5-second final film remains subject to independent encoded QA (G3), uninterrupted playback and the user's approval (G4).
+The observed native spatial presentation and recorded sources are accepted for assembly. This record supersedes pending spatial gates in earlier progress notes without relabeling the 7 November release or failed takes. The [149.5-second final film](film-review.md) passed independent encoded QA (G3) and uninterrupted browser playback. The user's approval (G4) remains pending.
 
 ## Observed acceptance
 

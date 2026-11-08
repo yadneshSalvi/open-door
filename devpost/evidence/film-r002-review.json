@@ -1,0 +1,84 @@
+{
+  "artifact": "Open-Door-r002.mp4",
+  "sha256": "e9df504d181822c5b1d5e5d31d6c898c875c09b6ce51b72fa40748c04b89ab20",
+  "durationSeconds": 149.5,
+  "frames": 4485,
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "fullDecodePassed": true,
+  "protectedSourceCheck": {
+    "film_frames": [
+      450,
+      2535
+    ],
+    "source_frames": [
+      504,
+      2589
+    ],
+    "frames_checked": 2085,
+    "playback_rate": 1,
+    "fixed_crop": [
+      256,
+      326,
+      2192,
+      1232
+    ],
+    "comparison": "480x270 grayscale, declared active overlay pixels excluded; lossy compression and fractional browser contain resampling tolerated",
+    "maximum_frame_mae": 2.4981951579866357,
+    "median_frame_mae": 2.4262046645433064,
+    "maximum_p99_absolute_difference": 16.0,
+    "maximum_fraction_difference_over_20": 0.006421452789479092,
+    "result": "All mapped protected frames checked; consistent accepted native geometry/order/rate, with no added freeze, interior cut, missing rehearsal section or retime found. Small sharp-edge differences are consistent with fractional contain/resampling and encoding; a known-geometry affine follow-up checked seven distinct action frames. Lossy pixel identity is not claimed."
+  },
+  "qr": {
+    "exact_url_characters": 294,
+    "decoded_exact_full_frames": [
+      4080,
+      4154,
+      4184
+    ],
+    "no_crop_resize_threshold_or_resynthesis": true
+  },
+  "phoneVisualReview": {
+    "width_px": 360,
+    "caption_midpoints": 59,
+    "label_midpoints": 7,
+    "shot_seam_samples": 47,
+    "result": "PASS; caption/label fit, no key-action/control occlusion, isolated0.333s endings merged. Separate outdoor showroom and simulation/automation scope are legible. Orbit and companion remain caption/speech-free."
+  },
+  "encodedAudio": {
+    "integrated_lufs": -14.03,
+    "true_peak_dbtp": -1.78,
+    "sample_rate": 48000,
+    "channels": 2,
+    "codec": "AAC",
+    "full_master_provenance_verified": true,
+    "native_audio_recorded": false,
+    "editorial_product_cues": 3,
+    "all_cues_exact_event_frames": true,
+    "voice_speed_factor": 1,
+    "score": "Original deterministic code-composed score; no external samples.",
+    "human_listening_claimed": false,
+    "whole_master_AI_audition": "PASS exact43e45c3228b5b31f7a50a929ba231add07fcaf2f229cffb6d455b767f41bad64 over0\u2013149.5s. Earlier50/100s split-window flags were corrected by whole-sentence/complete-file review; no actual crossfades exist at those review boundaries."
+  },
+  "browserPlayback": {
+    "status": "PASS",
+    "durationSeconds": 149.5,
+    "wallDurationSeconds": 149.571,
+    "progressSamples": 564,
+    "videoQuality": {
+      "totalVideoFrames": 4485,
+      "droppedVideoFrames": 0,
+      "corruptedVideoFrames": 0
+    },
+    "failures": []
+  },
+  "status": "Independent encoded G3 and complete browser playback passed; user G4 review pending",
+  "userApproved": false,
+  "published": false,
+  "physicalGlassesTested": false,
+  "scope": "Actual Lens Studio Preview with automated SIK input; full-size is a separately staged supplied model. Center shows the initial arrangement for contrast/framing only."
+}

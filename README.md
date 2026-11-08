@@ -46,7 +46,7 @@ Fast search uses the public HTTPS geometry endpoint; every returned alternative 
 
 The spatial source passes 64 tests across eight files, application/native TypeScript and the unchanged fixture regression. Exact Direct furniture transactions, far transactions, near UIKit Poke and the complete native rehearsal passed. Independent G2 review accepted the observed miniature, orbit, Center contrast/framing and separate outdoor replay. Main/full-size/share retain the exact revision-3 input and accepted repair; the actual QR decodes to the matching production companion model. The production scene is saved without active test indices or LEAF bridge. See [spatial acceptance and reproduction](devpost/spatial-release.md) and [verification](devpost/verification.md).
 
-Final encoded-film QA and user approval remain pending. Optional WorldQuery placement, unfilmed proximity/lazy-follow transitions and physical glasses remain untested. Center footage shows the initial arrangement with unverified exact input identity; it proves contrast/framing only.
+The [149.5-second final film](devpost/film-review.md) passed independent encoded QA and complete browser playback. User approval remains pending. Optional WorldQuery placement, unfilmed proximity/lazy-follow transitions and physical glasses remain untested. Center footage shows the initial arrangement with unverified exact input identity; it proves contrast/framing only.
 
 ## Source map
 

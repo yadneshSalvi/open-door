@@ -4,7 +4,7 @@ Recorded during the 7–8 November 2026 build. These changes came from review, n
 
 ## Final observed spatial closure — 8 November
 
-[Current spatial acceptance](spatial-release.md) records the final exact Direct and far transaction passes, observed G2 composition, accepted real-time sources, full-size03/main/share equality and actual production QR handoff. Failed Direct04 and rejected staging/takes remain failures. Production has no active test indices/bridge/helpers. Final encoded-film QA and user approval remain pending; optional WorldQuery, unfilmed proximity/lazy-follow and physical glasses remain untested.
+[Current spatial acceptance](spatial-release.md) records the final exact Direct and far transaction passes, observed G2 composition, accepted real-time sources, full-size03/main/share equality and actual production QR handoff. Failed Direct04 and rejected staging/takes remain failures. Production has no active test indices/bridge/helpers. The [149.5-second film](film-review.md) passed independent encoded QA and complete browser playback. User approval remains pending; optional WorldQuery, unfilmed proximity/lazy-follow and physical glasses remain untested.
 
 The following table preserves progress-stage observations from before that closure; its "await" wording is historical, not the current release status.
 

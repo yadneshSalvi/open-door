@@ -29,4 +29,4 @@ Putting the warning on the obstruction and separating option selection from revi
 
 This is supplied synthetic geometry, manually placed in Lens Studio Preview, with disclosed automated SIK input. It does not scan or recognize the background room. A clear modeled route is not accessibility certification, complete door operation, reach, transfer ability or comfort. No physical glasses test, participant quotation or user-study benefit is claimed. Optional WorldQuery placement and unfilmed proximity/lazy-follow transitions remain unverified.
 
-Lens: `lens/OpenDoor.esproj`. Companion: [Open Door](https://open-door-weld.vercel.app). The source footage and observed presentation are accepted; the 149.5-second film assembly still requires encoded QA and user approval. This draft does not publish a repository/video or submit Devpost.
+Lens: `lens/OpenDoor.esproj`. Companion: [Open Door](https://open-door-weld.vercel.app). The source footage, observed presentation and [149.5-second film](film-review.md) passed their technical reviews; user viewing approval remains pending. This draft does not publish a repository/video or submit Devpost.
