@@ -1,5 +1,9 @@
-# Lens and companion images
+# Lens images
 
-The [current gallery](../gallery.md) contains four cursor-free frames from the 9 November 2026 native Preview recordings: aligned tabletop, actual hand gesture, real-size bedside turn and Center simulation. [Source frames, crops and SHA-256 hashes](../evidence/native-gallery.json) identify every image. The PNGs retain their accepted native pixels; no synthetic hand or furniture was composited into them.
+The [current gallery](../gallery.md) uses accepted r004 native frames reviewed on 10 November 2026: rear-aligned tabletop, a useful drag with its movement readout, the real-size indoor corner and the earned Center view. A fifth close chair image is optional detail.
 
-The unchanged 7–8 November images remain in the [historical gallery](../archive/2026-11-08/gallery.md). Their recorded environment and state apply only to those earlier captures.
+[Exact source hashes, decoded frames, crops and camera scope](../evidence/native-gallery-r004.json) identify every derivative. The only transformations are cropping to the accepted Preview viewport and uniform downscaling. No hand, furniture or interface is added.
+
+The real-size corner is a supplied model placed on a measured floor patch in Colorful Home. It does not claim that the background furniture was recognized or measured automatically. Center is a Lens Studio simulation; physical glasses remain untested.
+
+Earlier PNGs and the [r003 record](../evidence/native-gallery.json) remain unchanged as historical evidence. Their recorded environment and state apply only to those earlier captures.

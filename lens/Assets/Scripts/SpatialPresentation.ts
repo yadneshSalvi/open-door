@@ -62,6 +62,18 @@ export function wheelchairParts(profile:{width:number;length:number;height:numbe
   return parts;
 }
 
+/** A leader ends on the visible backrest, not the unused top of the input envelope. */
+export function wheelchairLabelAnchor(profile:{width:number;length:number;height:number}):Point3 {
+  const back=wheelchairParts(profile).find(part=>part.name==='Backrest')!;
+  return {x:back.position.x,y:back.position.y+back.size.y/2,z:back.position.z};
+}
+
+/** The top corners are equally truthful anchors when the middle has no clear label slot. */
+export function wheelchairLabelAnchors(profile:{width:number;length:number;height:number}):Point3[] {
+  const back=wheelchairParts(profile).find(part=>part.name==='Backrest')!,middle=wheelchairLabelAnchor(profile);
+  return [middle,...[-1,1].map(side=>({x:middle.x,y:middle.y,z:middle.z+side*back.size.z/2}))];
+}
+
 export function rotateFloor(point:Point3,yaw:number):Point3 {
   const c=Math.cos(yaw),s=Math.sin(yaw);
   return {x:c*point.x+s*point.z,y:point.y,z:-s*point.x+c*point.z};
@@ -83,7 +95,7 @@ export function reserveLabel(reserveM:number,index:number):string {
 /** A certificate belongs to the candidate, never to the Before/source view. */
 export function proposalCaption(showAfter:boolean,reserveM:number,index:number):string {
   if(!showAfter)return 'Before';
-  if(reserveM<.001)return 'After · less than 1 mm extra room';
+  if(reserveM<.001)return 'After · under 0.1 cm extra room';
   return 'After · '+reserveLabel(reserveM,index);
 }
 
@@ -99,8 +111,8 @@ export function ordinaryTaskFeedback(task:'journey'|'door',result:any,specificWi
   const name=task==='journey'?'Turn':'Door';
   if(value.status==='verified_feasible')return name+' clear';
   if(value.status==='blocked_witness')return specificWitnessVisible&&value.witness?.objectId?null:name+' blocked';
-  if(value.status==='no_path_found')return task==='journey'?'No route found':'No sweep found';
-  return name+' uncertain';
+  if(value.status==='no_path_found')return task==='journey'?'No route found':'Door check incomplete';
+  return 'Not sure yet. Try again.';
 }
 
 /** A successful zero-move result is distinct from an exhausted finite search. */
@@ -133,24 +145,22 @@ export function obstructionLabels(result:any):Record<string,string> {
 
 export const PRIMARY_MENUS:Record<string,readonly string[]>={
   overview:['find','rehearse','more'],
-  more:['place','scale','back'],
+  more:['place','nextMore','back'],
   door:['door','back'],
   placement:['placeHere','useProvided','back'],
-  edit:['lock','align','back'],
+  edit:['lock','back'],
   profile:['profileWidth','profileBuffer','back'],
   profileWidth:['widthMinus','widthPlus','backProfile'],
   profileBuffer:['bufferMinus','bufferPlus','backProfile'],
   search:['cancel'],
-  // The up-to-three spatial tags are the controls in this state. Selecting any
-  // option reveals Apply / Before–After / Cancel, without six targets at once.
-  repairChoices:[],
+  // One spatial option + Next + Cancel. A fourth navigation target is never hidden.
+  repairChoices:['nextOption','cancel'],
   repair:['apply','beforeAfter','cancel'],
   repairCompare:['before','after','backRepair'],
   repairEmpty:['locks','profile','back'],
   repairUnneeded:['rehearse','back'],
   repairError:['retry','offline','back'],
   about:['back'],
-  keep:['showQR','about','back'],
   sharing:['back'],
   playing:['stop'],
   checking:['undo'],
@@ -182,13 +192,6 @@ export class RevisionEvaluation {
   matches(generation:number,revision:number,inputHash:string){
     return !this.cancelled&&generation===this.generation&&revision===this.revision&&inputHash===this.inputHash;
   }
-}
-
-/** Hysteresis prevents a label flickering at the distance threshold. */
-export function detailVisible(distanceCm:number,wasVisible:boolean,miniature:boolean,hovered:boolean):boolean {
-  if(hovered)return true;
-  const enter=miniature?35:120,exit=enter+(miniature?8:20);
-  return Number.isFinite(distanceCm)&&distanceCm<=(wasVisible?exit:enter);
 }
 
 /** Annotation endpoints on separated edges; not a motion or clearance verifier. */

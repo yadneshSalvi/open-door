@@ -1,22 +1,11 @@
 # Native experience
 
-Open [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj) in Lens Studio 5.23.2. The miniature begins with two separate obstructions: the table blocks the chair’s turn and the bench blocks the door. The original example remains unchanged at startup.
+Open [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj) in Lens Studio 5.23.2. The immutable example begins with two independent obstructions: the table blocks the bedside turn and the bench blocks the door.
 
-A pinch drag previews an unlocked furniture move. Release validates the placement and checks the updated model; Undo restores the old layout. Suggest fixes searches actual geometry with the bed locked, then locally checks its returned alternatives. Point at a colored ghost, compare Before and After, and choose Use. Align back is a later real edit, so its fresh result replaces the earlier extra-space certificate.
+Pinch furniture to preview a move. A live distance label, start outline and halo explain it. A valid release commits once, checks the updated model and plays the verified trajectory. Undo restores the prior input and stays in More after the temporary shortcut expires.
 
-## Measured Preview arrangement
+Suggest fixes searches actual geometry with the bed locked. One colored ghost is selectable beside Next option and Cancel. Use and comparison appear after selection. A real table drag can earn a rear-edge snap; there is no alignment command. The fresh result replaces the prior repair certificate.
 
-| View | Placement |
-| --- | --- |
-| Miniature | Sunlit Room sideboard, surface center `(-30,-142.9,-474)` cm, yaw 0, scale 0.1 |
-| Indoor bedside corner | Colorful Home floor y `-135.78` cm; world x `[-300,-150]`, z `[-350,-150]` cm |
-| Original room center in indoor view | `(-155,-135.78,-185)` cm, yaw 0, scale 1 |
-| Displayed model area | x `[0.65,2.15]`, y `[1.35,3.35]` m, exactly 1.5 × 2.0 m |
+The tabletop uses Sunlit Room. The Colorful Home real-size view displays a true 2.2 × 2.0 m bedside corner on measured indoor floor. Wall tape, outlined furniture, a bed corner and a measured door-direction marker add context. The chair stays visible at every pose, with an outline outside the corner. The original room is neither shrunk nor claimed to match the background furniture.
 
-These measurements place the example on the floor; they do not register it to the environment’s furniture. The indoor view clips ghost boxes, edges and route lines. It never rescales the 4.2 × 3.4 m input room to fit the patch.
-
-On device, a fresh surface hit and explicit confirmation are required. The editor’s saved pose cannot bypass that branch. A real-size placement asks for its own horizontal floor hit. The primary controls remain nearby during placement; afterward the model stays anchored and the real-size dock follows below eye level.
-
-## Inspect and reproduce
-
-[Native setup](../lens-src/SPATIAL-INTEGRATION.md) lists packages, script inputs and the separate LEAF test workflow. [Verification](verification.md) distinguishes source tests, actual Preview checks and physical hardware. Current film/gallery captures are in progress; the [previous spatial report](archive/2026-11-08/spatial-release.md) retains its own observed scope.
+[Native setup](native-setup.md) gives current inputs and reproduction instructions. [Verification](verification.md) lists source checks, observed native results and their limits. Internal integration notes are preserved in the [archive](archive/README.md).

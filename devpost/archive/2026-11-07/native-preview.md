@@ -40,7 +40,7 @@ OpenCV 4.13.0 did not detect an earlier dense revision-14 render, while ZXing de
 
 ## Fixes and runtime log scope
 
-Native Preview exposed two issues that source checks had not established. MeshBuilder required a flat interleaved numeric buffer; corrected vertex uploads rendered successfully. Destroying hovered controls/furniture also left SIK cursor wrappers referring to retired targets. The final controller preserves the finite menu roots and four Interactable/collider roots and refreshes only decorative children. The core and geometric checks were unchanged. [Integration notes](../../../lens-src/INTEGRATION.md) explain the read-only SIK review behind that lifecycle decision.
+Native Preview exposed two issues that source checks had not established. MeshBuilder required a flat interleaved numeric buffer; corrected vertex uploads rendered successfully. Destroying hovered controls/furniture also left SIK cursor wrappers referring to retired targets. The final controller preserves the finite menu roots and four Interactable/collider roots and refreshes only decorative children. The core and geometric checks were unchanged. [Integration notes](../integration-r003/INTEGRATION.md) explain the read-only SIK review behind that lifecycle decision.
 
 The final-source QA interval examined **810,745 log bytes** with no E/F/W diagnostics or Preview error/exception prints, excluding editor transport and analytics payloads. After debugger cleanup, the editor emitted one `QObject::disconnect` warning about a destroyed QTcpSocket signal. Subsequent Preview error prints were empty. That editor teardown warning is disclosed; the clean claim is scoped to the actual QA interval.
 

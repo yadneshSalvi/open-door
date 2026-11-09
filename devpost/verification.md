@@ -1,57 +1,48 @@
 # Verification
 
-Updated 9 November 2026. Numerical tests, native Preview observations and physical hardware are separate kinds of evidence. Modeling and testing limits are collected in [Scope](../README.md#scope).
+Updated 10 November 2026. Source tests, actual Lens Studio Preview observations and physical hardware are different forms of evidence. [Scope](../README.md#scope) defines the prototype’s limits.
 
-## Current source
+## Source and saved project
 
-The numerical engine, continuous motion verifier, portable core and HTTPS/export/share contracts are unchanged. The final source run passed **100 tests across 12 files**, application TypeScript, native TypeScript and the original fixture regression. The web production build passed before these native-only changes.
+The current source passes **140 tests across 16 files**, application TypeScript and native TypeScript, including the optional scenarios. All 36 saved native mirrors match their frozen source. The numerical engine, portable core and HTTPS/export/share contracts are unchanged. Fixture regression and portable bundle checks retain the three separate outcomes: chair and door blocked; table-only move clears the chair while the door remains blocked; moving both relevant pieces clears both tasks.
 
-The unchanged fixture regression confirms three distinct states: original chair/door blocked; moving only the table clears the chair while the door remains blocked; moving the bench as well clears both modeled tasks. A table move is never used as proof of door clearance.
+SDK-boundary tests execute mandatory device placement, horizontal and stale-hit checks, release-only commits, repair invalidation, held action identity, three-target accounting and persistent Undo. Presentation tests cover physical text and collider sizes, projected exclusions, short leaders, a single route ribbon, mesh batching, drag snapping, all 49 chair poses, changed-state caching and the 300 ms dock fade. These are source checks; native readability is reviewed separately.
 
-The new tests execute actual authored native methods against an explicitly mocked SDK boundary. They check the false-isEditor startup branch, blocked Back and saved-spot bypass, fresh floor placement, real-hit-only confirmation, 2 Hz requery, stale/no-hit handling, the pitched gaze intersecting a tabletop before its back wall, placement-only labels, physical UI sizes, held-action identity and aggregate target counts. They are simulations of those branches, not physical Spectacles tests.
+After filming, the temporary registry, messaging bridge, frame sampler and floor probe were removed through the editor. The saved project was closed, reopened, compiled and started successfully. The [current native summary](evidence/native-r004.json) records its exact scene hash. Optional scenarios remain in the Tests folders and are not attached to the shipping scene.
 
-Annotation tests cover projected bounds, obstruction avoidance, stable eligible positions and required-label fallback. Undo placement also tests the full target rectangle against furniture bounds and uses native-style non-enumerable vector getters to catch SDK interop errors. They cannot establish rendered readability or native field of view; those need actual camera checks.
+## Current Preview interactions
 
-## Table alignment and indoor crop
-
-Align back uses the real edit path. For the reviewed repaired example, table `(0.91,3.01,0)` aligns rear edges at 3.26 m and leaves a 1 cm side gap beside the wardrobe. Both tasks are recalculated and the earlier repair certificate is cleared. The resulting input hash is `23bff2355c471375` at revision 4. The fresh route extra-space lower bound is `0.0015062914311184186 m`; the door bound is `0.0021967573465547785 m`. The conservative display is **At least 0.1 cm extra room**, never the earlier 3 cm choice.
-
-The indoor display clips to room x `[0.65,2.15]`, y `[1.35,3.35]` m. It retains the true dimensions and checks the complete original model. Only **26 complete expanded chair footprints** out of the 49-pose aligned path fit inside the measured patch. Testing only pose centers would incorrectly show all 49; the actual implementation checks the whole footprint.
-
-## Native Preview
-
-The 9 November 2026 runs used **Lens Studio 5.23.2, SIK 2.0.0, UIKit 2.0.0, official 3D Hints 2.0.0 and LEAF 2.0.2**. CLAD and Lens Studio MCP supported scene integration and inspection. Native SIK logging uses an internal version string; the versions here are the installed package versions.
+The miniature was recorded in Sunlit Room using the SPECS 27 preview. The real-size corner uses Colorful Home. Visible synthetic hands take the actual SIK hover, pinch, drag and release paths.
 
 | Interaction | Observed result |
 | --- | --- |
-| Surface placement | The real WorldQuery reticle received a horizontal hit, a visible hand pinched Place here, and the miniature unfolded. Display placement changed; all model inputs stayed equal. |
-| Moving reticle | Changing actual camera aim moved the genuine hit by 1.958 cm while the query count advanced from 2 to 12. Confirmation then completed through the normal hand control. |
-| Furniture edit and Undo | A real drag/release committed once and checked the new position. The chair cleared while the separate door stayed blocked; Undo restored the earlier model. |
-| Checked layouts | Fresh HTTPS proposals were verified locally. Actual 3D ghost selection isolated the selected layout; Before/After and Use ran through the visible controls. |
-| Chair sizing | Actual +5 cm and −5 cm controls changed 66→71→66 cm, one commit per press. Normalizing only the edit counter restored the exact original input hash. |
-| Undo visibility | The aligned table keeps its Undo chip fully visible. A visible pinch restored the prior proposal’s furniture and chair profile, with the edit counter advancing normally; the aggregate stayed at three controls. |
-| Hand hint | The official move animation played once and its pose stayed visible through 27 idle observations. The actual first furniture drag dismissed it. This is representative Preview timing. |
-| Final alignment | Align back committed the requested table position, cleared the obsolete proposal certificate, and produced fresh chair and door checks. The complete route replay finished. |
-| Real size | The same final model ran at scale 1 on the measured indoor floor patch. All 26 displayed complete expanded footprints fit inside it. |
-| Distance and menus | A continuous walk-in crossed far, middle and near bands. Contextual chair/door controls, Back, Undo and the aggregate three-target limit were exercised. Actual Center simulation was inspected separately. |
-| Share | The QR decoded from recorded pixels to the final model. Opening that exact URL in the companion reproduced its inputs and fresh checks; it did not transfer the old route certificate. |
+| Furniture move | The actual table drag showed a live centimetre value, original-position outline and release. It cleared the chair turn while the door remained blocked. |
+| Undo and search | Undo restored the original arrangement. A genuine HTTPS request produced three alternatives, each checked locally against the complete input. One selectable ghost plus Next and Cancel keeps the three-target cap. |
+| Compare and use | The hand selected an option and used Before/After before applying it. The chair then followed the checked route. |
+| Rear-edge snap | A later table drag snapped its rear edge to the wardrobe. Release cleared the old repair certificate and checked the changed room again. Both tasks passed. |
+| Chair size | Actual controls changed width 66 → 71 → 66 cm, with a visibly changing footprint and fresh checks. Other input fields remained unchanged. |
+| Placement | A real horizontal WorldQuery hit was followed by a SIK confirmation and model placement. |
+| Real size | The same complete final input was shown at scale 1. The chair stayed rendered through 48 observed moving poses; 24 actual camera changes occurred while it was rolling, ending inside the turning circle. |
+| Share | The original Send gesture is followed by a clearer native close view of the same saved room. All 150 frames of that five-second hold decode to the identical 282-character URL, with the complete phone caption visible. The companion reconstructed the exact revision-4 model and freshly checked both tasks as clear. |
 
-The [recorded interaction receipt](evidence/native-recorded.json) and [gallery source manifest](evidence/native-gallery.json) bind the concrete results and frames. The film's 66→71 cm insert is a separate feature demonstration; it does not claim to show the return to 66 cm. The later continuous main explicitly uses the original chair.
+The continuous main run ends at revision 4, input hash `23bff2355c471375`. The table is at `(0.91, 3.01)` m and the wardrobe at `(0.35, 2.66)` m: both rear edges are **3.26 m**, with a **1 cm side gap**. The bed remains locked. The chosen **3 cm gap is kept**; extra lower bounds beyond it are about **0.1506 cm for the chair** and **0.2197 cm for the door**, not an additional 3 cm.
 
-Visible input uses an SDK-permitted LEAF hand subclass with a measured pinch midpoint and camera-relative palm roll. Every gesture follows real SIK interaction modes; teardown restores tracking. The saved production scene has no active test indices, temporary runner, ray probe or LEAF bridge. It compiled and started cleanly after removal. An unrelated host-authentication analytics warning is not a product runtime result.
+Dense image review confirms the live movement values and held snap endpoints. One source frame has a blank label while its position changes, followed by a short fade; fully readable values resume within about 0.133 seconds. That brief transition is retained in the evidence rather than described as uninterrupted readability.
 
-Native recording is video-only. The film uses separately generated narration and music, plus original product-cue assets aligned to logged actions. [Film review](film-review.md) records the exact encoded file checks separately from native behavior.
+## Indoor corner and floor
 
-## Numerical and browser foundations
+The scale-1 display covers model x `[0, 2.2]`, y `[1.4, 3.4]` m. Wall tape, the wardrobe, bedside table, bed corner and a door-direction marker establish the room. A single ribbon replaces the stack of chair outlines. The chair remains visible as an outline when outside the displayed corner. The actual additive Center image preserves the checked route and furniture.
 
-The retained suite covers independent interval/rotation/arc expectations, intermediate collisions, start occupancy, final heading, turning radius, reverse permission and conservative uncertainty. Repair tests preserve locks/dimensions/task inputs, reject invalid final placements, discard canceled or stale work and verify all supplied motions. Certificate tests bind the source and result hashes and independently recheck the selected extra space. Browser regressions cover same-tab/back-forward shared models and an actual playback race that once produced an undefined pose.
+Across 9,486 original observations and a 78-observation supplement, all **980 in-use buffered chair-floor targets** had positive support from at least one measured view. Two unresolved expanded-grid targets lie outside the used chair sweep. This is finite sampled support, not a continuous floor survey, room scan or whole-volume certificate. The moving-camera view shows the actual rendered chair; it does not promise that the entire conservative 1.1 m profile box stays inside the field of view at every close pose.
 
-The production companion and APIs have earlier complete browser/HTTP evidence. A shared link carries the model and triggers new evaluation; it does not preserve the selected native path or optimization certificate. [Repair method](repair-search.md), [geometry](geometry.md) and [API](api.md) document those contracts.
+## Host Preview frame times
 
-## Earlier evidence
+The recorded real-size window contains 3.600 seconds of chair playback and 1.453 seconds after stopping. Its 224 host UpdateEvent intervals measured median **21.903 ms**, p95 **24.857 ms** and maximum **62.788 ms**. The preceding start window had 187 intervals: median **22.216 ms**, p95 **26.110 ms**, maximum **490.347 ms**. The startup stall is retained in the report.
 
-- [8 November spatial build](archive/2026-11-08/spatial-release.md): near Direct and far transactions, 14.058-second blocked-to-clear test, outdoor full-room playback and matching QR. Those are the previous presentation.
-- [8 November film](archive/2026-11-08/film-review.md): the unchanged 149.5-second file and its complete playback/encoded checks.
-- [7 November remote repair](archive/2026-11-07/native-repair-preview.md) and [original native release](archive/2026-11-07/native-preview.md): separately retained source hashes, assertions and handoffs.
+These are recorded host intervals under diagnostic logging and screen capture, not playback-only quantiles, physical SPECS FPS, GPU timings or script self-time. They describe the measured source and context, not a guarantee for future runs.
 
-Test indices, the LEAF bridge and temporary scenario runners are absent from the saved release scene. [Reproduction instructions](../lens-src/SPATIAL-INTEGRATION.md) keep testing separate from normal startup.
+## Practical limits
+
+The room, furniture and chair are entered example geometry, not recognized background objects. Geometric clearance does not establish transfer ability, comfort, full door operation or accessibility certification. Physical glasses and human tracking have not been tested. The QR is a link fallback; direct paired-phone sending is future work.
+
+Native recordings have no microphone track. Reconstructed product sounds in the film must use the original assets and actual logged event times. The [previous verification](archive/verification-before-r004.md) and [r003 film review](evidence/film-review-r003.md) remain historical records. Current film checks are separate from these native results.

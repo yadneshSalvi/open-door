@@ -1,27 +1,29 @@
 import {describe,it,expect} from 'vitest';
 import {createRequire} from 'node:module';
-import {alignedTablePose,distanceBand,extraRoomText,overviewActions,placementAim,shouldCloseMenu,startupPlacement} from '../lens-src/SpatialExperiencePolicy';
-import {clipFloorPolygon,clipFloorSegment,completeFootprintInCorner,cornerOpacity,DEFAULT_CORNER,pointInCorner,validCorner} from '../lens-src/SpatialCorner';
+import {alignedTablePose,distanceBand,extraRoomText,overviewActions,moreActions,sideDockPosition,shouldCloseMenu,startupPlacement} from '../lens-src/SpatialExperiencePolicy';
+import {clipFloorPolygon,clipFloorSegment,completeFootprintInCorner,cornerOpacity,pointInCorner,validCorner} from '../lens-src/SpatialCorner';
 import {fullSizeRoomPosition,PRIMARY_MENUS} from '../lens-src/SpatialPresentation';
 const require=createRequire(import.meta.url),Core=require('../lens-src/OpenDoorCore.js');
+// Historical crop arithmetic remains a regression, not the current staging default.
+const DEFAULT_CORNER={minX:.65,minY:1.35,maxX:2.15,maxY:3.35};
 function repaired(){const input=Core.cloneInput();input.room.objects[1].pose={x:.5469999999999999,y:1.8070000000000002,theta:0};input.room.objects[2].pose={x:1.495,y:.692,theta:0};input.room.revision=3;return input;}
 
 describe('round3 native experience policy',()=>{
   it('requires fresh device placement despite a confirmed Preview inspector pose',()=>{
     expect(startupPlacement(false,true)).toEqual({isEditor:false,beginPlacement:true,showPreviewDisclosure:false,branch:'device'});
     expect(startupPlacement(false,false).beginPlacement).toBe(true);expect(startupPlacement(true,true).beginPlacement).toBe(false);expect(startupPlacement(true,false).beginPlacement).toBe(true);
-    const aim=placementAim({x:120,y:160,z:-200},{x:3,y:-9,z:-4});expect(Math.hypot(aim.x-120,aim.z+200)).toBe(75);expect(aim.y).toBe(120);
+    const aim=sideDockPosition({x:120,y:160,z:-200},{x:3,y:-9,z:-4});expect(Math.hypot(aim.x-120,aim.z+200)).toBeCloseTo(52);expect(aim.y).toBe(115);
   });
   it('uses three distance bands with10cm hysteresis',()=>{
     expect(distanceBand(130,null)).toBe('far');expect(distanceBand(115,'far')).toBe('far');expect(distanceBand(109,'far')).toBe('middle');
     expect(distanceBand(125,'middle')).toBe('middle');expect(distanceBand(131,'middle')).toBe('far');expect(distanceBand(54,'middle')).toBe('near');expect(distanceBand(64,'near')).toBe('near');expect(distanceBand(66,'near')).toBe('middle');
   });
   it('keeps Place on first More, counts both comparison segments and includes Back',()=>{
-    expect(PRIMARY_MENUS.more).toEqual(['place','scale','back']);expect(PRIMARY_MENUS.repairCompare).toEqual(['before','after','backRepair']);
-    for(const menu of ['more','edit','door','profile','profileWidth','profileBuffer','repairCompare','keep','about','placement']){expect(PRIMARY_MENUS[menu].length).toBeLessThanOrEqual(3);expect(PRIMARY_MENUS[menu].some(key=>key.startsWith('back'))).toBe(true);}
+    expect(PRIMARY_MENUS.more).toEqual(['place','nextMore','back']);expect(PRIMARY_MENUS.repairCompare).toEqual(['before','after','backRepair']);
+    for(const menu of ['more','edit','door','profile','profileWidth','profileBuffer','repairCompare','about','placement']){expect(PRIMARY_MENUS[menu].length).toBeLessThanOrEqual(3);expect(PRIMARY_MENUS[menu].some(key=>key.startsWith('back'))).toBe(true);}
     expect(Object.values(PRIMARY_MENUS).flat()).not.toContain('toolsMore');
     for(const clear of [false,true])for(let context=0;context<=3;context++)expect(overviewActions(clear,context).length+context).toBeLessThanOrEqual(3);
-    expect(shouldCloseMenu('more',0,6,false)).toBe(true);expect(shouldCloseMenu('more',0,7,true)).toBe(false);expect(shouldCloseMenu('repair',0,20,false)).toBe(false);
+    expect(shouldCloseMenu('more',0,6,false)).toBe(true);expect(shouldCloseMenu('more',0,7,true)).toBe(false);expect(shouldCloseMenu('repair',0,20,false)).toBe(true);expect(moreActions(0,true)[0]).toBe('undo');
   });
   it('aligns the screenshot table by a real valid edit while preserving protected input',()=>{
     const source=repaired(),before=JSON.stringify(source),pose=alignedTablePose(source.room.objects[1],source.room.objects[3]);expect(Core.stableHash(source)).toBe('d80f2566c8606cae');

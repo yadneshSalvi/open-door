@@ -1,0 +1,95 @@
+{
+  "schema": "open-door/current-film-review@4",
+  "review_date": "2026-11-10",
+  "status": "PASS WITH STATED FILM SCOPE AND ADAPTATIONS",
+  "title": "Open Door — Try the turn",
+  "film": {
+    "filename": "Open-Door-r004.mp4",
+    "sha256": "20a4d949ab9d3d85b9f3493e2b976378755aa0452f08a9b16f6c026d32eab4d0",
+    "bytes": 22662216,
+    "duration_seconds": 105.16666666666667,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "decoded_frames": 3155,
+    "decode_errors": 0
+  },
+  "independent_receipt_sha256": "85eb015e904c65f6b0b49f3bd188a9bf06e4c6c8d8563f4fbb96eddb5b737ef4",
+  "picture": {
+    "native_frames_compared": 3065,
+    "protected_main_frames": 1710,
+    "protected_main_seconds": 57,
+    "rate": 1,
+    "no_hidden_main_cuts_or_retiming": true,
+    "comparison_scope": "Sequential decoded-n and independent CSS matrices/eases; gray 480x270 comparison after declared 1088x612 source resample outside exact overlays. Lossy correspondence, not bit identity.",
+    "source_correspondence_result": "All declared native frames agree within consistent resampling/compression differences; no unexpected source mismatch. Full-size wire outlines have higher median error (5.047 versus 3.539–3.891 for tabletop/QR)."
+  },
+  "text": {
+    "caption_midpoints": 37,
+    "boundaries": "All cue starts and ends checked at 360 px",
+    "fixed_caption_box": [
+      1300,
+      780,
+      428,
+      104
+    ],
+    "font_px": 48,
+    "line_height_px": 52,
+    "literal_bottom_center": false,
+    "position_adaptation": "Fixed lower-right captions keep native controls, required feedback and the chair visible; a small peripheral outline edge can be covered."
+  },
+  "qr": {
+    "exact_encoded_decodes": 6,
+    "successful_decodes": 6,
+    "url_sha256": "e575526002449191db218aa82106372be7997968ec773c537d4ae62a0a5433de",
+    "input_hash": "23bff2355c471375",
+    "revision": 4,
+    "complete_phone_caption_visible": true,
+    "scope": "Actual Send from source008, then a later source010 camera view of the identical model and URL. No automatic paired-phone delivery."
+  },
+  "audio": {
+    "codec": "AAC",
+    "sample_rate": 48000,
+    "channels": 2,
+    "integrated_lufs": -14.89,
+    "true_peak_dbtp": -1.88,
+    "lag_samples": 0,
+    "drift_windows_passed": 4,
+    "master_sha256": "751e1fcc1650eb658c3385ac5a79701677975e22d62c48d99d71742023a457fc",
+    "whole_master_model_audition_passed": true,
+    "native_microphone_audio": false,
+    "cues": "39 declared remixes placed at genuine recorded event times",
+    "human_listening_claimed": false
+  },
+  "complete_browser_playback": {
+    "rate": 1,
+    "unmuted": true,
+    "frames": 3155,
+    "browser_dropped_frames": 2,
+    "stalls": 0,
+    "errors": 0,
+    "intermediate_pause_or_seek": false,
+    "initial_start_and_terminal_end_events_retained": true
+  },
+  "native_source": "009; optional retained-QR test driver 010 does not change product source",
+  "native_source_tests": 140,
+  "adaptations": [
+    "Three verified options are cycled as one ghost with Next/Cancel, preserving the three-target cap.",
+    "Captions use one lower-right box [1300,780,428,104], 48 px type / 52 px line height, rather than literal bottom-centre. It covers a minor peripheral full-size outline edge, not the actual chair body.",
+    "Accepted steeper tabletop camera and one 33 ms readout reset plus about 133 ms fade.",
+    "Center shows a bounded glasses simulation view, not the complete patch in the narrow display.",
+    "Send comes from source008; the same-input QR hold comes from source010, with no implication of a continuous single capture."
+  ],
+  "limits": [
+    "Scripted Lens Studio Preview; physical glasses tracking, comfort and performance untested.",
+    "Normal QR model link and browser/API validation; no physical phone camera scan, inverted-QR validation or paired-phone delivery.",
+    "Full-size rendered chair remains visible during the accepted walk; this does not claim all conservative envelope corners remain in view.",
+    "Finite floor checks support all 980 in-use buffered chair floor targets; two unused expanded-grid points remain unknown. No continuous-surface, whole-volume or physical accessibility certificate.",
+    "The selected proposal truthfully certified about 3.04 cm extra reserve before final alignment. Final aligned pose has only small additional reserve above the requested 3 cm; editing clears the previous proposal certificate and performs fresh checks."
+  ],
+  "previous_r003_sha256": "42549071adf7994662a2a695ac58ac86841fab1bf4e74b3c5dad741a79885330",
+  "previous_r003_unchanged": true,
+  "uploaded": false,
+  "public_video_url": null,
+  "publication_authorized": false
+}

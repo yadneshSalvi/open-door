@@ -1,65 +1,67 @@
-import { clipFloorPolygon,clipFloorSegment,CornerBounds,cornerOpacity,FloorPoint,pointInCorner } from './SpatialCorner';
+import {clipFloorPolygon,clipFloorSegment,CornerBounds,doorEdgeMarker,FloorPoint,pointInCorner} from './SpatialCorner';
+import {sampledRibbon,triangulateRibbon} from './SpatialRouteRibbon';
+import {SpatialMeshBatch} from './SpatialMeshBatch';
 
-/** A clipped drawing of the existing model at one centimetre per centimetre. */
+/** True-size display clipping. All marks share static meshes, grouped by colour. */
 export class OpenDoorCornerView {
-  constructor(private parent:SceneObject,private bounds:CornerBounds,private cubeMesh:RenderMesh,
-    private material:(key:string,color:vec4)=>Material,private point:(x:number,y:number,z:number)=>vec3,private yawOffset=0){}
-
-  private node(name:string){const object=global.scene.createSceneObject(name);object.setParent(this.parent);return object;}
-  public line(from:FloorPoint,to:FloorPoint,color:vec4,widthCm=1,heightM=.008,dashed=false) {
+  private batch:SpatialMeshBatch;
+  constructor(private parent:SceneObject,private bounds:CornerBounds,_cubeMesh:RenderMesh,
+    material:(key:string,color:vec4)=>Material,private point:(x:number,y:number,z:number)=>vec3,_yawOffset=0){this.batch=new SpatialMeshBatch(parent,material);}
+  public flush(){this.batch.flush();}
+  public line(from:FloorPoint,to:FloorPoint,color:vec4,widthCm=1,heightM=.008,dashed=false){
     const segment=clipFloorSegment(from,to,this.bounds);if(!segment)return;
-    const dx=segment.to.x-segment.from.x,dy=segment.to.y-segment.from.y,length=Math.hypot(dx,dy);
-    if(length<.0001)return;
-    const pieces=Math.max(1,Math.ceil(length/(dashed?.07:.12)));
-    for(let n=0;n<pieces;n++){
+    const dx=segment.to.x-segment.from.x,dy=segment.to.y-segment.from.y,length=Math.hypot(dx,dy);if(length<1e-6)return;
+    const count=dashed?Math.max(1,Math.ceil(length/.07)):1;
+    for(let n=0;n<count;n++){
       if(dashed&&n%2)continue;
-      const t=(n+.5)/pieces,x=segment.from.x+dx*t,y=segment.from.y+dy*t;
-      const fade=cornerOpacity({x,y},this.bounds);if(fade<.015)continue;
-      const alpha=Math.round(color.w*fade*16)/16;if(alpha<=0)continue;
-      const object=this.node('Clipped floor mark'),visual=object.createComponent('Component.RenderMeshVisual');
-      visual.mesh=this.cubeMesh;visual.mainMaterial=this.material('evidence-corner-line-'+[color.x,color.y,color.z,alpha].join('-'),new vec4(color.x,color.y,color.z,alpha));
-      object.getTransform().setLocalPosition(this.point(x,y,heightM));
-      object.getTransform().setLocalRotation(quat.angleAxis(Math.atan2(dy,dx)+this.yawOffset,vec3.up()));
-      object.getTransform().setLocalScale(new vec3(length/pieces*100,.18,widthCm));
+      const a=n/count,b=(n+1)/count;
+      this.batch.line(this.point(segment.from.x+dx*a,segment.from.y+dy*a,heightM),this.point(segment.from.x+dx*b,segment.from.y+dy*b,heightM),color,widthCm);
     }
   }
-  public polygon(points:FloorPoint[],color:vec4,widthCm=1,heightM=.008,dashed=false) {
+  public polygon(points:FloorPoint[],color:vec4,widthCm=1,heightM=.008,dashed=false){
     for(let n=0;n<points.length;n++)this.line(points[n],points[(n+1)%points.length],color,widthCm,heightM,dashed);
   }
-  public roomBoundary(room:{width:number;depth:number}) {
-    this.polygon([{x:0,y:0},{x:room.width,y:0},{x:room.width,y:room.depth},{x:0,y:room.depth}],new vec4(.9,.95,1,.8),1.4);
-    // Corner crop ends fade away. There is deliberately no invented wall at a crop edge.
+  public roomBoundary(room:{width:number;depth:number}){
+    const color=new vec4(.92,.95,1,.8),edges=[[{x:0,y:0},{x:0,y:room.depth}],[{x:0,y:room.depth},{x:room.width,y:room.depth}]];
+    for(const [a,b] of edges){
+      const clipped=clipFloorSegment(a,b,this.bounds);if(!clipped)continue;
+      this.line(a,b,color,2,.012);this.line(a,b,color,1,.1);
+      for(const p of [clipped.from,clipped.to])this.batch.line(this.point(p.x,p.y,.012),this.point(p.x,p.y,.1),color,1);
+    }
+    const r=this.bounds;
+    this.polygon([{x:r.minX,y:r.minY},{x:r.maxX,y:r.minY},{x:r.maxX,y:r.maxY},{x:r.minX,y:r.maxY}],new vec4(.76,.81,.84,.5),.5,.006,true);
   }
-  public furniture(points:FloorPoint[],heightM:number,color:vec4,filled=true) {
+  public doorContext(hinge:FloorPoint){
+    const marker=doorEdgeMarker(hinge,this.bounds);if(!marker)return;
+    const {anchor:a,direction:d}=marker,t={x:-d.y,y:d.x},color=new vec4(.83,.87,.9,.7);
+    // Neutral door symbol, not a checked sweep or mint route continuation.
+    const inward={x:a.x-d.x*.14,y:a.y-d.y*.14},tip={x:a.x-d.x*.015,y:a.y-d.y*.015};
+    this.line(inward,tip,color,.5,.024,true);
+    for(const side of [-1,1])this.line(tip,{x:tip.x-d.x*.04+t.x*.025*side,y:tip.y-d.y*.04+t.y*.025*side},color,.5,.024);
+    for(let n=0;n<8;n+=2){const p=(angle:number)=>({x:inward.x+t.x*Math.cos(angle)*.07-d.x*Math.sin(angle)*.07,y:inward.y+t.y*Math.cos(angle)*.07-d.y*Math.sin(angle)*.07});this.line(p(n*Math.PI/16),p((n+1)*Math.PI/16),color,.4,.024);}
+  }
+  public furniture(points:FloorPoint[],heightM:number,color:vec4,filled=true){
     const polygon=clipFloorPolygon(points,this.bounds);if(polygon.length<3)return;
-    if(filled)this.volume(polygon,heightM,new vec4(color.x,color.y,color.z,.26));
-    this.polygon(points,color,1.4,.01,true);
-    this.polygon(points,new vec4(color.x,color.y,color.z,color.w*.8),1,heightM);
-    for(const point of points){
-      if(!pointInCorner(point,this.bounds))continue;
-      const fade=cornerOpacity(point,this.bounds);if(fade<.01)continue;
-      const object=this.node('Furniture height edge'),visual=object.createComponent('Component.RenderMeshVisual');
-      visual.mesh=this.cubeMesh;visual.mainMaterial=this.material('evidence-corner-upright-'+[color.x,color.y,color.z,fade].join('-'),new vec4(color.x,color.y,color.z,color.w*fade));
-      object.getTransform().setLocalPosition(this.point(point.x,point.y,heightM/2));object.getTransform().setLocalScale(new vec3(.8,heightM*100,.8));
+    const alpha=new vec4(color.x,color.y,color.z,.10);
+    if(filled){
+      this.batch.face(polygon.map(p=>this.point(p.x,p.y,heightM)),alpha,triangulateRibbon(polygon));
+      for(let n=0;n<polygon.length;n++){const a=polygon[n],b=polygon[(n+1)%polygon.length];this.batch.face([this.point(a.x,a.y,0),this.point(b.x,b.y,0),this.point(b.x,b.y,heightM),this.point(a.x,a.y,heightM)],alpha);}
     }
+    this.polygon(points,color,1.2,.01);this.polygon(points,new vec4(color.x,color.y,color.z,color.w*.8),1,heightM);
+    // Actual corners are upright. A crop intersection is a dashed cut, never a new cabinet corner.
+    for(const p of points)if(pointInCorner(p,this.bounds))this.batch.line(this.point(p.x,p.y,.01),this.point(p.x,p.y,heightM),color,.8);
+    const onOriginal=(a:FloorPoint,b:FloorPoint)=>points.some((p,n)=>{
+      const q=points[(n+1)%points.length],dx=q.x-p.x,dy=q.y-p.y;
+      return Math.abs(dx*(a.y-p.y)-dy*(a.x-p.x))<1e-8&&Math.abs(dx*(b.y-p.y)-dy*(b.x-p.x))<1e-8;
+    });
+    for(let n=0;n<polygon.length;n++){const a=polygon[n],b=polygon[(n+1)%polygon.length];if(onOriginal(a,b))continue;this.line(a,b,color,1,.01,true);this.line(a,b,color,1,heightM,true);}
   }
-  private volume(points:FloorPoint[],height:number,color:vec4) {
-    const builder=new MeshBuilder([{name:'position',components:3},{name:'normal',components:3},{name:'texture0',components:2}]);
-    builder.topology=MeshTopology.Triangles;builder.indexType=MeshIndexType.UInt16;
-    const vertices:number[]=[],indices:number[]=[];
-    const face=(positions:vec3[],normal:vec3)=>{
-      const start=vertices.length/8;
-      for(const p of positions)vertices.push(p.x,p.y,p.z,normal.x,normal.y,normal.z,0,0);
-      for(let n=1;n<positions.length-1;n++)indices.push(start,start+n,start+n+1);
-    };
-    face(points.map(p=>this.point(p.x,p.y,height)),vec3.up());
-    for(let n=0;n<points.length;n++){
-      const a=points[n],b=points[(n+1)%points.length],dx=b.x-a.x,dy=b.y-a.y;
-      const normal=new vec3(dy,0,dx);if(normal.lengthSquared<1e-12)continue;
-      face([this.point(a.x,a.y,0),this.point(b.x,b.y,0),this.point(b.x,b.y,height),this.point(a.x,a.y,height)],normal.normalize());
+  public ribbon(path:{x:number;y:number;theta:number}[],length:number,width:number){
+    for(const loop of sampledRibbon(path,length,width)){
+      const clipped=clipFloorPolygon(loop,this.bounds);if(clipped.length<3)continue;
+      this.batch.face(clipped.map(p=>this.point(p.x,p.y,.012)),new vec4(.36,.86,.72,.12),triangulateRibbon(clipped));
+      this.polygon(loop,new vec4(.36,.86,.72,.75),.7,.016);
     }
-    builder.appendVerticesInterleaved(vertices);builder.appendIndices(indices);if(!builder.isValid())return;builder.updateMesh();
-    const visual=this.node('Transparent furniture box').createComponent('Component.RenderMeshVisual');
-    visual.mesh=builder.getMesh();visual.mainMaterial=this.material('evidence-corner-volume-'+[color.x,color.y,color.z].join('-'),color);
+    for(const pose of path){const dx=Math.cos(pose.theta)*.012,dy=Math.sin(pose.theta)*.012;this.line({x:pose.x-dx,y:pose.y-dy},{x:pose.x+dx,y:pose.y+dy},new vec4(.83,.9,.9,.18),.1,.018);}
   }
 }

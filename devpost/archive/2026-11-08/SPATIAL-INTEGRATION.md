@@ -1,8 +1,8 @@
-> Historical integration for the8November build. See the [current integration](../../../lens-src/SPATIAL-INTEGRATION.md).
+> Historical integration for the8November build. See the [current integration](../integration-r003/SPATIAL-INTEGRATION.md).
 
 # Spatial revision — Preview integration
 
-This is the canonical source contract for the 8 November spatial redesign. Source checks do not establish native rendering, reachability or audio acceptance. The earlier accepted release remains recorded in [INTEGRATION.md](../../../lens-src/INTEGRATION.md). [Current spatial acceptance](../../spatial-release.md) closes observed native transactions, G2 presentation and source capture/handoff gates; final encoded-film QA and user review remain pending.
+This is the canonical source contract for the 8 November spatial redesign. Source checks do not establish native rendering, reachability or audio acceptance. The earlier accepted release remains recorded in [INTEGRATION.md](../integration-r003/INTEGRATION.md). [Current spatial acceptance](../../spatial-release.md) closes observed native transactions, G2 presentation and source capture/handoff gates; final encoded-film QA and user review remain pending.
 
 ## Coordinated source set
 
@@ -85,4 +85,4 @@ The complete 64-case source suite passes across eight files, including sixteen p
 
 Near-control failures were retained: a camera aimed at the room left the dock outside the frustum and produced no events. A properly aimed near repeat passed; the bare-IK repeat then passed in **7.788 s**, observing actual UIKit **Poke** mode. Direct furniture dragging was subsequently accepted in the final Direct05 run with exact Direct mode, unchanged source during preview and queued onTriggerEndOutside release, one evaluated commit, actual Undo, locked-bed refusal and invalid-boundary rollback. Both hand tracking parents were restored. Direct04 failed IK diagnostics remain historical failures; no requirement was relaxed.
 
-The unpadded [paced rehearsal](../../../lens-src/leaf/FILM-REHEARSAL.md) passed in **65.556 s**, reaching the real chair endpoint at **59.047 s**. Native v5 miniature and thin-floor outdoor support views were independently accepted for filming. These are rehearsal and staging observations, not acceptance of a recorded or edited video. The subsequent source-clock, capture, scoped Center, full-size03 journey and exact share handoff records are now accepted. Center shows the initial arrangement with unverified exact input identity, so it supports contrast/framing only. Final encoded-film QA remains pending.
+The unpadded [paced rehearsal](../integration-r003/FILM-REHEARSAL.md) passed in **65.556 s**, reaching the real chair endpoint at **59.047 s**. Native v5 miniature and thin-floor outdoor support views were independently accepted for filming. These are rehearsal and staging observations, not acceptance of a recorded or edited video. The subsequent source-clock, capture, scoped Center, full-size03 journey and exact share handoff records are now accepted. Center shows the initial arrangement with unverified exact input identity, so it supports contrast/framing only. Final encoded-film QA remains pending.

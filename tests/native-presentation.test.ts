@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {createRequire} from 'node:module';
 import {Box3,Ray,Vector3} from 'three';
-import {PRIMARY_MENUS,PressIdentity,RevisionEvaluation,closestDisplaySegment,completionFeedback,detailVisible,emptyRepairPresentation,floorSection,fullSizeRoomPosition,obstructionLabels,ordinaryTaskFeedback,proposalCaption,reserveLabel,rotateFloor,visibleUndoPosition,wheelchairParts} from '../lens-src/SpatialPresentation';
+import {PRIMARY_MENUS,PressIdentity,RevisionEvaluation,closestDisplaySegment,completionFeedback,emptyRepairPresentation,floorSection,fullSizeRoomPosition,obstructionLabels,ordinaryTaskFeedback,proposalCaption,reserveLabel,rotateFloor,visibleUndoPosition,wheelchairParts} from '../lens-src/SpatialPresentation';
 const require=createRequire(import.meta.url);
 const Core=require('../lens-src/OpenDoorCore.js');
 
@@ -74,7 +74,7 @@ describe('native spatial presentation',()=>{
     for(const actions of Object.values(PRIMARY_MENUS))expect(actions.length).toBeLessThanOrEqual(3);
     expect(PRIMARY_MENUS.overview).toEqual(['find','rehearse','more']);
     expect(PRIMARY_MENUS.repair).toEqual(['apply','beforeAfter','cancel']);
-    expect(PRIMARY_MENUS.repairChoices).toEqual([]);
+    expect(PRIMARY_MENUS.repairChoices).toEqual(['nextOption','cancel']);
   });
   it('names only actual obstruction witnesses and invents no clearance deficit',()=>{
     const input=Core.cloneInput(),labels=obstructionLabels(Core.evaluate(input));
@@ -93,7 +93,7 @@ describe('native spatial presentation',()=>{
     expect(ordinaryTaskFeedback('door',doorClear,true)).toBe('Door clear');
     expect(ordinaryTaskFeedback('journey',doorClear,true)).toBeNull();
     expect(ordinaryTaskFeedback('journey',{tasks:{journey:{status:'no_path_found'}}},true)).toBe('No route found');
-    expect(ordinaryTaskFeedback('journey',{tasks:{journey:{status:'uncertain'}}},true)).toBe('Turn uncertain');
+    expect(ordinaryTaskFeedback('journey',{tasks:{journey:{status:'uncertain'}}},true)).toBe('Not sure yet. Try again.');
   });
   it('rounds certified reserves down and explicitly flags a tiny margin',()=>{
     expect(reserveLabel(.030426874516801088,2)).toBe('3 cm extra room');
@@ -105,7 +105,7 @@ describe('native spatial presentation',()=>{
     expect(proposalCaption(false,.030426874516801088,2)).toBe('Before');
     expect(proposalCaption(false,.00005561,0)).not.toMatch(/spare|cm|mm|least/);
     expect(proposalCaption(true,.030426874516801088,2)).toBe('After · 3 cm extra room');
-    expect(proposalCaption(true,.00005561,0)).toBe('After · less than 1 mm extra room');
+    expect(proposalCaption(true,.00005561,0)).toBe('After · under 0.1 cm extra room');
   });
   it('does not claim a clear turn after the independently clear door finishes',()=>{
     const input=Core.cloneInput();input.room=Core.moveObject(input.room,'bench',3.56,.48);
@@ -133,14 +133,6 @@ describe('native spatial presentation',()=>{
     expect(press.release('more:back:r2')).toBe(false);
     press.begin('lock:table:r2');press.cancel();expect(press.release('lock:table:r2')).toBe(false);
     press.begin(null);expect(press.release('repair:apply:option1')).toBe(false);
-  });
-  it('uses distance hysteresis with an explicit hover override',()=>{
-    expect(detailVisible(36,false,true,false)).toBe(false);
-    expect(detailVisible(36,true,true,false)).toBe(true);
-    expect(detailVisible(44,true,true,false)).toBe(false);
-    expect(detailVisible(130,false,false,false)).toBe(false);
-    expect(detailVisible(130,true,false,false)).toBe(true);
-    expect(detailVisible(200,false,false,true)).toBe(true);
   });
   it('puts the illustrative gap line on actual polygon edges without changing them',()=>{
     const a=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];

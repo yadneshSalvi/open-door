@@ -1,9 +1,9 @@
-# The room change
+# Try the turn
 
-A chair meets a bedside table. Moving that table lets the chair make the turn; the separate door check still identifies the bench. Undo restores the original problem.
+I need to know if a wheelchair can turn beside this bed. Open Door lets me try furniture moves before anyone has to lift them.
 
-Suggest fixes offers checked furniture arrangements while the bed stays locked. Point at a ghost, compare Before and After, then use it. Aligning the table with the wardrobe is another actual edit, so the Lens checks that new position again and replaces the earlier extra-space result.
+An actual table drag makes the first consequence visible: the chair can turn, while the separate door check still identifies the bench. Undo restores the original problem. Suggest fixes preserves the chair and the locked bed, then offers one checked layout at a time. Comparison shows what changed; Use plays the verified route.
 
-The tabletop shows the whole plan. The indoor floor view shows the bedside corner at real size, with the chair visible only where its full expanded outline fits within the measured patch. The same saved model can be opened in the companion for fresh checks and downloads.
+A later actual drag earns the wardrobe-edge snap. Release checks that new position and clears the earlier option’s extra-space certificate. The indoor corner shows the same dimensions at real size, with wall context, a single ribbon and a chair that stays visible throughout. A QR carries the current model for fresh companion checks.
 
-The film pairs these actions with their actual visible results. Its uninterrupted main sequence includes the real edit, Undo, checked choices, comparison, alignment and fresh route. [Film](film-review.md) · [Verification](verification.md).
+The 105.167-second film follows accepted native actions and their observed outcomes. Its complete 57-second main sequence is uncut at normal speed. Every hand performs a real input; each narration gap has a visible action or a short reading purpose. The final QR view shows the same model from a later camera position. The [r003 technical record](evidence/film-review-r003.md) remains historical evidence.

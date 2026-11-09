@@ -1,33 +1,33 @@
 # Open Door
 
-Moving a bedside table is easy to suggest and harder to judge from a floor plan. Open Door lets someone try the move first: pinch a miniature piece, release it, and watch whether an example wheelchair can turn toward the bed.
+I need to know whether a wheelchair can turn beside this bed. Open Door lets me try furniture moves before anyone has to lift them.
 
 ## What it does
 
-The Lens sits on a table in front of you. A chair outline and on-object amber labels show the two separate problems: the bedside turn and the door’s swing. A legal drag checks the new layout, then plays the actual chair route. Undo restores the old positions.
+Pinch a tabletop piece, move it and release. The old outline and a live distance readout show the change. A legal release checks the whole footprint, then plays the actual chair route. Amber marks an obstruction; mint shows a checked route. The door is checked separately, so a successful bedside turn never implies that the entry bench is clear.
 
-Suggest fixes searches the unlocked furniture while keeping the bed, chair dimensions and task fixed. Up to three colored ghost layouts show the choices. Point at one, compare Before and After, then use it. A later edit, such as aligning the table with the wardrobe, is checked again; it cannot keep the old result or its extra-space number.
+Suggest fixes searches unlocked furniture while preserving the chair dimensions and task. One colored ghost appears at a time. Next option and Cancel keep the choices small; pinching the ghost opens Use and Before/After comparison. Moving the table again replaces the old result with fresh checks. A real rear-edge snap lines it up with the wardrobe without an alignment button.
 
-Real size shows the bedside corner at its actual dimensions on an indoor floor. The transparent furniture and route are clipped to a measured 1.5 × 2.0 m patch. Stand beside that turn and inspect the space around the chair, with the model anchored to the floor.
+At real size, wall tape, outlined furniture and a bed corner make the local scale tangible. A single ribbon traces the checked motion. The chair stays visible as an outline when it moves outside the displayed corner. The entered room is never shrunk to fit a convenient floor patch.
 
 ## Designed for glasses
 
-Controls belong to the objects: pinch the chair to change its size, the door to try its swing, and furniture to move it. No more than three UI buttons appear at once. Official hand hints introduce the gestures. Distant views reduce to a large status glyph; close views reveal gap detail. The room stays in place while the controls remain below eye level.
+The room stays anchored while I inspect it from another position. Controls belong to the action: pinch the chair to change its size, the door to try its swing, and furniture to move it. No more than three UI targets appear at once. Settings use the dock; nearby labels must clear the actual projected room. Only the tabletop uses a distant status glyph.
 
 ## How we built it
 
-The [Devpost Learn plan-lens framework](https://github.com/challengepost/learn-specs) guided the [written design brief](design-brief.md). Its spatial-design questions led from a floating control panel to a surface-staged room, from a blocking size dialog to a pinchable chair, and from a full-room platform to a local indoor corner. This was planning from a design brief, not a user study.
+The [Devpost Learn plan-lens framework](https://github.com/challengepost/learn-specs) structured the original [brief](design-brief.md), room task and Preview constraints. Later design reviews drove the surface staging, pinchable chair, indoor corner and presentation refinements. This was a design exercise, not an invented interview or user study.
 
-CLAD and Lens Studio MCP supported implementation and inspection in Lens Studio 5.23.2. SIK 2.0.0 and UIKit 2.0.0 provide real hand/ray interaction and persistent controls; official 3D Hints 2.0.0 introduce the gestures. On 9 November 2026, LEAF 2.0.2 runs exercised that same input path: surface placement, drag/release, Undo, 3D layout selection, chair sizing, comparison and playback. The [verification record](verification.md) records the current checks.
+CLAD and Lens Studio MCP supported implementation and inspection in Lens Studio 5.23.2. SIK 2.0.0 and UIKit 2.0.0 provide actual hand/ray interactions and persistent controls; official 3D Hints 2.0.0 introduce the gestures. LEAF 2.0.2 runs exercise that same SIK path. The [verification record](verification.md) identifies which source and native results are accepted.
 
-A shared TypeScript engine checks the whole oriented chair footprint and the separate door sweep. Repair proposals arrive through HTTPS and are independently verified inside the Lens. The search is finite, with explicit no-result and small-gap outcomes. It never changes the chair or its task to manufacture a pass.
+A shared TypeScript engine checks complete oriented footprints and continuous motions. Repair candidates arrive over HTTPS, then are independently verified inside the Lens. The search is bounded and preserves all input dimensions and locks. Small remaining margins are reported honestly.
 
-Save → Send to phone displays a current-model QR. The [companion](https://open-door-weld.vercel.app) opens that model, runs fresh checks and provides dimension editing and downloads.
+Send to phone displays the current-model QR. The [companion](https://open-door-weld.vercel.app) reconstructs that model, checks it again, and provides dimension editing and downloads. It does not inherit the chosen native route or its repair certificate.
 
 ## What we learned
 
-A correct number is useful only when the viewer can connect it to a physical change. Putting the warning on the obstruction, giving the chair a recognizable shape and playing the route after release make that connection visible. Testing in Preview also exposed issues that source tests could not: out-of-view controls, overlapping labels and a hand pose that hid the pinch.
+The result matters when a viewer can see which move caused it. Source tests established numerical and input invariants; native Preview exposed different failures, including clipped controls, overlapping plates and a hand covering its own action. Those require visual checks, not stronger claims from the same tests.
 
-The next step is testing readability, real hand tracking, placement and comfort on Spectacles with people who can judge this task from their own experience. [Scope](../README.md#scope) explains the synthetic dimensions, Preview input, indoor subset and limits of a geometric result.
+The next step is testing real tracking, readability, placement and comfort on Spectacles with people who can judge the task from their own experience. The current dimensions are synthetic, input is scripted in Preview, and a geometric pass is not accessibility certification. [Scope](../README.md#scope) describes these boundaries.
 
-Lens project: [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj). [Film and gallery](gallery.md). [Built-with and licenses](attributions.md).
+Lens project: [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj). **Demo film: Open Door — Try the turn.** [Gallery](gallery.md). [Licenses](attributions.md).

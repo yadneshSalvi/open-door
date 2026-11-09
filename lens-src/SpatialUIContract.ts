@@ -2,7 +2,7 @@
  * Cap ratio is a conservative system-font estimate, not a hardware measurement.
  */
 export const SPATIAL_UI={maxTargets:3,buttonWidth:10.5,buttonHeight:6,gap:2.2,
-  rimCm:.25,rimOpacity:.78,hoverRimOpacity:.85,hoverScale:1.04,pressCm:.35,
+  rimCm:.24,hoverRimCm:.28,selectedRimCm:.35,rimOpacity:.78,hoverRimOpacity:.9,disabledRimOpacity:.3,disabledLabelOpacity:.5,hoverScale:1.04,pressCm:.35,
   buttonText:58,bodyText:58,captionText:52,textUnitsPerEm:43.886,estimatedCapRatio:.695,
   tagWidth:18,tagHeight:3.2,tagFadeSeconds:.3,leaderCm:2,leaderWidthCm:.08} as const;
 export function dockWidth(count:number){return count*SPATIAL_UI.buttonWidth+Math.max(0,count-1)*SPATIAL_UI.gap;}

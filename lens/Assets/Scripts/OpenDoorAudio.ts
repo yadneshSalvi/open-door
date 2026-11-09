@@ -1,4 +1,4 @@
-type AudioCue='clear'|'contact'|'roll';
+type AudioCue='clear'|'contact'|'roll'|'snap';
 
 /** Stable native stream per track; the shared source follows the physical event. */
 export class OpenDoorAudio {
@@ -10,15 +10,15 @@ export class OpenDoorAudio {
   /** Constructed by the experience's OnStart, after scene inputs are available. */
   constructor(parent:SceneObject,clear?:AudioTrackAsset,contact?:AudioTrackAsset,roll?:AudioTrackAsset) {
     this.source=global.scene.createSceneObject('Open Door · spatial feedback');this.source.setParent(parent);
-    const tracks:Partial<Record<AudioCue,AudioTrackAsset>>={clear,contact,roll};
-    for(const cue of ['clear','contact','roll'] as AudioCue[]) {
+    const tracks:Partial<Record<AudioCue,AudioTrackAsset>>={clear,contact,roll,snap:contact};
+    for(const cue of ['clear','contact','roll','snap'] as AudioCue[]) {
       const track=tracks[cue];if(!track)continue;
       const audio=this.source.createComponent('Component.AudioComponent');
       audio.enabled=true;audio.playbackMode=Audio.PlaybackMode.LowLatency;
       // Match UIKitAudioPlayer's stable per-track voice pattern. Reassigning a
       // live audioTrack can replace its native stream during stop/play.
       audio.audioTrack=track;
-      audio.volume=cue==='roll'?.18:.38;audio.fadeInTime=.015;audio.fadeOutTime=.05;
+      audio.volume=cue==='roll'||cue==='snap'?.18:.38;audio.fadeInTime=.015;audio.fadeOutTime=.05;
       audio.spatialAudio.enabled=true;audio.spatialAudio.positionEffect.enabled=true;
       audio.spatialAudio.distanceEffect.enabled=true;
       audio.spatialAudio.distanceEffect.minDistance=35;audio.spatialAudio.distanceEffect.maxDistance=700;

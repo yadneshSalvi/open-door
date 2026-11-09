@@ -1,0 +1,144 @@
+{
+  "schema": "open-door/r004-native-summary@1",
+  "date": "2026-11-10",
+  "context": "Lens Studio 5.23.2, SPECS27, Sunlit Room miniature and Colorful Home real-size corner, simulated SIK hands",
+  "main": {
+    "capture": "od-main009/main009.mp4",
+    "sha256": "e14911464521b6edf24495624ec6366891ffa12e4a6a4945830dc22e8354b960",
+    "revision": 4,
+    "inputHash": "23bff2355c471375",
+    "journey": "verified_feasible",
+    "door": "verified_feasible",
+    "objects": [
+      {
+        "id": "bed",
+        "pose": {
+          "x": 2.8,
+          "y": 2.32,
+          "theta": 0
+        },
+        "locked": true
+      },
+      {
+        "id": "table",
+        "pose": {
+          "x": 0.91,
+          "y": 3.01,
+          "theta": 0
+        },
+        "locked": false
+      },
+      {
+        "id": "bench",
+        "pose": {
+          "x": 1.495,
+          "y": 0.692,
+          "theta": 0
+        },
+        "locked": false
+      },
+      {
+        "id": "wardrobe",
+        "pose": {
+          "x": 0.35,
+          "y": 2.66,
+          "theta": 0
+        },
+        "locked": false
+      }
+    ],
+    "profile": {
+      "id": "provided-profile-v1",
+      "name": "Example device",
+      "width": 0.66,
+      "length": 1.05,
+      "height": 1.1,
+      "clearance": 0.03,
+      "uncertainty": 0,
+      "movement": "pivot",
+      "minimumTurningRadius": 0.65,
+      "allowReverse": true
+    },
+    "repairMetrics": {
+      "status": "applied",
+      "mode": "https",
+      "steps": 3,
+      "elapsedSeconds": 4.010752542002592,
+      "maxStepMs": 37,
+      "validatedCandidates": 3,
+      "localVerificationMs": 88,
+      "requestId": "lens-4-3-1794247476539",
+      "requestGeneration": 3,
+      "roundTripSeconds": 3.907615792006254
+    },
+    "postSnapRepairCertificate": null,
+    "totalUITargets": 3
+  },
+  "support": {
+    "place": "006c: real horizontal WorldQuery hit and actual SIK confirmation",
+    "chairSize": "008:66\u219271\u219266cm with fresh checking",
+    "fullSize": "007b: same complete input,48movingposes,24camera changes during playback",
+    "center": "007: real additive Center image of cleared route",
+    "share": "008 supplies the Send gesture; 010 supplies the complete native QR card and phone caption. Both contain exactly the same revision 4 input and 282-character URL; the companion rechecks 2 of 2 clear."
+  },
+  "alignment": {
+    "tableRearM": 3.26,
+    "wardrobeRearM": 3.26,
+    "sideGapM": 0.01,
+    "chosenClearanceM": 0.03,
+    "extraRouteLowerBoundCm": 0.1506,
+    "extraDoorLowerBoundCm": 0.2197
+  },
+  "floor": {
+    "originalObservations": 9486,
+    "supplementObservations": 78,
+    "inUseTargets": 980,
+    "positiveFromAtLeastOneView": 980,
+    "unresolvedExpandedGridTargets": 2,
+    "scope": "finite sampled support, not continuous floor or whole-volume certification"
+  },
+  "movingReadoutLimit": {
+    "sourceFrame": 1920,
+    "sourcePtsSeconds": 64,
+    "blankFrames": 1,
+    "fullyReadableAgainFrame": 1924,
+    "note": "One-frame relocation reset and brief fade retained; not an all-frame readability claim."
+  },
+  "shipping": {
+    "sceneSha256": "ada5060b694a5e484f502b92675913f39771840aed87379166894124300920ed",
+    "reopenedPreview": "Preview58",
+    "typeScriptCompile": "pass",
+    "runtimeStartup": "pass",
+    "activeTestRegistry": false,
+    "activeMessagingBridge": false,
+    "privateMeasurementHelpers": false
+  },
+  "limits": [
+    "No physical Spectacles, human tracking or accessibility outcome test.",
+    "The example room is entered geometry, not environment recognition.",
+    "Floor and full-size visibility are bounded recorded observations."
+  ],
+  "hostPreviewIntervals": {
+    "primary": {
+      "context": "3.599887secondsplaying+1.453129secondsstopped",
+      "samples": 224,
+      "medianMs": 21.903166,
+      "p95Ms": 24.857416,
+      "maxMs": 62.787583
+    },
+    "precedingOnset": {
+      "samples": 187,
+      "medianMs": 22.216208,
+      "p95Ms": 26.1095,
+      "maxMs": 490.347
+    }
+  },
+  "hostPreviewIntervalScope": "Host UpdateEvent intervals during diagnostic logging and screen capture; not physical SPECS performance, GPU or self-time. No playback-only OD quantiles inferred.",
+  "sourceChecks": {
+    "unitTests": 140,
+    "unitTestFiles": 16,
+    "mirrors": 36,
+    "typechecks": "web pass; native compile and reopened startup pass after the test-only retained QR recording",
+    "numericalApiBundleDiff": []
+  }
+}

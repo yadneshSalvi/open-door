@@ -82,13 +82,13 @@
     - '// @input string companionBaseUrl = "https://open-door-weld.vercel.app"'
     - "// @input vec3 miniatureSurfacePositionCm = {-30,-142.9,-474}"
     - // @input float miniatureYawDegrees
-    - "// @input vec3 fullSizeStartPositionCm = {-247,-135.78,-160}"
-    - // @input float fullSizeYawDegrees
+    - "// @input vec3 fullSizeStartPositionCm = {-308,-135.7,-635}"
+    - // @input float fullSizeYawDegrees = 180
     - // @input bool placementConfirmed
     - '// @input string placementDescription = "Example room · entered sizes"'
     - // @input bool fullScaleOverlay = true
-    - "// @input vec2 cornerMinM = {0.65,1.35}"
-    - "// @input vec2 cornerMaxM = {2.15,3.35}"
+    - "// @input vec2 cornerMinM = {0,1.4}"
+    - "// @input vec2 cornerMaxM = {2.2,3.4}"
     - // @input Asset.AudioTrackAsset clearSound
     - // @input Asset.AudioTrackAsset contactSound
     - // @input Asset.AudioTrackAsset wheelSound

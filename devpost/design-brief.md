@@ -1,45 +1,49 @@
 # Open Door — design brief
 
-## One room task
+## The task
 
-Before moving heavy furniture, compare changes that let an example wheelchair turn toward the bed. A tabletop miniature gives an overview; the bedside corner on the floor shows the same dimensions at real size. A person using a mobility device could work with a designer or trusted collaborator and choose the dimensions and priorities that matter to them.
+Before moving furniture, try a change that lets an example wheelchair turn beside the bed. A tabletop miniature gives an overview; a bedside corner on the floor shows the same dimensions at real size. The person choosing the dimensions and priorities stays in control.
 
-The first move has a visible consequence. Pinch the table, drag it and release. The footprint is green or amber during the move. A clear release starts the checked chair route; a blocked result identifies the obstruction. Undo sits beside the piece. The door is a separate check, so clearing the table does not imply that the bench no longer blocks it.
+Pinch the table, drag it and release. The old outline stays behind while a live readout shows the actual distance moved. A legal release makes one edit, checks it, then plays the verified chair trajectory. The door is an independent check: clearing the table does not clear the entry bench.
 
 ## Why glasses
 
-Stand beside the full-size turn and inspect the space around the chair, with the model anchored to the floor. The small room remains useful for the whole arrangement; the indoor bedside corner makes its local scale tangible. The web companion supports text entry and files, while the Lens supports spatial inspection and hand input.
+The model remains anchored while the viewer changes position. That makes the space around the full-size turn inspectable from more than one view. The web companion handles text entry and files; the Lens makes the object, gesture and resulting movement visible together.
 
-## What the planning framework changed
+## What informed the design
 
-The [plan-lens skill in challengepost/learn-specs](https://github.com/challengepost/learn-specs) supplied the design questions and Preview constraints used to write this brief. This was a design exercise; user research remains future work. Three decisions followed that framework and the subsequent design reviews:
+The [Devpost Learn plan-lens framework](https://github.com/challengepost/learn-specs) structured the original brief: one room task, a body-scale question and explicit Preview constraints. This was planning from a brief, not a user interview or user study.
 
-| Earlier direction | Current choice | Reason |
-| --- | --- | --- |
-| A floating room with a permanent panel | A level model on a surface, with labels on the relevant pieces | Keep the room and the action in the same place |
-| A wheelchair-size confirmation dialog | A compact chair tag; pinch the chair to edit its size | Explain the shape without covering the problem |
-| The whole room staged on an outdoor platform | A measured 1.5 × 2.0 m indoor bedside crop, with outlined furniture | Show true local scale without shrinking the room or hiding the real floor |
+Subsequent design reviews drove the larger changes: the floating panel became a level surface model; the blocking dimensions dialog became a pinchable chair; the outdoor platform became an indoor corner. Further review led to a continuously visible chair, one route ribbon, actual drag snapping, and controls that must clear the projected room. Those decisions are credited to the design review process, not retroactively to plan-lens.
 
-## Interaction
+## Interaction and recovery
 
-The overview offers Suggest fixes, Try the route and More. Hovering a piece reveals its contextual action and reduces the dock’s other controls so no more than three UI buttons are active. More exposes Place immediately. Back is included in the count; short menus close after inactivity. A five-second Undo chip follows an edit. Locked pieces stay fixed.
+The ordinary overview offers Suggest fixes, Try the route and More. A contextual command consumes one of the same three available UI targets. If an object command has no clear projected position, it moves to a reserved dock slot. Undo remains the first More command while history exists, including after the five-second shortcut expires. Back is counted, and temporary menus close after inactivity.
 
-Suggest fixes returns up to three checked layouts. Colored ghost sets have separate labels and leaders; hovering isolates one. Pinching its geometry or label selects it. Use, Compare and Cancel then replace the choices. Compare exposes distinct lit Before and After buttons. The original layout never inherits the selected layout’s extra-space number.
+Repair choices use one selectable ghost, Next option and Cancel. Its nearby colored label is not another hit target. After selection, Use, Compare and Cancel replace them. Compare exposes Before, After and Back. The original layout never inherits the selected layout’s extra-space number.
 
-The example table can be lined up with the wardrobe using Align back. That is a real furniture edit: it adds one history entry, clears the earlier repair certificate and checks both tasks again. The reviewed destination is (0.91, 3.01) m, with a 1 cm side gap and aligned rear edges. Its current extra-space reading is much smaller than the earlier 3 cm alternative; the old number must not survive the edit.
+Furniture has real near and far interaction paths. Locks remain binding. The table snaps only when a valid drag comes within 2 cm of the wardrobe rear plane. A dashed guide and click explain the snap. Release commits once, clears the prior repair certificate and checks both tasks again. There is no separate alignment button.
 
-The room uses dark low rims, desaturated furniture, bright text and restrained cyan/amber feedback. An outlined chair collision accompanies an on-object explanation. Labels keep their physical size and seek a clear position beside the objects, with a short leader. Far away, one status glyph replaces controls and detail. Close approach reveals the measured geometric gap. Official hand hints appear in context and remain eligible until the relevant gesture succeeds.
+## Composition
+
+Dark furniture and low rims leave the evidence legible. Mint means a checked route or valid placement; amber means an obstruction. Layout alternatives use separate colors. The door is a thin outline with a restrained fill, not a solid colored wall.
+
+Fixed and optional labels use the same projected bounds test. They face the actual camera, remain close to their anchor and use short leaders with endpoint dots. The dock includes the floor and door in its exclusion test. A required label or dock that cannot be placed is recorded as a composition failure to resolve in native Preview, rather than being allowed to cover the subject.
+
+Only the tabletop reduces to a distant status glyph. The chair-size hint is contextual on the chair, with a first-placement introduction. The door and furniture glow on hover. Official hand hints remain eligible until their relevant action succeeds.
 
 ## Placement and real size
 
-A fresh device session starts with placement. A horizontal WorldQuery hit along the actual gaze is queried every half-second and confirmed with a pinch. A mint reticle means a current real hit; an estimated aim has only neutral instructions. Saved editor staging cannot confirm a device placement. Real size requests a separate floor hit on device.
+A fresh device session starts with placement. WorldQuery follows the actual pitched gaze, at two queries per second. A confirmation requires a recent horizontal hit within the allowed distance; a nominal aim is not enough. Saved staging is editor-only. Real size asks for its own floor placement on device.
 
-In the measured Preview arrangement, the bedside crop covers room x [0.65, 2.15], y [1.35, 3.35] m. It maps to an indoor 1.5 × 2.0 m floor patch. Furniture boxes, edges and route lines are clipped and faded rather than resized. The chair is shown only when its complete expanded footprint fits within that patch. All original room dimensions and route checks remain unchanged. The controls follow below eye level; the room stays anchored.
+The checked indoor setup displays model x `[0,2.2]`, y `[1.4,3.4]` m. It is a true **2.2 × 2.0 m** corner, with two wall traces, a wardrobe outline, the side table, a bed corner and a neutral marker toward the omitted door. Furniture and the single route ribbon are clipped to this display area. Every chair pose stays visible; a pose whose complete buffered footprint leaves the area is outlined rather than hidden. None of this changes the original model or verification.
 
-## Computation and recovery
+The measured Colorful Home placement is documented in [native setup](native-setup.md). Its finite multi-view floor/ghost checks, fresh model identity and actual camera walk during the complete chair rehearsal are separately recorded. These checks do not certify physical accessibility.
 
-An oriented 66 × 105 cm example footprint moves through a complete bedside trajectory with a chosen 3 cm gap. A separate door-leaf sweep checks furniture through 0–90°. The finite repair search preserves dimensions, locks, start, goal and uncertainty. It ranks fewer pieces moved first, then movement and rotation. “Least movement found” describes a bounded search result, not a global optimum. [Method and limits](repair-search.md) give the numerical definitions.
+## Computation
 
-The native Lens requests repairs over HTTPS, then independently checks each result before display and again before Use. Ordinary edits and checks remain local. Cancel, a newer edit or a changed chair size invalidate pending results. Network failure offers explicit retry or slower offline search. A saved QR carries only the model, which the companion checks again.
+The shared engine checks an oriented 66 × 105 cm example footprint and a separate door sweep. The finite repair search preserves dimensions, locks, start, goal and uncertainty. It ranks fewer moved pieces first, then displacement and rotation. It reports what it found, not a global optimum.
 
-See [verification](verification.md) for tested behavior and [Scope](../README.md#scope) for the boundaries of this prototype.
+HTTPS supplies candidate layouts; the native Lens independently checks each before display and again before Use. Cancel or a newer edit invalidates pending results. Network failure offers retry or an explicit slower offline search. A shared QR carries the model, which the companion evaluates anew.
+
+[Method and limits](repair-search.md) · [Verification](verification.md) · [Scope](../README.md#scope)

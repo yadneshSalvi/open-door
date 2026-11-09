@@ -24,4 +24,4 @@ Configuration-space search, separating axes, distance bounds and A* are establis
 
 References include [Snap Internet Access](https://developers.snap.com/spectacles/about-spectacles-features/apis/internet-access), [Next.js Route Handlers](https://nextjs.org/docs/app/getting-started/route-handlers), [OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), installed package source and Lens type declarations.
 
-The [Devpost Learn plan-lens framework](https://github.com/challengepost/learn-specs) informed the authored design brief and spatial interaction decisions. CLAD and Lens Studio MCP were development tools. These acknowledgments do not describe a participant interview or user-study result.
+The [Devpost Learn plan-lens framework](https://github.com/challengepost/learn-specs) informed the original design brief and intended room task. Later review rounds drove the surface staging, pinchable chair and indoor corner. CLAD and Lens Studio MCP were development tools. These acknowledgments do not describe a participant interview or user-study result.

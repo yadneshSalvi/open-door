@@ -24,7 +24,7 @@ Independent front/side screenshots passed table grounding, readable three-button
 
 The unpadded paced rehearsal passed in 65.556 seconds and reached the chair endpoint at 59.047 seconds. The subsequent recorded take's native scenario passed in 65.100 seconds, observing 84 distinct moving poses and the final revision-3 model hash `d80f2566c8606cae`. These are actual scenario observations. Independent source-clock/crop review, scoped Center contrast/framing, full-size03 and exact shared input/repair equality are now accepted; the [149.5-second film](film-review.md) also passed independent encoded QA and complete browser playback. User approval remains pending.
 
-The [paced Preview scenario](../../../lens-src/leaf/FILM-REHEARSAL.md) executed in the accepted main source with disclosed automated SIK input. Native recording clocks are accepted; physical glasses reach remains untested.
+The [paced Preview scenario](../integration-r003/FILM-REHEARSAL.md) executed in the accepted main source with disclosed automated SIK input. Native recording clocks are accepted; physical glasses reach remains untested.
 
 ## Computed fixture results
 
@@ -60,7 +60,7 @@ Live structured language preference parsing was also exercised in the original r
 
 ## Spatial revision — native gate
 
-The frozen source manifest and [integration contract](../../../lens-src/SPATIAL-INTEGRATION.md) specify the measured table pose, full-size supplied-room floor anchor, audio inputs, live surface confirmation and LEAF registration. Source-only changes add near/far editing, release-time sliced evaluation, object feedback, spatial alternatives, contextual controls and a footprint-constrained chair. The engine, solver, verification rules, dimensions and HTTPS/QR contracts are unchanged.
+The frozen source manifest and [integration contract](../integration-r003/SPATIAL-INTEGRATION.md) specify the measured table pose, full-size supplied-room floor anchor, audio inputs, live surface confirmation and LEAF registration. Source-only changes add near/far editing, release-time sliced evaluation, object feedback, spatial alternatives, contextual controls and a footprint-constrained chair. The engine, solver, verification rules, dimensions and HTTPS/QR contracts are unchanged.
 
 Actual multi-view staging, scoped Center contrast/framing, SIK exact Direct/far releases, LEAF and exact QR handoff now have accepted evidence. Optional WorldQuery, unfilmed proximity/lazy-follow transitions and physical glasses remain untested; recorded native sources contain no audio. The authored functional scenario selects a returned reserve ≥3 cm and checks one revision, unchanged profile/locks and the real endpoint. The IK scenario requires the requested direct/indirect strategy and uses fail-fast diagnostics without a functional fallback. A source typecheck is not a LEAF run.
 
@@ -86,4 +86,4 @@ Its final native revision **11**, fingerprint **`851f354fb4fef3b3`**, was decode
 
 Native Preview corrected MeshBuilder's flat interleaved upload and stale SIK target lifetimes. Persistent menu/furniture targets replaced destructive rebuilds. The final original-source QA interval examined **810,745 log bytes** with no E/F/W or Preview error/exception prints after excluding editor transport/analytics payloads. One editor-only QTcpSocket disconnect warning followed cleanup; subsequent Preview error prints were empty. That clean claim applies only to the recorded original interval.
 
-[Original native evidence](../2026-11-07/native-preview.md), [sanitized measurements](../../media/native-verification.json) and [integration](../../../lens-src/INTEGRATION.md) preserve source hashes and boundaries. No LEAF pass was part of that original release. Physical glasses, phone QR scanning, on-device performance, comfort studies and external user feedback remain untested; Preview success does not establish those outcomes.
+[Original native evidence](../2026-11-07/native-preview.md), [sanitized measurements](../../media/native-verification.json) and [integration](../integration-r003/INTEGRATION.md) preserve source hashes and boundaries. No LEAF pass was part of that original release. Physical glasses, phone QR scanning, on-device performance, comfort studies and external user feedback remain untested; Preview success does not establish those outcomes.

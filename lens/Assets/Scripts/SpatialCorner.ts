@@ -1,7 +1,7 @@
 /** Display clipping in room metres. It never changes the room, route, or 1:1 scale. */
 export type FloorPoint={x:number;y:number};
 export type CornerBounds={minX:number;minY:number;maxX:number;maxY:number};
-export const DEFAULT_CORNER:CornerBounds={minX:.65,minY:1.35,maxX:2.15,maxY:3.35};
+export const DEFAULT_CORNER:CornerBounds={minX:0,minY:1.4,maxX:2.2,maxY:3.4};
 
 export function validCorner(value:CornerBounds,room:{width:number;depth:number}):boolean {
   return [value.minX,value.minY,value.maxX,value.maxY].every(Number.isFinite)
@@ -13,6 +13,15 @@ export function pointInCorner(point:FloorPoint,bounds:CornerBounds):boolean {
 }
 export function completeFootprintInCorner(points:FloorPoint[],bounds:CornerBounds):boolean {
   return points.length>=3&&points.every(point=>pointInCorner(point,bounds));
+}
+
+/** Context only: direction and distance from the display edge to the actual hinge. */
+export function doorEdgeMarker(hinge:FloorPoint,bounds:CornerBounds){
+  if(![hinge.x,hinge.y].every(Number.isFinite)||pointInCorner(hinge,bounds))return null;
+  const anchor={x:Math.max(bounds.minX,Math.min(bounds.maxX,hinge.x)),y:Math.max(bounds.minY,Math.min(bounds.maxY,hinge.y))};
+  const dx=hinge.x-anchor.x,dy=hinge.y-anchor.y,distanceM=Math.hypot(dx,dy);
+  if(distanceM<1e-9)return null;
+  return {anchor,direction:{x:dx/distanceM,y:dy/distanceM},distanceM,label:'Door\n'+distanceM.toFixed(2)+' m'};
 }
 
 /** Liang–Barsky retains the original line direction and exact endpoints at the crop. */

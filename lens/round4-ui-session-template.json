@@ -1,0 +1,121 @@
+{
+    "sessions": [
+        {
+            "name": "Open Door full-size camera ",
+            "scenarios": [
+                {
+                    "id": "open-door-menu-exits",
+                    "config": {
+                        "__leaf__timeout_secs": "120",
+                        "__leaf__diagnostic_policy": "fail-fast",
+                        "__leaf__log_level": "INFO",
+                        "__leaf__diagnostic_report_duration_ms": "-1"
+                    }
+                }
+            ]
+        }
+    ],
+    "defaultConfigs": {
+        "open-door-menu-exits": {
+            "__leaf__timeout_secs": "120",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-chair-sizing": {
+            "__leaf__timeout_secs": "60",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-ghost-choice": {
+            "__leaf__timeout_secs": "60",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-visible-drag-transactions": {
+            "expectedStrategy": "direct",
+            "__leaf__timeout_secs": "90",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-worldquery-placement": {
+            "verifyMovingHit": "false",
+            "__leaf__timeout_secs": "60",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-object-menus": {
+            "__leaf__timeout_secs": "60",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-blocked-to-clear": {
+            "__leaf__timeout_secs": "90",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-surface-reach": {
+            "expectedStrategy": "indirect",
+            "__leaf__timeout_secs": "60",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-drag-transactions": {
+            "expectedStrategy": "indirect",
+            "__leaf__timeout_secs": "90",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-full-size-anchor": {
+            "__leaf__timeout_secs": "45",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__log_level": "INFO",
+            "__leaf__diagnostic_report_duration_ms": "-1"
+        },
+        "open-door-opening-film": {
+            "__leaf__timeout_secs": "45",
+            "__leaf__log_level": "WARN",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__diagnostic_report_duration_ms": "0"
+        },
+        "open-door-paced-preview": {
+            "expectedInputHash": "",
+            "__leaf__timeout_secs": "120",
+            "__leaf__log_level": "WARN",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__diagnostic_report_duration_ms": "0"
+        },
+        "open-door-full-size-clear-film": {
+            "expectedInputHash": "",
+            "cameraWindowMs": "10000",
+            "expectedPlacementJson": "",
+            "__leaf__timeout_secs": "120",
+            "__leaf__log_level": "WARN",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__diagnostic_report_duration_ms": "0"
+        },
+        "open-door-share-film": {
+            "expectedInputHash": "",
+            "expectedPlacementJson": "",
+            "__leaf__timeout_secs": "120",
+            "__leaf__log_level": "WARN",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__diagnostic_report_duration_ms": "0"
+        },
+        "open-door-full-size-film": {
+            "retainFullSize": "true",
+            "__leaf__timeout_secs": "45",
+            "__leaf__log_level": "WARN",
+            "__leaf__diagnostic_policy": "fail-fast",
+            "__leaf__diagnostic_report_duration_ms": "0"
+        }
+    }
+}

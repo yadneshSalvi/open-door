@@ -1,0 +1,135 @@
+{
+  "schema": "open-door-native-gallery/v4",
+  "review_date": "2026-11-10",
+  "status": "fresh-accepted-native-source-frames",
+  "entries": [
+    {
+      "id": "tabletop-aligned-r004",
+      "path": "../media/native-tabletop-aligned-r004.png",
+      "sha256": "2f9b742926f71e8064427a25497701cd91105c431cb73b9ce5cd1490011b1c0a",
+      "capture_id": "od-main009",
+      "source_sha256": "e14911464521b6edf24495624ec6366891ffa12e4a6a4945830dc22e8354b960",
+      "decoded_frame": 2115,
+      "source_pts_seconds": 70.5,
+      "source_crop": [
+        264.00000000000006,
+        329.99999999999994,
+        2176.0,
+        1224.0
+      ],
+      "output_size": [
+        1920,
+        1080
+      ],
+      "transform": "Fixed crop and uniform downscale only. No UI, hand or furniture compositing.",
+      "input_scope": "Committed final model 23bff2355c471375, revision 4; 66 \u00d7 105 cm example chair.",
+      "camera_scope": "Sunlit Room tabletop; camera (-30,-75,-430) cm looking at (-30,-142.9,-474) cm, wide Preview projection.",
+      "source_exclusions": "Only accepted native viewport pixels. No desktop, file paths, test overlays or credentials.",
+      "frozen_presentation": "main009"
+    },
+    {
+      "id": "table-drag-r004",
+      "path": "../media/native-table-drag-r004.png",
+      "sha256": "6c8c3c0211ce02373d2c2279fc8aa7fd4c5abbb3ce772d57d9815fb03a4ad65b",
+      "capture_id": "od-main009",
+      "source_sha256": "e14911464521b6edf24495624ec6366891ffa12e4a6a4945830dc22e8354b960",
+      "decoded_frame": 1964,
+      "source_pts_seconds": 65.46666666666667,
+      "source_crop": [
+        264,
+        330,
+        2176,
+        1224
+      ],
+      "output_size": [
+        1920,
+        1080
+      ],
+      "transform": "Fixed crop and uniform downscale only. No UI, hand or furniture compositing.",
+      "input_scope": "Active drag before release; table preview at rear snap. Final committed model shown separately.",
+      "camera_scope": "Sunlit Room tabletop; camera (-30,-75,-430) cm looking at (-30,-142.9,-474) cm, wide Preview projection.",
+      "source_exclusions": "Only accepted native viewport pixels. No desktop, file paths, test overlays or credentials.",
+      "frozen_presentation": "main009"
+    },
+    {
+      "id": "room-corner-r004",
+      "path": "../media/native-room-corner-r004.png",
+      "sha256": "b894773291961a1f353fe106b56d66520af00cb32c45bac0ecb74a32ca4f3c74",
+      "capture_id": "od-full007b",
+      "source_sha256": "9e97b19f21b67f0607d0b67b8100f4a39fff2d56114208d0f0d0e91903358802",
+      "decoded_frame": 3120,
+      "source_pts_seconds": 104.0,
+      "source_crop": [
+        264.00000000000006,
+        329.99999999999994,
+        2176.0,
+        1224.0
+      ],
+      "output_size": [
+        1920,
+        1080
+      ],
+      "transform": "Fixed crop and uniform downscale only. No UI, hand or furniture compositing.",
+      "input_scope": "Committed final model 23bff2355c471375, revision 4; 66 \u00d7 105 cm example chair.",
+      "camera_scope": "Colorful Home; real-size root (-400,-135.7,-610) cm, yaw 180\u00b0, scale 1. C view (-550,40,-875) looking at (-300,-95,-550); accepted walk moves to (-420,40,-635) looking at (-320,-112,-535).",
+      "source_exclusions": "Only accepted native viewport pixels. No desktop, file paths, test overlays or credentials.",
+      "frozen_presentation": "full007b/Center007; later source changes restricted to chair-sizing and live drag readout; this view is unchanged."
+    },
+    {
+      "id": "center-r004",
+      "path": "../media/native-center-r004.png",
+      "sha256": "6b416e43cf52d5530057b34277acbbd4b3a707259525130e2bf171314c6e4310",
+      "capture_id": "od-center007",
+      "source_sha256": "0fd88cdb0b60ba4d60a81983191710f9e897e8c31890331ad7a17b7591a142bc",
+      "decoded_frame": 150,
+      "source_pts_seconds": 5.0,
+      "source_crop": [
+        264.00000000000006,
+        329.99999999999994,
+        2176.0,
+        1224.0
+      ],
+      "output_size": [
+        1920,
+        1080
+      ],
+      "transform": "Fixed crop and uniform downscale only. No UI, hand or furniture compositing.",
+      "input_scope": "Committed final model 23bff2355c471375, revision 4; 66 \u00d7 105 cm example chair.",
+      "camera_scope": "Actual SPECS 27 Center simulation from the accepted indoor camera pass. This is a bounded payoff view, not the complete corner in one field of view.",
+      "source_exclusions": "Only accepted native viewport pixels. No desktop, file paths, test overlays or credentials.",
+      "frozen_presentation": "full007b/Center007; later source changes restricted to chair-sizing and live drag readout; this view is unchanged."
+    },
+    {
+      "id": "room-turn-r004",
+      "path": "../media/native-room-turn-r004.png",
+      "sha256": "283fd545f165eef98f85696801109fd2f0ddd3bfcb9290376a77f4cd08e14c9f",
+      "capture_id": "od-full007b",
+      "source_sha256": "9e97b19f21b67f0607d0b67b8100f4a39fff2d56114208d0f0d0e91903358802",
+      "decoded_frame": 3315,
+      "source_pts_seconds": 110.5,
+      "source_crop": [
+        264.00000000000006,
+        329.99999999999994,
+        2176.0,
+        1224.0
+      ],
+      "output_size": [
+        1920,
+        1080
+      ],
+      "transform": "Fixed crop and uniform downscale only. No UI, hand or furniture compositing.",
+      "input_scope": "Committed final model 23bff2355c471375, revision 4; 66 \u00d7 105 cm example chair.",
+      "camera_scope": "Colorful Home; real-size root (-400,-135.7,-610) cm, yaw 180\u00b0, scale 1. C view (-550,40,-875) looking at (-300,-95,-550); accepted walk moves to (-420,40,-635) looking at (-320,-112,-535).",
+      "source_exclusions": "Only accepted native viewport pixels. No desktop, file paths, test overlays or credentials.",
+      "frozen_presentation": "full007b/Center007; later source changes restricted to chair-sizing and live drag readout; this view is unchanged."
+    }
+  ],
+  "scope": [
+    "Lens Studio Preview, not physical glasses footage.",
+    "All hands are actual scripted SIK inputs, not composited illustrations.",
+    "The real-size display is a supplied model placed on a measured indoor patch; no room recognition.",
+    "The aligned model rechecks both tasks; conservative additional reserve is about 1.506 mm for the chair route, not 3 cm.",
+    "The close chair image is optional detail; the wide corner image supplies wardrobe and floor-boundary context."
+  ],
+  "historical_assets": "Earlier image files remain unchanged. Their previous capture/state applies only to those earlier records."
+}

@@ -8,11 +8,18 @@ export function startupPlacement(isEditor:boolean,previewPoseConfirmed:boolean) 
     branch:isEditor?'preview':'device'} as const;
 }
 
-/** A level aim point 75 cm ahead and 40 cm below the eye, independent of head pitch. */
-export function placementAim(eye:SpatialPoint,forward:SpatialPoint):SpatialPoint {
-  const length=Math.hypot(forward.x,forward.z);
-  const x=length>1e-8?forward.x/length:0,z=length>1e-8?forward.z/length:-1;
-  return {x:eye.x+x*75,y:eye.y-40,z:eye.z+z*75};
+/** A nearby side dock, below the eye and 28 degrees away from the route view. */
+export function sideDockPosition(eye:SpatialPoint,forward:SpatialPoint,side=1):SpatialPoint {
+  const length=Math.hypot(forward.x,forward.z),x=length>1e-8?forward.x/length:0,z=length>1e-8?forward.z/length:-1;
+  const a=28*Math.PI/180,c=Math.cos(a),s=Math.sin(a)*(side<0?-1:1);
+  return {x:eye.x+(x*c-z*s)*52,y:eye.y-45,z:eye.z+(z*c+x*s)*52};
+}
+
+/** One action at a time leaves Next and Back available without a fourth hit target. */
+export const MORE_ACTIONS=['place','scale','undo','about'] as const;
+export function moreActions(page:number,hasUndo=false):string[]{
+  const actions=hasUndo?['undo','place','scale','about']:MORE_ACTIONS;
+  return [actions[((Math.floor(page)%actions.length)+actions.length)%actions.length],'nextMore','back'];
 }
 
 /** Ten-centimetre hysteresis; the first sample uses the nominal 55/120 cm bands. */
@@ -27,14 +34,14 @@ export function distanceBand(distanceCm:number,previous:DetailBand|null):DetailB
 /** The ordinary task result is a conservative extra-space bound, not a fitted-device promise. */
 export function extraRoomText(lowerBoundM:number|null):string {
   if(lowerBoundM===null||!Number.isFinite(lowerBoundM)||lowerBoundM<0)return 'Space not checked';
-  if(lowerBoundM<.001)return 'Less than 1 mm extra room';
+  if(lowerBoundM<.001)return 'Under 0.1 cm extra room';
   const centimetres=Math.floor((lowerBoundM+1e-12)*1000)/10;
   return 'At least '+String(centimetres)+' cm extra room';
 }
 
 /** Cancel a stale popup rather than changing its command under a held pinch. */
 export function shouldCloseMenu(menu:string,lastInteraction:number,now:number,held:boolean):boolean {
-  return !held&&['more','edit','door','profile','profileWidth','profileBuffer'].includes(menu)
+  return !held&&['more','edit','door','profile','profileWidth','profileBuffer','repairChoices','repair','repairCompare','repairEmpty','repairUnneeded','repairError','about'].includes(menu)
     &&Number.isFinite(now)&&now-lastInteraction>=6;
 }
 

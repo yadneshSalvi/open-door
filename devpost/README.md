@@ -1,17 +1,18 @@
 # Open Door documentation
 
-Start with the [Lens overview and setup](../README.md).
+Start with the [Lens overview](../README.md). **Demo film: Open Door — Try the turn.**
 
 | Read | What it covers |
 | --- | --- |
-| [Design brief](design-brief.md) | The room task, glasses interaction and concrete plan-lens decisions |
-| [Submission description](submission-draft.md) | A short product story and how it was built |
-| [Gallery](gallery.md) · [Film](film-review.md) | Actual Lens imagery and demonstration |
-| [Native experience](spatial-release.md) | Placement, indoor crop, controls and reproducible setup |
-| [Verification](verification.md) | Current checks and their practical limits |
-| [Repair method](repair-search.md) | Finite search, ranking and extra-space checks |
-| [Geometry](geometry.md) | Footprint, trajectory and door-sweep mathematics |
-| [API](api.md) | HTTPS request/response and export contracts |
-| [Attributions](attributions.md) | Incorporated packages, fonts and original audio |
+| [Design brief](design-brief.md) | The task, glasses interaction and distinct planning/review contributions |
+| [Submission description](submission-draft.md) | The product story and how it was built |
+| [Gallery](gallery.md) | Actual dated Lens imagery |
+| [Native setup](native-setup.md) | Packages, staging, device placement and optional tests |
+| [Native experience](spatial-release.md) | Current interactions and display behavior |
+| [Verification](verification.md) | Current checks and test limits |
+| [Repair method](repair-search.md) | Finite search, ranking and extra-space verification |
+| [Geometry](geometry.md) | Footprints, trajectories and door sweeps |
+| [API](api.md) | HTTPS and export contracts |
+| [Attributions](attributions.md) | Packages, fonts and original audio |
 
-[Historical records](archive/README.md) preserve earlier native builds, films and numerical reviews. Their results apply to their dated source versions. Current modeling and test limits are in [Scope](../README.md#scope).
+The [current technical film review](evidence/film-review-r004.md) is an evidence record, separate from the public demonstration title. The [r003 review](evidence/film-review-r003.md) remains historical. [Historical records](archive/README.md) retain earlier source versions and their own results. Modeling and test limits are in [Scope](../README.md#scope).

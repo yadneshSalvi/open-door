@@ -1,0 +1,60 @@
+{
+  "sourceRevision": "a1e551b21f94f1fa67bf82f6c19e765ca7155f22",
+  "files": [
+    {
+      "source": "README.md",
+      "archived": "devpost/archive/r003/README.md",
+      "originalSha256": "e343a610ca0e04050971de6648db44ea1aba62b66fb62f375fa5043b5eb34dbc",
+      "archivedSha256": "77dbd640e0f1e7e3b71e4dc36661e931b19dce9ba4ff3f9eee869f875a3eb828"
+    },
+    {
+      "source": "devpost/submission-draft.md",
+      "archived": "devpost/archive/r003/devpost-submission-draft.md",
+      "originalSha256": "caadece60b039b81454c8f9562d47b686ebc20b7fd4a49ea0be0b0feba069959",
+      "archivedSha256": "85af3ed37af981836847d5169b0cd3102187337608d56bfff066fab33f081689"
+    },
+    {
+      "source": "devpost/design-brief.md",
+      "archived": "devpost/archive/r003/devpost-design-brief.md",
+      "originalSha256": "b9aa79b48c524b9a91deb5d000f0fab1675650cc77aec38bdc0ac72c3ce610df",
+      "archivedSha256": "51bbeb2ed56213a8c919422a59291b695ab4f5a8c54d3051ca455033c1472400"
+    },
+    {
+      "source": "devpost/verification.md",
+      "archived": "devpost/archive/r003/devpost-verification.md",
+      "originalSha256": "34c142ed8be8a7fd833ece6aa46a5a89fb107bc991bfaead12af62b2e3287cd0",
+      "archivedSha256": "348948dea883b066b261511b4489161c738e6cabf69682ec876b04dfa759d31d"
+    },
+    {
+      "source": "devpost/native-preview.md",
+      "archived": "devpost/archive/r003/devpost-native-preview.md",
+      "originalSha256": "1f1005d7f4b08ab97624e6eb27e320201e2f4a8866b2155231f7956f85e6ba68",
+      "archivedSha256": "7aef583a133e40ff7e1e0c62687c9b52175d51ea757d4debc4b1daa31214a46f"
+    },
+    {
+      "source": "devpost/spatial-release.md",
+      "archived": "devpost/archive/r003/devpost-spatial-release.md",
+      "originalSha256": "b15a52f0ff98f80b60be003f64037fc7bebb07543ad788044f4db64ee40211c9",
+      "archivedSha256": "33c01ebc0f8b0d4c88aeaa19062676947e8acb509db09e31a249236a52013453"
+    },
+    {
+      "source": "devpost/gallery.md",
+      "archived": "devpost/archive/r003/devpost-gallery.md",
+      "originalSha256": "fa57be35ac14ce73db07f8e00a45b49c038a8ca85d258bd00e71db429d0d2495",
+      "archivedSha256": "7c08c979595f1dbc2b5d65f59a1038fb1ac16fd949f54f32fc67de6f29c01797"
+    },
+    {
+      "source": "devpost/demo-story.md",
+      "archived": "devpost/archive/r003/devpost-demo-story.md",
+      "originalSha256": "ac72fd7d57c2018c0a9ef7c5b0546d6b62dd242b58ae656c297c0722b678392a",
+      "archivedSha256": "c8d8eca4c3b981038f2ce02ff0ff9f245aefbd9ed51d4abf53142d0821ca94cd"
+    },
+    {
+      "source": "devpost/media/README.md",
+      "archived": "devpost/archive/r003/devpost-media-README.md",
+      "originalSha256": "52fd186e5d83bdcfd79480c7fb12e21cdbf385925c04a6c836a097af9311afcc",
+      "archivedSha256": "c26e9a719bb192211c560e3195ccc92a799033382d7d1520fee59b10f6ca3277"
+    }
+  ],
+  "archiveNote": "Original SHA-256 values identify the retained Git baseline. Relative links were rebased to the archive; archivedSha256 identifies each current archived copy."
+}

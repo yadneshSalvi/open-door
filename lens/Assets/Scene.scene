@@ -2040,9 +2040,6 @@
   ScriptAsset: !<reference> d44e8646-31e5-401a-b02a-91641454917d
   ScriptInputsDefault:
     companionBaseUrl: true
-    fullSizeYawDegrees: true
-    cornerMinM: true
-    cornerMaxM: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -2054,13 +2051,13 @@
       companionBaseUrl: "https://open-door-weld.vercel.app"
       miniatureSurfacePositionCm: !<Vec3> {x: -30.000000, y: -142.899994, z: -474.000000}
       miniatureYawDegrees: !<float> 0.000000
-      fullSizeStartPositionCm: !<Vec3> {x: -247.000000, y: -135.779999, z: -160.000000}
-      fullSizeYawDegrees: !<float> 0.000000
+      fullSizeStartPositionCm: !<Vec3> {x: -308.000000, y: -135.699997, z: -635.000000}
+      fullSizeYawDegrees: !<float> 180.000000
       placementConfirmed: true
       placementDescription: Example room · entered sizes
       fullScaleOverlay: true
-      cornerMinM: !<Vec2> {x: 0.650000, y: 1.350000}
-      cornerMaxM: !<Vec2> {x: 2.150000, y: 3.350000}
+      cornerMinM: !<Vec2> {x: 0.000000, y: 1.400000}
+      cornerMaxM: !<Vec2> {x: 2.200000, y: 3.400000}
       clearSound: !<reference.AudioTrackAsset> f142a803-0e79-4629-9585-9f16f2aca967
       contactSound: !<reference.AudioTrackAsset> 982638b5-747e-42ef-adc2-bc0f63a877ca
       wheelSound: !<reference.AudioTrackAsset> 2cb23dd8-225d-45af-9690-f2231761e1ec
