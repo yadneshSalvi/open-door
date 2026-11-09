@@ -1,0 +1,156 @@
+{
+  "schema": "open-door.native-product-freeze/1",
+  "revision": "round3-product-002",
+  "scope": "Canonical presentation and input source only. Root owns native imports, scene settings and acceptance.",
+  "files": [
+    {
+      "source": "lens-src/OpenDoorExperience.ts",
+      "destination": "lens/Assets/Scripts/OpenDoorExperience.ts",
+      "sha256": "92634000cdf14db75955f74e38f64a623049729b82fba23add700947a91eb1b6"
+    },
+    {
+      "source": "lens-src/OpenDoorSpatialUI.ts",
+      "destination": "lens/Assets/Scripts/OpenDoorSpatialUI.ts",
+      "sha256": "ae6eecb1b313088e398f082ce81b030b69160c8b88486ded50ed8bd0ee502ea5"
+    },
+    {
+      "source": "lens-src/OpenDoorSurfacePlacement.ts",
+      "destination": "lens/Assets/Scripts/OpenDoorSurfacePlacement.ts",
+      "sha256": "726575cb5a01448248e9e53ba3d3f2004a8091ad0ff86dbdd763470c10581386"
+    },
+    {
+      "source": "lens-src/SpatialPresentation.ts",
+      "destination": "lens/Assets/Scripts/SpatialPresentation.ts",
+      "sha256": "3a947256364c93dd78b6e1b68a85560296b229f8e1260e5da3229b6ac7909e07"
+    },
+    {
+      "source": "lens-src/OpenDoorCornerView.ts",
+      "destination": "lens/Assets/Scripts/OpenDoorCornerView.ts",
+      "sha256": "ac73763ec73a6497139f785c7abb9c7a947c55612f39330ed60a97d3b51802fc"
+    },
+    {
+      "source": "lens-src/OpenDoorHints.ts",
+      "destination": "lens/Assets/Scripts/OpenDoorHints.ts",
+      "sha256": "12f8138d5b60536ae7ad4a0c75ad41dac56be910daceef6771ff3471cf78e513"
+    },
+    {
+      "source": "lens-src/SpatialCorner.ts",
+      "destination": "lens/Assets/Scripts/SpatialCorner.ts",
+      "sha256": "0fedbae6fafbb64eca46d5548106414e2641855999cbffa513711391f8437015"
+    },
+    {
+      "source": "lens-src/SpatialExperiencePolicy.ts",
+      "destination": "lens/Assets/Scripts/SpatialExperiencePolicy.ts",
+      "sha256": "533eceba0e90113d4b4d8f79484be58d0c406f7d5948e667a015fc82dd4edccf"
+    },
+    {
+      "source": "lens-src/SpatialUIContract.ts",
+      "destination": "lens/Assets/Scripts/SpatialUIContract.ts",
+      "sha256": "4d5cc8014c0fb9f3767204914f6cc035cdfe682eb1ba7e5ffbe39706d647e51a"
+    },
+    {
+      "source": "lens-src/SpatialAnnotationLayout.ts",
+      "destination": "lens/Assets/Scripts/SpatialAnnotationLayout.ts",
+      "sha256": "cf7bdbb4d5c639c5d7eda516f74d2e01cec561e2ae8a5922eb7405694c998a96"
+    }
+  ],
+  "unchangedCore": {
+    "path": "lens-src/OpenDoorCore.js",
+    "sha256": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e"
+  },
+  "checks": {
+    "tests": "42 focused presentation/controller tests passed across 5 files; full prior product001 suite87 passed",
+    "nativeTypecheck": "passed after product002",
+    "webTypecheck": "passed",
+    "fixtureVerification": "baseline blocked/blocked; table clear/blocked; table+bench clear/clear",
+    "authoredDiffWhitespace": "passed",
+    "webProductionBuild": "passed after product001; web source unchanged"
+  },
+  "requiredPackage": "Installed official 3D Hints v2.0; existing SIK/UIKit/LEAF versions unchanged",
+  "previewInputs": {
+    "miniatureSurfacePositionCm": {
+      "x": -30,
+      "y": -142.9,
+      "z": -474
+    },
+    "miniatureYawDegrees": 0,
+    "placementConfirmed": true,
+    "placementDescription": "Example room \u00b7 entered sizes",
+    "fullSizeStartPositionCm": {
+      "x": -247,
+      "y": -135.78,
+      "z": -160
+    },
+    "fullSizeYawDegrees": 0,
+    "fullScaleOverlay": true,
+    "cornerMinM": {
+      "x": 0.65,
+      "y": 1.35
+    },
+    "cornerMaxM": {
+      "x": 2.15,
+      "y": 3.35
+    }
+  },
+  "tableAlignment": {
+    "startup": "Original blocked fixture remains unchanged. Align back is a real optional postrepair edit.",
+    "poseM": {
+      "x": 0.91,
+      "y": 3.01,
+      "theta": 0
+    },
+    "fromReviewedR002InputHash": "d80f2566c8606cae",
+    "resultInputHash": "23bff2355c471375",
+    "resultRevision": 4,
+    "clearsPreviousRepairCertificate": true,
+    "routeExtraLowerBoundM": 0.0015062914311184186,
+    "doorExtraLowerBoundM": 0.0021967573465547785,
+    "nearText": "At least 0.1 cm extra room"
+  },
+  "cornerMapping": {
+    "sizeM": [
+      1.5,
+      2.0
+    ],
+    "roomBounds": {
+      "minX": 0.65,
+      "maxX": 2.15,
+      "minY": 1.35,
+      "maxY": 3.35
+    },
+    "worldFloorYcm": -135.78,
+    "worldXcm": [
+      -300,
+      -150
+    ],
+    "worldZcm": [
+      -350,
+      -150
+    ],
+    "allRoutePoses": 49,
+    "completeBufferedFootprintsShown": 26,
+    "meaning": "A true-scale bedside subset; the whole original model is still checked. No whole-trip visibility claim."
+  },
+  "devicePolicy": {
+    "firstLaunch": "Requires a fresh horizontal hit or explicit new camera-relative manual table placement; saved Preview pose cannot bypass placement.",
+    "realSize": "Requires a separate fresh horizontal floor hit, with the crop center mapped to that hit. It never reuses the Preview floor coordinates.",
+    "evidence": "False-isEditor branches exercised only at a mocked SDK boundary. Physical Spectacles untested."
+  },
+  "nativeAcceptance": "Pending actual Lens Studio compile, visual, input, placement and Center checks.",
+  "leafScenarioFiles": "Not included in this product-only freeze.",
+  "supersedes": "ROUND3-PRODUCT-SOURCE-001.json",
+  "deltaFrom001": [
+    "OpenDoorExperience.ts",
+    "OpenDoorSpatialUI.ts",
+    "OpenDoorHints.ts",
+    "SpatialAnnotationLayout.ts"
+  ],
+  "changes002": [
+    "Chair size: two lines,13.5x4.8cm; remains eligible until chair action.",
+    "Door obstruction: two lines,12x4.6cm.",
+    "Actual-camera projected placement avoids furniture/chair silhouettes, active buttons and other labels without shrinking text; no valid slot hides the plate instead of covering an object.",
+    "Startup scope compact Example room,2.4s eligibility.",
+    "Far state: one large200-unit glyph,8cm plate.",
+    "Official illustrative hints tilted60deg to the tabletop,0.28 illustration scale; physical scripted hand remains true size."
+  ]
+}

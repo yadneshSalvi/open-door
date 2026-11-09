@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-09",
+  "environment": "Lens Studio 5.23.2 Interactive Preview; Sunlit Room and Colorful Home",
+  "images": [
+    {
+      "file": "media/native-tabletop-aligned.png",
+      "sha256": "de38276a9c0944180de7b3c3a04438146740d308a77b29ec0856f31a99ef0779",
+      "caption": "The table aligns with the wardrobe; both modeled tasks have been checked again.",
+      "scope": "Final aligned model; 66 \u00d7 105 cm example chair.",
+      "source_file": "od-undo-polish-02.mp4",
+      "source_sha256": "7017890b1b577d66018ae8215d76dfb42dcb5364e32b3fd5c6b7e6745ca46279",
+      "source_frame": 2109,
+      "source_seconds": 70.5,
+      "crop_xywh": [
+        390,
+        328,
+        1920,
+        1080
+      ],
+      "native_acceptance_sha256": "34f7853975c57169f556cc5e9e375d12a545d55a507d0abb6451cf62882d7444",
+      "cursor_absent": true,
+      "synthetic_hands": true,
+      "physical_device_tested": false,
+      "selection_note": "Current presentation during aligned route replay, before the contextual Undo chip appears. Original source pixels are fixed-cropped; the model is the same final aligned input."
+    },
+    {
+      "file": "media/native-table-drag.png",
+      "sha256": "7bcd3d4b13b2fae8cd14b0b18114941d05b5066eba66fee9c2f092b4465e742d",
+      "caption": "A visible scripted hand grips the actual table. A legal release commits one edit.",
+      "scope": "Earlier interaction in the continuous demonstration; not its final layout.",
+      "source_file": "od-main-place-07.mp4",
+      "source_sha256": "54480a6c143c2ef5c687d4a0e5b821d75ae313fa4304caa11716183cc31b687a",
+      "source_frame": 1061,
+      "source_seconds": 35.36666666666667,
+      "crop_xywh": [
+        390,
+        328,
+        1920,
+        1080
+      ],
+      "native_acceptance_sha256": "c28dabe0835aba62bc5f629087b7d25fd13fa308c552ec9ff42ad6888c0ee206",
+      "cursor_absent": true,
+      "synthetic_hands": true,
+      "physical_device_tested": false
+    },
+    {
+      "file": "media/native-bedside-scale.png",
+      "sha256": "0abf634e1eb8b2615d315475cd8b4a20a269bdeae70fe3da5c1221a485f359ab",
+      "caption": "The same final layout shows the bedside turn at actual scale on an indoor floor.",
+      "scope": "Only the measured bedside segment is displayed; not the full doorway-to-bed route.",
+      "source_file": "od-full-05.mp4",
+      "source_sha256": "0d1053990473b0136a48f95384d9074938059539d601e9099da825add9b9cb8c",
+      "source_frame": 2670,
+      "source_seconds": 89.0,
+      "crop_xywh": [
+        390,
+        386,
+        1920,
+        1080
+      ],
+      "native_acceptance_sha256": "45689870bd53a972986341fbb6d831759e7d759ead569f92ba0b0bbb98528600",
+      "cursor_absent": true,
+      "synthetic_hands": true,
+      "physical_device_tested": false
+    },
+    {
+      "file": "media/native-center.png",
+      "sha256": "73de4b554c4138ea504fd3080716c3f229b376a634404ec2eefb69b03271f278",
+      "caption": "The actual glasses Center simulation shows button rims, warnings and the example chair.",
+      "scope": "Original blocked example; a Preview simulation, not physical glasses footage.",
+      "source_file": "od-support-01.mp4",
+      "source_sha256": "5850915f9f7dd44e7f2326ea78163288c121f3e1a006a5d5f843f0e41d0611aa",
+      "source_frame": 1350,
+      "source_seconds": 45.0,
+      "crop_xywh": [
+        390,
+        386,
+        1920,
+        1080
+      ],
+      "native_acceptance_sha256": "ce592dc5d210ed4f3f7371d16ee4acc79a2b9634bdf65604ab9d881bc8421a0b",
+      "cursor_absent": true,
+      "synthetic_hands": true,
+      "physical_device_tested": false
+    }
+  ]
+}

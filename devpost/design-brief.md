@@ -1,45 +1,45 @@
 # Open Door — design brief
 
-## The spatial moment
+## One room task
 
-The level miniature sits on a table. Its example wheelchair and outline make the task visible; actual collision witnesses light the bedside table and bench. Pinch the table, move it and release: the chair shows that the room is checking, then the current route and obstruction feedback update. **Find changes** adds up to three computed ghost sets. Pinch a tag, compare Before/After and use that layout. The chair follows the retained verified route and finishes at the bedside heading. The bed stays locked.
+Before moving heavy furniture, compare changes that let an example wheelchair turn toward the bed. A tabletop miniature gives an overview; the bedside corner on the floor shows the same dimensions at real size. A person using a mobility device could work with a designer or trusted collaborator and choose the dimensions and priorities that matter to them.
 
-Open Door is a room-layout rehearsal prototype for a person using a mobility device, optionally with a designer or trusted collaborator. Dimensions and priorities come from the person. The prototype does not infer their needs or speak for their lived experience.
+The first move has a visible consequence. Pinch the table, drag it and release. The footprint is green or amber during the move. A clear release starts the checked chair route; a blocked result identifies the obstruction. Undo sits beside the piece. The door is a separate check, so clearing the table does not imply that the bench no longer blocks it.
 
 ## Why glasses
 
-A surface-placed miniature makes the entire arrangement editable. Full size exposes the same footprint, turn and final heading on open floor in a furnished Preview environment. The selected implementation is a supplied model placed by hand (Option C), not a measured twin of the surrounding furniture. One horizontal WorldQuery hit can place the miniature after explicit confirmation; it neither scans a room nor establishes table extent. Scale changes the display, never the viewer's camera or the numerical dimensions.
+Stand beside the full-size turn and inspect the space around the chair, with the model anchored to the floor. The small room remains useful for the whole arrangement; the indoor bedside corner makes its local scale tangible. The web companion supports text entry and files, while the Lens supports spatial inspection and hand input.
 
-The SPECS Lens is the spatial deliverable. Its companion supports comfortable dimension entry, import/export, a separate browser repair worker and reviewed language preferences. A website alone would not demonstrate the intended spatial interaction.
+## What the planning framework changed
 
-## Provided geometry and scope
+The [plan-lens skill in challengepost/learn-specs](https://github.com/challengepost/learn-specs) supplied the design questions and Preview constraints used to write this brief. This was a design exercise; user research remains future work. Three decisions followed that framework and the subsequent design reviews:
 
-The example room is 420 × 340 cm. Furniture, door and profile are synthetic test data. The profile occupies 66 × 105 cm, permits pivoting and reverse, and uses an explicit 3 cm clearance buffer. These are neither an accessibility standard nor a claimed average of wheelchair users.
+| Earlier direction | Current choice | Reason |
+| --- | --- | --- |
+| A floating room with a permanent panel | A level model on a surface, with labels on the relevant pieces | Keep the room and the action in the same place |
+| A wheelchair-size confirmation dialog | A compact chair tag; pinch the chair to edit its size | Explain the shape without covering the problem |
+| The whole room staged on an outdoor platform | A measured 1.5 × 2.0 m indoor bedside crop, with outlined furniture | Show true local scale without shrinking the room or hiding the real floor |
 
-The journey begins on the landing inside the room and ends at a specified bedside pose and heading. The separate door check verifies leaf/furniture clearance through 0–90°. It does not establish outside entry, reach, opening force, transfers, comfort or complete door operation.
+## Interaction
 
-The repair searches finite destinations and orientations for unlocked furniture. It preserves the profile, buffer, uncertainty, locks, start, goal, tolerances and furniture dimensions. It ranks pieces moved first, then translation plus rotation cost. **Least movement found** describes the retained search result; no global minimum is claimed. Additional reserve is independently checked beyond the unchanged buffer and uncertainty for the route, and as extra leaf/furniture separation for the door. The under-1-mm alternative is visibly marked as a small margin, not treated as a robust real-world fit. [The method and limits](repair-search.md) give the numerical details.
+The overview offers Suggest fixes, Try the route and More. Hovering a piece reveals its contextual action and reduces the dock’s other controls so no more than three UI buttons are active. More exposes Place immediately. Back is included in the count; short menus close after inactivity. A five-second Undo chip follows an edit. Locked pieces stay fixed.
 
-## Interaction and visual language
+Suggest fixes returns up to three checked layouts. Colored ghost sets have separate labels and leaders; hovering isolates one. Pinching its geometry or label selects it. Use, Compare and Cancel then replace the choices. Compare exposes distinct lit Before and After buttons. The original layout never inherits the selected layout’s extra-space number.
 
-The room dominates the interface. The native overview has three actions: Find changes, Rehearse and More. The option-selection state has only the up-to-three spatial tags; choosing one replaces them with Use this layout, Before/After and Cancel. Locks appear on pieces, the profile is attached to the chair, and a short About card contains the scope. There is no permanent header or raw coordinate display. The web proposal inspector keeps the spatial changes and Apply action together.
+The example table can be lined up with the wardrobe using Align back. That is a real furniture edit: it adds one history entry, clears the earlier repair certificate and checks both tasks again. The reviewed destination is (0.91, 3.01) m, with a 1 cm side gap and aligned rear edges. Its current extra-space reading is much smaller than the earlier 3 cm alternative; the old number must not survive the edit.
 
-Pale timber, linen, bright chalk text and mint/amber evidence form a warm architectural model. Decorative bedding, lamp and trim never affect collision geometry. Text accompanies color. Light native lettering is intentional for an additive display; physical readability still needs hardware testing.
+The room uses dark low rims, desaturated furniture, bright text and restrained cyan/amber feedback. An outlined chair collision accompanies an on-object explanation. Labels keep their physical size and seek a clear position beside the objects, with a short leader. Far away, one status glyph replaces controls and detail. Close approach reveals the measured geometric gap. Official hand hints appear in context and remain eligible until the relevant gesture succeeds.
 
-Standard SIK near and far pinch-drag edits unlocked furniture on the model floor. Preview positions do not mutate the source. Release queues one validated commit; illegal drops roll back. A cooperative slice advances the unchanged route evaluator after release, with a checking state until a complete result exists. Starting an actual edit cancels a pending search; proposal review refuses furniture edits so a ghost cannot become an unintended source change. Fine adjust, locks and Undo remain contextual.
+## Placement and real size
 
-The translucent chair is a schematic, with no human figure and no solid outside the supplied occupied envelope. Actual trajectory samples drive its motion and wheel animation. Spatial rolling, contact and completion cues supplement visible feedback. Close approach reveals a line between the nearest sampled footprint/furniture edges and the independently certified layout reserve. The line is an illustration; the reserve remains a whole-layout certificate, not a newly invented local deficit. Full-size controls use a bounded lazy follow below eye level while the room remains anchored.
+A fresh device session starts with placement. A horizontal WorldQuery hit along the actual gaze is queried every half-second and confirmed with a pinch. A mint reticle means a current real hit; an estimated aim has only neutral instructions. Saved editor staging cannot confirm a device placement. Real size requests a separate floor hit on device.
 
-An online native search has a timeout and explicit retry/offline recovery. Every returned alternative is independently rechecked locally before display and again before Apply. Direct editing and evaluation remain local. A canceled or superseded response cannot change the room.
+In the measured Preview arrangement, the bedside crop covers room x [0.65, 2.15], y [1.35, 3.35] m. It maps to an indoor 1.5 × 2.0 m floor patch. Furniture boxes, edges and route lines are clipped and faded rather than resized. The chair is shown only when its complete expanded footprint fits within that patch. All original room dimensions and route checks remain unchanged. The controls follow below eye level; the room stays anchored.
 
-## Observable criteria
+## Computation and recovery
 
-1. Review the provided profile and inspect the actual table/footprint and bench/door witnesses.
-2. Find computed alternatives without changing the source; compare displacement and certified extra reserve, including the small-margin warning.
-3. Toggle Before/After, choose an alternative, preserve the bed lock and commit all moves in one revision. Rehearse the retained verified trajectory after one profile acknowledgment.
-4. Change a profile, lock or arbitrary furniture pose; invalidate old proposals, recompute and Undo. Canceled and superseded requests cannot reappear.
-5. Keep the exact committed model through a QR handoff and matching downloads. A model-only share is distinguished from the complete repair certificate retained by a repair-aware JSON export.
+An oriented 66 × 105 cm example footprint moves through a complete bedside trajectory with a chosen 3 cm gap. A separate door-leaf sweep checks furniture through 0–90°. The finite repair search preserves dimensions, locks, start, goal and uncertainty. It ranks fewer pieces moved first, then movement and rotation. “Least movement found” describes a bounded search result, not a global optimum. [Method and limits](repair-search.md) give the numerical definitions.
 
-The web flow, earlier native release and current spatial native/source acceptance pass at their separately recorded scope. The spatial source passes 64 tests across eight files and application/native TypeScript. Exact Direct and far furniture transactions, Poke controls, complete rehearsal, observed G2 presentation and matching QR handoff have accepted evidence. [Current acceptance](spatial-release.md) preserves the failed takes and limits: optional WorldQuery, unfilmed proximity/lazy-follow transitions and physical glasses remain untested; the [149.5-second film](film-review.md) passed independent encoded QA and complete browser playback, with user approval pending. No user study, testimonial, accessibility certification or live recognition is claimed.
+The native Lens requests repairs over HTTPS, then independently checks each result before display and again before Use. Ordinary edits and checks remain local. Cancel, a newer edit or a changed chair size invalidate pending results. Network failure offers explicit retry or slower offline search. A saved QR carries only the model, which the companion checks again.
 
-The planning follows the [Learn AR with SPECS resources](https://learn-specs.devpost.com/resources). The four equally weighted criteria are addressed through spatial clarity, reproducible geometry, computed choices and an actual working journey; Design is also the first published tie-break criterion. [Official rules](https://learn-specs.devpost.com/rules).
+See [verification](verification.md) for tested behavior and [Scope](../README.md#scope) for the boundaries of this prototype.

@@ -1,0 +1,65 @@
+{
+  "schema": "open-door.documentation-archive/1",
+  "records": [
+    {
+      "original": "devpost/native-preview.md",
+      "archive": "devpost/archive/2026-11-07/native-preview.md",
+      "originalSha256": "abf6e81ca2b1b4dd1bf0f168744d65099ebb6b1d37d5ae1f42378da6f09210de",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/native-repair-preview.md",
+      "archive": "devpost/archive/2026-11-07/native-repair-preview.md",
+      "originalSha256": "88ee7c6e8261e30188fc01c64e6e6e9c02a23e7849711cf07a4e35a1da397907",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/numerical-review.md",
+      "archive": "devpost/archive/2026-11-07/numerical-review.md",
+      "originalSha256": "568bb147b05a0781632560cdc3ea739db66e6ea298ba46651301f65119e910ae",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/iterations.md",
+      "archive": "devpost/archive/2026-11-08/iterations.md",
+      "originalSha256": "10275d011a6444ff1d3effb50523a63623173569839b605d460fbc912b7a5651",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/preview-acceptance.md",
+      "archive": "devpost/archive/2026-11-08/preview-acceptance.md",
+      "originalSha256": "366ca3d262ae6803875f76b3aef3d9760dc3b3971759226413ab0613b6c1f68b",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/spatial-release.md",
+      "archive": "devpost/archive/2026-11-08/spatial-release.md",
+      "originalSha256": "ca32b090b1c2eafa737cc8e6548458aca38b1fda3872683ebfce851e39175132",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/verification.md",
+      "archive": "devpost/archive/2026-11-08/verification.md",
+      "originalSha256": "170d7fdacc4bbb4d3bee1d5674121b6db666aff494164fe8f209f06cab133e54",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/film-review.md",
+      "archive": "devpost/archive/2026-11-08/film-review.md",
+      "originalSha256": "f5f0da926dc84a0f4167e4a35b3606df83be4e0eab0982868b93044ed4308d4e",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/demo-story.md",
+      "archive": "devpost/archive/2026-11-08/demo-story.md",
+      "originalSha256": "9405fea23ab0127937645abd9b35e72a10fbf5ec8b869d93c75deedb28cb8a26",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    },
+    {
+      "original": "devpost/media/README.md",
+      "archive": "devpost/archive/2026-11-08/gallery.md",
+      "originalSha256": "8be02a30be91a64bbd14341bc91b73ad8712f07ae0e0dfd409d1e24c649f6681",
+      "note": "Narrative retained; relative links rebased and historical heading added."
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "open-door/film-review@3",
+  "status": "PASS",
+  "artifact": {
+    "file": "Open-Door-r003.mp4",
+    "sha256": "42549071adf7994662a2a695ac58ac86841fab1bf4e74b3c5dad741a79885330",
+    "bytes": 18641431,
+    "duration_seconds": 140.9,
+    "frames": 4227,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "frames_per_second": 30,
+    "video_codec": "H.264",
+    "audio_codec": "AAC",
+    "sample_rate_hz": 48000,
+    "audio_channels": 2
+  },
+  "picture": {
+    "native_seconds": 137.9,
+    "native_frames_compared": 4137,
+    "main_continuous_seconds": 63.5,
+    "main_frames_compared": 1905,
+    "main_film_frames": [
+      1464,
+      3369
+    ],
+    "rate": 1,
+    "non_lens_seconds": 3,
+    "source_comparison": "Every native frame compared to its original fixed source crop and uniform contain transform; no frame above the 3/255 quarter-resolution gray MAE threshold. This is compression/transform tolerance, not pixel identity.",
+    "maximum_mean_absolute_error_255": 2.1076712952424312,
+    "full_decode": "PASS"
+  },
+  "caption_review": {
+    "midpoints": 35,
+    "seam_frames": 51,
+    "fractional_boundary_presence_checks": 149,
+    "phone_width_pixels": 360,
+    "status": "PASS",
+    "scope": "Independent model visual and measured encoded-frame review"
+  },
+  "qr": {
+    "exact_match": true,
+    "untouched_full_resolution_frames": [
+      3979,
+      4106,
+      4136
+    ],
+    "url_sha256": "e575526002449191db218aa82106372be7997968ec773c537d4ae62a0a5433de",
+    "input_hash": "23bff2355c471375",
+    "physical_phone_scan": false
+  },
+  "audio": {
+    "integrated_lufs": -14.41,
+    "true_peak_dbtp": -1.84,
+    "selected_narration_stems": 25,
+    "native_event_bound_cues": 40,
+    "native_audio_recorded": false,
+    "whole_mix_model_audition": "PASS",
+    "aac_master_zero_lag_correlation": 0.9997617874075282,
+    "aac_master_snr_db": 33.17864082915388,
+    "words_per_spoken_second": 2.362023274570803,
+    "pace_scope": "Approximately 2.3 words per spoken second in aggregate. Four short clauses were judged brisk but intelligible, without clipped syllables or masking; this is not a universal per-clause rate cap.",
+    "human_listening_claim": false
+  },
+  "browser_playback": {
+    "status": "PASS",
+    "rate": 1,
+    "unmuted": true,
+    "wall_seconds": 140.963,
+    "progress_samples_checked": 531,
+    "frames": 4227,
+    "dropped_frames": 1,
+    "corrupted_frames": 0,
+    "intermediate_pauses": 0,
+    "seeks": 0,
+    "buffering_events": 0,
+    "errors": 0,
+    "scope": "Complete actual browser playback observed by the model; not human listening or user approval"
+  },
+  "source_evidence_sha256": {
+    "independent_final_report": "d879e4a6b1dd4572a1143584d75e4ed2c33d0e4b5c6f2b50f481e679d7e58b00",
+    "root_browser_receipt": "73f64cab35575071eb54d95d7992c09b33234a6d518067b0edf2f7f9218adfef",
+    "current_native_interaction_receipt": "34f7853975c57169f556cc5e9e375d12a545d55a507d0abb6451cf62882d7444"
+  },
+  "truth_scope": {
+    "environment": "Lens Studio Preview simulated room, including actual Center mode",
+    "input": "Visible scripted SIK hand input; commits and controls use actual native interaction paths.",
+    "opening": "Moving the table clears the chair turn; the door remains a separate check.",
+    "final_input_hash": "23bff2355c471375",
+    "final_table_pose_metres": {
+      "x": 0.91,
+      "y": 3.01,
+      "theta": 0
+    },
+    "earlier_extra_space_certificate_cleared": true,
+    "real_size": "A measured 1.5 by 2 metre indoor bedside patch at scale 1, showing 26 complete expanded chair footprints from a 49-pose path; not the whole room or automatic furniture registration.",
+    "feature_insert": "The separate chair-width demonstration changes 66 to 71 cm. The continuous main explicitly uses the original chair.",
+    "companion": "The QR transfers the model for fresh checks, not the earlier route certificate.",
+    "current_presentation": "Later Undo visibility and first-use hint hold fixes were separately verified; captured product006 pixels remain unaltered.",
+    "hardware_test": false,
+    "recognition": false,
+    "clinical_certification": false,
+    "scope_document": "README.md#scope"
+  },
+  "publication": {
+    "uploaded": false
+  },
+  "picture_plan_sha256": "a6db89f4d69e8b375a0feca81484a76c7525bcf1aa0519767f7c359cdbb25da7",
+  "capture_manifest_sha256": "178db018cf1a7c34aed33d65738d0a200e9c7d0ec5e74ddbfc690e0563b54579"
+}

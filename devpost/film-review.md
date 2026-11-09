@@ -1,12 +1,19 @@
-# Open Door r002 film review
+# Open Door demonstration
 
-The 149.5-second, 1920 × 1080, 30 fps review cut passed independent encoded QA and complete browser playback. Its SHA-256 is `e9df504d181822c5b1d5e5d31d6c898c875c09b6ce51b72fa40748c04b89ab20`. [Sanitized measurements](evidence/film-r002-review.json) bind these results to that exact file.
+The current **2:20.9** film shows Open Door in Lens Studio Preview. Its 63.5-second main interaction follows a visible hand through a real furniture edit and Undo, checked layout choices, Before/After, Use, and the final table alignment. The table’s back edge aligns with the wardrobe; both modeled tasks are checked again after that edit.
 
-- Full video/audio decode passed. Every one of the 2,085 frames in the 69.5-second main demonstration was compared with its accepted source at normal speed and a fixed crop; no temporal, cut or hold anomaly was found.
-- All 59 caption midpoints, seven disclosure midpoints and 47 shot-seam samples were reviewed at 360-pixel width. Three full encoded frames decode to the exact accepted 294-character model URL.
-- Encoded audio measures −14.03 LUFS and −1.78 dBTP. The complete master has an AI audio review; this is not human listening.
-- Browser playback ran from start to finish, unmuted at 1×, with 4,485 frames, no dropped or corrupted frames, and no seeking, buffering or errors.
+The final file is **1920 × 1080 at 30 fps**, with SHA-256 `42549071adf7994662a2a695ac58ac86841fab1bf4e74b3c5dad741a79885330`. [Source-bound measurements](evidence/film-r003-review.json) identify the exact reviewed bytes.
 
-The miniature, separate outdoor full-size replay and shared model retain the same accepted repaired input. The Center clip instead shows the initial arrangement for contrast and framing. The companion insert is a four-second actual page still. Input is automated SIK; the film does not establish scanning, physical-glasses testing or accessibility certification.
+- All 4,137 native picture frames match their original fixed source maps within compression tolerance, including all 1,905 frames of the continuous main interaction. Playback remains at normal speed.
+- All 35 caption midpoints and 149 caption-boundary checks passed review at phone width. Captions stay below the subject in a fixed band; the approach to the miniature remains wordless.
+- Encoded audio measures −14.41 LUFS and −1.84 dBTP. The complete mix passed model audio review. Narration averages about 2.36 words per spoken second; four short clauses are brisk but intelligible, with no clipped syllables or masking in the focused review.
+- Native recording captured video only. Generated narration and music are mixed with original product-cue assets at 40 observed native event times.
+- Complete browser playback ran unmuted at normal speed for 140.9 seconds, with no intermediate pause, seek, buffering or error. The browser reported one dropped frame out of 4,227 and zero corrupted frames.
 
-The user must still watch and approve both exact films under review gate G4 before publication. Earlier films remain preserved; this record is not upload or submission authorization.
+The opening move proves that the chair can turn; the door is checked separately. The final alignment clears the earlier proposal’s extra-space certificate and recomputes both tasks. The later real-size scene displays only the measured bedside subset, at scale 1. The separate 66→71 cm chair-size demonstration is followed by the original chair in the continuous main interaction. The QR carries the final model to the companion, which checks the inputs again.
+
+The film begins with the Preview/scripted-input disclosure. It uses actual native hand interactions and the actual Center simulation; it is not footage from physical Spectacles. [Scope](../README.md#scope) collects the modeling, measurement and hardware limits.
+
+The current Lens also keeps the final Undo chip visible in front of nearby furniture and holds the official first-use hint until success. Those later presentation fixes are separately verified in the [native checks](verification.md); they have not been composited over the recorded interaction.
+
+The film, captions and editable project are prepared locally. The [previous film record](archive/2026-11-08/film-review.md) remains preserved with its original checks and source context.

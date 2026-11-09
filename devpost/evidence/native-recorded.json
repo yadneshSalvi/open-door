@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-09",
+  "environment": {
+    "application": "Lens Studio 5.23.2",
+    "SIK": "2.0.0",
+    "UIKit": "2.0.0",
+    "LEAF": "2.0.2",
+    "3D Hints": "2.0.0",
+    "hardwareTested": false
+  },
+  "inputMethod": "Public LEAF scenarios drive visible SIK hand hover, pinch, drag and release. No product success handler is substituted for input.",
+  "placement": {
+    "sameInputBeforeAndAfter": true,
+    "inputHash": "157d458020a00d14",
+    "candidateCm": {
+      "x": -20.199148178100586,
+      "y": -142.06753540039062,
+      "z": -473.00823974609375
+    },
+    "confirmed": true,
+    "movingHit": {
+      "wallEpochMs": 1794204164652,
+      "first": {
+        "x": -20.199148178100586,
+        "y": -142.06753540039062,
+        "z": -473.00823974609375
+      },
+      "next": {
+        "x": -18.240816116333008,
+        "y": -142.06118774414062,
+        "z": -473.0006103515625
+      },
+      "distanceCm": 1.9583572106609242,
+      "queriesBefore": 2,
+      "queriesAfter": 12,
+      "surfaceStatus": "ready"
+    },
+    "sourceLogSha256": "688443a6b2e87e6719e83c975465e0481043f6f3355194b89c76daf13d0a962a"
+  },
+  "ghostSelection": {
+    "sameInputBeforeAndAfter": true,
+    "selectedIndex": 2,
+    "displayedJourney": "verified_feasible",
+    "displayedDoor": "verified_feasible",
+    "totalUITargets": 3
+  },
+  "chairSizing": {
+    "widthsCm": [
+      66,
+      71,
+      66
+    ],
+    "commits": 2,
+    "restoredInputHashIgnoringEditCounter": "157d458020a00d14",
+    "originalInputHash": "157d458020a00d14",
+    "inputEqualityPassed": true,
+    "staticRunLogSha256": "75bfa0b1ebc397530fd2cc7fefcaa37df34c65d92bcdf6a4b5da6941968e5468"
+  },
+  "finalLayout": {
+    "inputHash": "23bff2355c471375",
+    "editCounter": 4,
+    "tablePoseMetres": {
+      "x": 0.91,
+      "y": 3.01,
+      "theta": 0
+    },
+    "wardrobeAndTableRearEdgeMetres": 3.26,
+    "sideGapMetres": 0.01,
+    "requestedChairExtraSpaceMetres": 0.03,
+    "routeExtraSpaceLowerBoundMetres": 0.0015062914311184186,
+    "doorExtraSpaceLowerBoundMetres": 0.0021967573465547785,
+    "oldRepairCertificateCleared": true
+  },
+  "indoorView": {
+    "scale": 1,
+    "patchMetres": [
+      1.5,
+      2.0
+    ],
+    "roomX": [
+      0.65,
+      2.15
+    ],
+    "roomY": [
+      1.35,
+      3.35
+    ],
+    "rootCm": [
+      -155,
+      -135.78,
+      -185
+    ],
+    "completeDisplayedChairPoses": 26,
+    "wholePathPoses": 49,
+    "sameFinalInputHash": "23bff2355c471375",
+    "wholeRouteShownAtFullSize": false
+  },
+  "shippingScene": {
+    "temporaryRunnerAndBridgeRemoved": true,
+    "compileAndFreshStartupPassed": true,
+    "sceneSha256": "ccec448382cf8d34780f0f33eaa4b91e8da37c97bfe7ae166506b9428add2d6b",
+    "currentSourceFreezeSha256": "b00d885128dbe8af9fac3fba31e454b5501f934753270bdf23900b3978e5c8ce",
+    "freshStartupReceiptSha256": "ba17f943f001a7a0693b0b4ccec544a4e17c12092b9da2fd42438a8b29162748"
+  },
+  "gallery": "native-gallery.json",
+  "undoPolish": {
+    "sameAlignedInputHash": "23bff2355c471375",
+    "allThreeTargetsIncludingUndo": true,
+    "fullLabelVisible": true,
+    "actualPinchRestoredPreviousFurnitureAndProfile": true,
+    "restoredRevision": 5,
+    "receiptSha256": "34f7853975c57169f556cc5e9e375d12a545d55a507d0abb6451cf62882d7444"
+  },
+  "hintLifecycle": {
+    "representativeNativeGesture": "Furniture move",
+    "animationPlayedOnce": true,
+    "heldClipTimeSeconds": 3.183544158935547,
+    "stationarySamples": 27,
+    "visibleDuringIdle": true,
+    "successfulDragDismisses": true,
+    "scope": "Representative Preview gesture; no physical Spectacles claim."
+  }
+}

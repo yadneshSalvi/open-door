@@ -1,64 +1,62 @@
 # Open Door
 
-[Open the live companion](https://open-door-weld.vercel.app).
+Try furniture moves on a tabletop, then see a wheelchair turn at real size.
 
-Open Door is a SPECS room-layout rehearsal prototype with a web companion. Explicit dimensions, an occupied device footprint and a chosen task produce inspectable geometric evidence. The companion searches for furniture changes, previews verified alternatives and lets you trade less movement for more modeled clearance while preserving locks.
+[Demo film](devpost/film-review.md) · [Lens gallery](devpost/gallery.md)
 
-This is a provided model, not live scene recognition. A clear result applies to the modeled checks, not accessibility certification, comfortable transfers or a person's lived experience.
+![Open Door’s aligned table and checked chair route in Lens Studio Preview](devpost/media/native-tabletop-aligned.png)
 
-![Actual supplied-room full-size replay, manually staged in Sunlit Outdoor Preview.](devpost/media/spatial-full-size-r002.png)
+## Designed for glasses
 
-![Selected computed proposal on the Sunlit Room tabletop miniature.](devpost/media/spatial-options-r002.png)
+- **Touch the piece you want to change.** Pinch furniture to move it; pinch the example chair to change its size. Locks and Undo sit beside the affected piece.
+- **See the consequence in the room.** An amber outline identifies a collision. After a clear edit, the chair follows the checked route in cyan.
+- **Keep choices small.** Up to three buttons appear at once. Point at a layout ghost, compare Before and After, then choose Use.
+- **Keep attention on the space.** The model stays on its surface. Nearby detail appears beside the chair; real-size controls follow below eye level.
 
-Actual recorded 8 November Preview frames, cropped to the accepted native viewport. Input is automated SIK; the full-size scene is a separately staged supplied model. [Gallery provenance](devpost/media/spatial-gallery-provenance.json) binds the source and image hashes. [Spatial release evidence](devpost/spatial-release.md) separates accepted source footage from the final film review. The [7 November release](devpost/native-repair-preview.md) remains historical evidence.
+Glasses let you stand beside the full-size turn and inspect the space around the chair, while the model stays anchored to the floor.
 
-## Run locally
+## Open the Lens
 
-Use Node.js 22, as pinned in `.nvmrc` and the package engine.
+Open [`lens/OpenDoor.esproj`](lens/OpenDoor.esproj) in **Lens Studio 5.23.2** and start Interactive Preview. The project includes the installed SIK, UIKit and compatible official hand hints. The example begins with a table blocking the chair and a bench blocking the door.
+
+Pinch the table and move it. A legal release makes one edit, checks the room again and shows the result. Undo restores the old layout. **Suggest fixes** searches for furniture changes while keeping the bed locked and the chair dimensions unchanged. The Lens checks each returned layout locally before showing it and again before Use.
+
+**More → Place** accepts a horizontal surface hit after an explicit pinch. A saved spot is available in the editor. Device startup requires a fresh surface hit. **More → Real size** shows a 1.5 × 2.0 m bedside corner at its actual dimensions; furniture and motion are clipped at that corner’s edge. It does not squeeze the whole room into the patch.
+
+See [native setup and testing](lens-src/SPATIAL-INTEGRATION.md) and the [current verification record](devpost/verification.md).
+
+## Companion
+
+[Open the companion](https://open-door-weld.vercel.app) for dimension entry, room editing, computed alternatives and JSON/SVG downloads. The Lens’s **Save → Send to phone** displays a QR carrying the current model. The companion reconstructs that model and checks it again. A shared model does not transfer a selected route or its repair certificate.
+
+For local development, use Node.js 22:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open [localhost:3102](http://localhost:3102). Geometry, computed repairs, editing, profile controls, undo/redo, comparison and SVG/JSON exports need no AI key. For reviewed language preferences, copy `.env.example` to `.env` and add a server-side `OPENAI_API_KEY`. Models never determine clearance results.
+Open [localhost:3102](http://localhost:3102). Geometry and editing work without an AI key. Optional language preferences use a server-side `OPENAI_API_KEY`; models never decide geometry results.
 
 ```sh
 npm test
 npm run typecheck
 npm run verify:fixture
-npm run lens:bundle
 npm run build
-npx next start --port 3104
 ```
 
-Inspect the production build at [localhost:3104](http://localhost:3104). Deploy this repository root as a Next.js project on Vercel. Its HTTPS APIs use App Router Route Handlers. Keep vendor keys server-side; `.vercelignore` excludes private plans, credentials and native resources from web uploads.
+Canonical native source is in `lens-src/`. `npm run lens:bundle` regenerates its portable numerical engine; copy changed native source into the project only as a coordinated editor update. Do not edit generated caches. HTTPS evaluation, repairs and exports are Vercel-compatible Route Handlers.
 
-## Open the actual Lens
+## Built with
 
-Open `lens/OpenDoor.esproj` in Lens Studio. The generated project preserves the installed SIK and UI Kit packages. Canonical runtime source lives in `lens-src/`; `lens/Assets/Scripts/` is its coordinated editor copy. `OpenDoorCore.js` is generated from the same numerical engine as the companion.
+- [Devpost Learn’s plan-lens framework](https://github.com/challengepost/learn-specs) informed the [design brief](devpost/design-brief.md): a task in the room, controls on the objects and explicit Preview limits.
+- **CLAD and Lens Studio MCP** built and inspected the native Lens in Lens Studio 5.23.2.
+- **SIK 2.0.0 and UIKit 2.0.0** provide actual hand/ray input and persistent controls; **official 3D Hints 2.0.0** teach the first gestures.
+- **LEAF 2.0.2** exercises that same SIK path. On 9 November 2026, visible-hand runs completed real surface placement, furniture drag/Undo, 3D layout selection, 66→71→66 cm chair-width changes, and the checked route. See the [current verification](devpost/verification.md).
+- **TypeScript, Next.js and Three.js** power the shared geometry engine and companion. [Attributions](devpost/attributions.md) include fonts, packages and original sound cues.
 
-Follow the [spatial integration contract](lens-src/SPATIAL-INTEGRATION.md) for the current canonical source set, measured table/floor placements, audio inputs and LEAF registration. `npm run lens:bundle` generates `lens-src/OpenDoorCore.js`; coordinate native copies after engine changes. Never edit scene manifests or caches to bypass native editor workflows.
+## Scope
 
-The 8 November canonical source places a level miniature on a supplied or explicitly confirmed surface. A schematic wheelchair stays inside the unchanged occupied profile; actual obstruction witnesses light the furniture. Near/far SIK dragging has release-only evaluation, alternatives appear as spatial ghost sets, locks sit on pieces and contextual controls show at most three actions. Full size places the same supplied room on manually configured Preview ground, with lazy-follow controls and detail on approach. This is a supplied model in a simulated environment, not a reconstruction of that environment's furniture.
+The example room, furniture and chair dimensions are synthetic. Testing uses Lens Studio Preview and scripted SIK input; physical Spectacles, human hand tracking and comfort have not been tested. A surface hit places the model but does not scan or recognize the room. The indoor display is a bedside subset of the entered room, not a match to the background furniture. A clear geometric result does not establish transfer ability, complete door operation, comfort or accessibility certification. The QR works in Preview; sending a link directly to a paired phone is future work. The companion always performs fresh checks.
 
-Fast search uses the public HTTPS geometry endpoint; every returned alternative is independently verified locally before display and again before Apply. Network failure offers explicit retry or slower offline search. Locks, Undo, profile dimensions, preferred trajectories, complete repair evidence and the model-only QR handoff retain their existing contracts. The companion validates and recomputes the encoded model before downloads.
-
-The spatial source passes 64 tests across eight files, application/native TypeScript and the unchanged fixture regression. Exact Direct furniture transactions, far transactions, near UIKit Poke and the complete native rehearsal passed. Independent G2 review accepted the observed miniature, orbit, Center contrast/framing and separate outdoor replay. Main/full-size/share retain the exact revision-3 input and accepted repair; the actual QR decodes to the matching production companion model. The production scene is saved without active test indices or LEAF bridge. See [spatial acceptance and reproduction](devpost/spatial-release.md) and [verification](devpost/verification.md).
-
-The [149.5-second final film](devpost/film-review.md) passed independent encoded QA and complete browser playback. User approval remains pending. Optional WorldQuery placement, unfilmed proximity/lazy-follow transitions and physical glasses remain untested. Center footage shows the initial arrangement with unverified exact input identity; it proves contrast/framing only.
-
-## Source map
-
-| Location | Purpose |
-| --- | --- |
-| `src/engine/` | Geometry, continuous verification, bounded repair search, planner and sharing |
-| `src/components/` | Interactive studio and direct controls |
-| `src/app/api/` | Evaluation, repair, export, fixture and language APIs |
-| `lens/` | Actual Lens project |
-| `lens-src/` | Controller, portable engine and integration contract |
-| `tests/` | Independent oracles and state/API regressions |
-| `examples/` | Original and revised room models |
-| `devpost/` | Curated design, methods, evidence and attribution |
-
-Read the [computed repair method](devpost/repair-search.md), [design brief](devpost/design-brief.md), [geometry note](devpost/geometry.md), [API contract](devpost/api.md) and [iteration record](devpost/iterations.md). Private plans, environment files and editor connection credentials remain ignored. Repository/video publication is a separate release action.
+[Design, methods, API and verification](devpost/README.md) · [Historical records](devpost/archive/README.md)

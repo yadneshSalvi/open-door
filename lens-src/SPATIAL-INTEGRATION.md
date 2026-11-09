@@ -1,86 +1,69 @@
-# Spatial revision — Preview integration
+# Open Door native setup
 
-This is the canonical source contract for the 8 November spatial redesign. Source checks do not establish native rendering, reachability or audio acceptance. The earlier accepted release remains recorded in [INTEGRATION.md](INTEGRATION.md). [Current spatial acceptance](../devpost/spatial-release.md) closes observed native transactions, G2 presentation and source capture/handoff gates; final encoded-film QA and user review remain pending.
+The numerical engine and API contracts are unchanged. Canonical authored source is in `lens-src/`; the Lens project imports matching files under `lens/Assets/Scripts/`. Use the native editor to import and save changes. Never edit package caches or scene serialization to bypass editor lifecycle.
 
-## Coordinated source set
+## Project and packages
 
-The editor owner copies the following together into `Assets/Scripts/`, preserving the directory structure. Do not copy older Assets files back over canonical source.
+Open `lens/OpenDoor.esproj` with Lens Studio 5.23.2. Retain installed SIK 2.0.0 / UIKit 2.0.0, the camera/world setup and authored mesh/material/font inputs. Official **3D Hints 2.0.0** is compatible with this package set; the newer renamed InteractionKit package family is not a drop-in replacement. Keep the official prefab’s guide child disabled and autoplay off. Its illustration is separate from the actual tracked test hand.
 
-- `OpenDoorExperience.ts`, `OpenDoorSpatialUI.ts`, `OpenDoorSurfacePlacement.ts`, `OpenDoorAudio.ts`, `SpatialPresentation.ts`.
-- Existing `ArchitecturalMeshes.ts` and **unchanged** `OpenDoorCore.js`.
-- For QA in a **separate development scene copy**, use `leaf/` with the official compatible `Leaf.lspkg` 2.0.2 package. Attach `OpenDoorLeafIndex.ts` once for functional scenarios; optionally attach `OpenDoorFilmIndex.ts` for film scenarios. The official LEAF panel owns MessagingBridge; avoid a duplicate bridge. Scenario components register through indices, not individual scene attachments. Remove indices, bridge and temporary helpers from production after QA, restart Preview, check compile/runtime and save cleanly. The accepted production scene has no active test automation.
-- Import `Audio/turn-clear.wav`, `Audio/contact-soft.wav` and `Audio/wheel-roll.wav` as ordinary audio assets. Assign `clearSound`, `contactSound` and `wheelSound`. Retain an Audio Listener on the world camera. The files are original algorithmic sounds; [provenance](Audio/provenance.json) and the reproducible generator are retained.
+The controller uses the authored cube/material/font, three original [audio cues](Audio/provenance.json), a camera AudioListener, and the HTTPS companion base `https://open-door-weld.vercel.app`. No API credential belongs in native source or the scene.
 
-Retain the unit cube (bounds ±0.5), PBR base material, unlit evidence material, Inter font, existing SIK/UI Kit and camera/render target setup. The experience owner is at identity. The controller places the model in world centimetres; changing the owner transform is not the placement interface. No engine bundle rebuild is needed for these source-only presentation changes. A coordinated `lens:bundle` check may verify the unchanged portable engine later; it must not overwrite a concurrently tested Assets revision.
+Current source lists: [product008](ROUND3-PRODUCT-SOURCE-008.json) and [test-only LEAF008](leaf/ROUND3-LEAF-SOURCE-008.json). These bind the accepted runtime and reproduction source. Lens Studio Preview acceptance is recorded separately from physical-device testing, which has not been performed.
 
-## Measured placement inputs
+## Editor staging
 
-The miniature uses the plain sideboard in **Sunlit Room**. Its measured surface is `(-30, -142.9, -474)` cm with yaw `0`; model floor y is `-141.8` cm. Front/side images from camera `(-30, -72, -408)` looking at `(-30, -141.8, -474)` passed grounding, dock readability and reduced clutter. Later review accepted the v5 miniature presentation for filming. The initial Colorful Home table test is historical.
+Set the miniature surface center to `(-30,-142.9,-474)` cm, yaw 0. The 1.1 cm plinth rests on that measured Sunlit Room sideboard; miniature scale is 0.1. The inspector’s confirmed placement is only an editor convenience. A device always begins unplaced and needs a fresh horizontal WorldQuery hit. A no-hit/timeout/retry cannot confirm it.
 
-Full size uses a separately staged supplied-room showroom on **Sunlit Outdoor** paved ground. Ground observations and independent support-view review agree with the configured plane at `−172.7` cm. The earlier Colorful Home anchor was rejected after a wider view revealed a wall intersection. A measured hit alone was insufficient. Disclose the separate Preview scene; this supplied room is not a reconstruction of background furniture.
+For the indoor bedside inspection, use Colorful Home and these display inputs:
 
-All values are world centimetres and yaw degrees. Surface measurements are observations, not room recognition.
+```text
+fullSizeStartPositionCm = (-247,-135.78,-160)
+fullSizeYawDegrees = 0
+fullScaleOverlay = true
+cornerMinM = (0.65,1.35)
+cornerMaxM = (2.15,3.35)
+```
 
-| Input | Current Preview configuration | Meaning |
-| --- | --- | --- |
-| `miniatureSurfacePositionCm` | `(-30, -142.9, -474)` | Sunlit Room tabletop surface top, not model centre |
-| `miniatureYawDegrees` | `0` | Align the level 42 × 34 cm model with the measured sideboard |
-| `fullSizeStartPositionCm` | `(-92, -172.7, -175)` | Place the unchanged journey start on Sunlit Outdoor ground |
-| `fullSizeYawDegrees` | `0` | Supplied room orientation in that open space |
-| `fullScaleOverlay` | `false` | Option C: show the supplied room's solids and low cutaway bounds |
-| `placementConfirmed` | `true` for the measured-pose G1 pass | Explicit manual placement; set false separately to test live surface confirmation |
-| `placementDescription` | `Placed by hand · supplied room · no scanning` | Provenance shown briefly and retained in verification state |
+The original room center becomes `(-155,-135.78,-185)` cm. The 1.5 × 2.0 m crop maps to world x `[-300,-150]`, z `[-350,-150]` cm. This is a measured open patch, not a twin of nearby furniture. The original room and furniture keep their true dimensions. Lines and transparent boxes are clipped; the chair appears only when its whole expanded footprint fits. Only 26 of the aligned path’s 49 poses qualify.
 
-The miniature remains level. Its 1.1 cm plinth rests on the configured surface; the model floor is therefore at y = −141.8 cm. The measured board fit was checked separately from the WorldQuery hit. A horizontal point alone does not prove tabletop extent. These are the actual scene inputs; older serialized scenes or script defaults must be assigned explicitly when integrating this configuration.
+A device’s real-size mode requests a separate floor hit and places the crop center there. It does not reuse the editor’s distant floor coordinates. WorldQuery follows actual gaze, re-queries at 2 Hz and rejects stale, non-horizontal, out-of-range or absent hits. Mint confirmation feedback requires a ready real candidate. During placement, room annotations and hints are hidden and the dock stays below the gaze point.
 
-At full size, the mathematical start `(1.18, 1.45)` m maps to the supplied floor anchor. The helper computes model centre `(0, -172.7, -200)` cm for yaw zero; it also handles other configured yaws. Its footprint spans x = −210…210 cm and z = −370…−30 cm. The floor uses a 0.1 cm display surface centered on the ground plane because Preview does not occlude a thick slab's below-ground sides. Miniature thickness and all checked geometry are unchanged. The exact 420 × 340 cm room is **not** registered to environment furniture; full solids intentionally represent the supplied model.
+## Interaction and geometry boundaries
 
-`configurePlacement(json)` changes only presentation. Its object keys are `miniatureSurfaceCm`, `miniatureYawDegrees`, `fullSizeStartCm`, `fullSizeYawDegrees`, `confirmed`, `description` and optional `overlay`. It does not move the viewer or change any model dimensions, poses, profile, task or revision.
+The starting room is still genuinely blocked. Use the real table drag or Suggest fixes to change it. Align back places the table at `(0.91,3.01,0)` in the reviewed example, adding one history entry and recalculating both tasks. It clears any old repair certificate, share URL and export. Do not visually offset the mesh away from its checked pose.
 
-`More → Room tools → More → Details → Place model` starts a single horizontal WorldQuery hit along the viewer's gaze. A normal within the implemented horizontal tolerance and a hit 35–250 cm away produces a world marker; **Place here** explicitly confirms it. **Look again** requests another hit. **Use supplied pose** is the labeled manual fallback. A four-second timeout and request serial discard obsolete results. This places the display; it is not room scanning.
+Furniture, button and option targets persist across rebuilds. A held pinch cannot dispatch a replacement action. Drag preview leaves the source untouched; a legitimate release queues one commit and sliced evaluation. Invalid and locked moves preserve the source. Actual expanded-footprint and door motions come from the unchanged verifier, not a new visual path.
 
-## Runtime behavior to inspect
+The dock uses 10.5 × 6 cm buttons and a 2.2 cm gap between horizontal hit regions. Labels and controls retain physical scale. The current working and Center views were inspected in native Preview. The physical sizes are not inferred from a projected-box unit test. Full-size controls use their nearby following dock for availability; furniture detail still uses actual eye-to-object distance.
 
-- Overview: **Find changes · Rehearse · More**. No permanent header or coordinate readout. A compact disclosure appears briefly; About retains provided-model, geometric-only and untested-hardware scope.
-- Furniture: persistent SIK targets accept direct and indirect input. The near hand position or far ray is projected into the level, yawed model floor. During a drag only `placementIssue` runs. Release queues one validated revision; a `RevisionEvaluation` slice advances the unchanged generator on Update. The chair shimmers while checking; partial results are never displayed or exported. The time budget is cooperative, not a hard bound on an atomic generator step.
-- Obstructions: actual witness IDs drive amber outlines and object-attached text. No missing-clearance amount is inferred. A blocked Rehearse displays the verified collision witness; it does **not** invent a verified prefix leading to that pose.
-- Chair: wheels, seat, backrest, arms and footplate are a decorative schematic constrained to the supplied occupied envelope. The numerical rectangle is unchanged. The label says **Example wheelchair footprint**. On a verified rehearsal, the chair uses the actual sampled trajectory, rolls its wheels, plays a quiet spatial loop and ends with a mint color pulse and chime.
-- Alternatives: all returned ghost sets appear together, with up to three selectable tags and no simultaneous primary dock actions. Pinch a tag to reveal **Use this layout · Showing: Before/After · Cancel**. Furniture edits are rejected throughout proposal review; a tag is not a source furniture object. Cancel restores the source. The tight option remains explicitly under 1 mm; other tags round certified reserve downward.
-- Before never carries the candidate's reserve. The label reads **Before · current room**. A separately clear Door swing ends with **Door clear**, not Turn clear. Find changes on the current fully verified model reports **No changes needed** without changing the input or making another request.
-- Locks: hover or select a piece to reveal its padlock. The bed remains locked. Fine adjust and Undo remain contextual; no Select item cycle is shown.
-- Profile: a compact card stays by the chair. Width and buffer each have a two-target −/+ adjustment state plus Done. Rehearsal acknowledgment is one **OK** and resumes the real task.
-- Detail: approach/hover reveals labels with distance hysteresis. A display-only line joins the nearest **sampled** footprint/furniture edges for an accepted/previewed repair. The adjacent number is the independently certified **layout reserve**, not a new pointwise clearance measurement or a claim that the sampled location is the continuous global minimum.
-- Full size: the model is floor anchored. Controls stay below eye level with a 35 cm lazy-follow dead zone and bounded catch-up, freezing during a furniture drag or control hover. World objects do not follow the head.
-- QR: Save & share produces an adjacent tag while leaving the model visible. Existing model-only URL and separate complete JSON evidence semantics are unchanged.
+## LEAF development workflow
 
-Persistent primary slots, lock targets, option targets and furniture colliders survive refreshes. UIKit's explicit `initialize()` and guarded setters are used for dynamic buttons. FlexLayout has manual item discovery and defers forced layout until its replaying `onInitialized` event; it must not assume dynamically created components have already awakened.
+Use a separate development scene for automation. Install compatible **LEAF 2.0.2**, attach `OpenDoorLeafIndex` once, and optionally attach `OpenDoorFilmIndex` for capture. The official LEAF panel owns its bridge. Do not create duplicate bridges or bind individual scenario scripts as active startup components. See [scenario instructions and parameters](leaf/ROUND3-SCENARIOS.md).
 
-Persistent controls also capture their action identity on trigger-down. Release runs it only if the same enabled action/context is still present; cancel, hover exit or a replacement clears the press. The miniature dock is narrower and follows the camera-facing edge of the model, freezing during a drag or control hover. Its buttons retain 6 cm base height and an enlarged collider; tag sizes reduce on close approach. The first-use hint is compact, time-bounded, dismissed by dragging and available again on hover until the first drag.
+The visible hand uses a fresh SDK-permitted `LeafSingleHandInteractor` subclass for each run. Its pinch midpoint and palm roll are measured; it is not scaled or composited over the product. Every scenario checks actual SIK modes. Teardown restores tracking and waits before another wrapper starts. Logs distinguish real interaction from read-only state assertions. Main/full/share logs also record actual product audio scheduling for video-only capture.
 
-Audio uses one persistent component per cue, with each track assigned once during startup and only its playback position reset on reuse. This follows the installed UIKit audio stream pattern and avoids stop/reassign/play on one native stream. Audible spatial playback still requires the native check; typechecking does not prove it.
+Before shipping, remove or deactivate both indices, the LEAF bridge and private scenario runner. Restart Preview, confirm compilation/runtime, and save. Keep scenario source for reproduction. Never turn a failed gesture into a pass by calling its product handler.
 
-## Preview gates
+## Checks
 
-1. Compile and save the coordinated source. At the measured table, capture front, side and approach views plus Spectacles simulation Center view. Check plinth contact, level alignment, depth, body below eye level, no unreadable/occluding text and the three-control progression. Inspect actual render materials, not only screenshots of code.
-2. Use actual SIK far drag, then near drag after approaching the miniature. Confirm source inputs/history stay unchanged during the drag, one revision arrives after release, invalid drops roll back and the locked bed refuses movement. Measure evaluation `maxStepMs` from `getVerificationState()`; no Node-to-Preview timing extrapolation.
-3. Run Find, Cancel and retry. Inspect all ghost sets; choose the returned +3 cm option, toggle Before/After, Apply, acknowledge once and watch the full trajectory. Check lock/profile/start/goal invariants and Undo.
-4. Test proximity detail, controls at full size, side walk-around, door sweep, optional audio inputs and surface confirmation/failure. The supplied model must not visually imply a match to unmeasured environment furniture.
-5. Run `open-door-blocked-to-clear` from a fresh baseline. It uses actual named SIK controls, waits on current verification state, selects a genuinely returned reserve ≥3 cm, checks one revision and preserved profile/locks, then checks the actual endpoint.
-6. Run `open-door-surface-reach` from a genuinely far viewing pose with `expectedStrategy=indirect`, then after a real camera approach with `expectedStrategy=direct`. UIKit may use either Direct or Poke for the direct-family expectation; the actual enum/strategy is recorded separately and Poke never counts as Indirect. IK diagnostics use fail-fast and no functional fallback. The first nominal far camera actually routed as Poke and correctly failed the old indirect expectation; that is a recorded pose/routing finding.
-7. Decode the final full native QR and verify the exact existing HTTPS companion handoff. Run the fresh log audit; retain actual audio/visual evidence before final design acceptance or new film claims.
+```sh
+npm test
+npm run typecheck
+npx tsc -p tsconfig.native.json --pretty false
+npm run verify:fixture
+npm run lens:bundle
+```
 
-The checks above describe reproduction gates. Current native observations and independent G2 review are accepted at the scope recorded in [spatial acceptance](../devpost/spatial-release.md); typechecking alone is never evidence of execution. Optional WorldQuery and unfilmed proximity/lazy-follow transitions remain unverified.
+`npm run lens:bundle` regenerates only the canonical portable core. Do not run it or copy sources while another native integration is in progress. The current local run passed 100 tests across 12 files, web and native typechecks, fixture regression and the canonical bundle check. The bundle reproduced the existing core bytes; no Assets sync was performed by that command. The [verification record](../devpost/verification.md) records completed native checks and film evidence. [Scope](../README.md#scope) covers physical-device and modeling limits.
 
-## Follow-up scenario set
+## Accepted Preview behavior and release scene
 
-`open-door-drag-transactions` starts at a settled overview with the table unlocked. It chooses a small legal displacement from the actual input snapshot, then uses real SIK drag events. The default `expectedStrategy=indirect` uses the bounded functional ray interactor; `direct` uses IK with fail-fast and no fallback for the legal move. It observes unchanged source state during the drag and at queued release, waits for one evaluated revision, uses the actual Undo menu, then performs labeled far-ray locked-bed and invalid-boundary stress gestures. Those stress gestures do not claim human reachability. All operations have time limits.
+The 9 November visible-hand runs exercised real furniture drag/Undo, the three HTTPS alternatives, Before/After, Use, and Align back. The aligned result is revision 4, input hash `23bff2355c471375`; both checks pass after the last real edit. Its conservative extra room is about 1.51 mm for the route and 2.20 mm for the door, beyond the unchanged requested 3 cm buffer. The earlier selected 3 cm repair certificate does not describe this later layout and is cleared.
 
-`open-door-full-size-anchor` uses actual More → Full size → Miniature → Back controls. It checks unchanged input/hash/revision/camera, unit display scale and the task start mapped to the configured anchor. It does not prove that the assigned anchor lies on the environment's physical floor; that remains a visual/WorldQuery gate.
+Separate native checks passed actual ghost-collider selection, width 66 → 71 → 66 cm with a fresh check each time, and genuine WorldQuery placement. The moving-hit test observed a 1.958 cm candidate movement and query count 2 → 12 before confirmation. Only the 66 → 71 portion is used in the accepted film; the full return-to-66 is a functional QA result. A valid adjacent gaze hit was measured before filming; a no-hit gaze is not replaced with a nominal pose.
 
-The first spatial source (`30219d10…`) compiled and completed `open-door-blocked-to-clear` in actual Preview in **13.746 s**. The follow-up-2 runtime (`3e17061b…`) then passed the expanded journey in **14.058 s**, including neutral Before labeling and the already-clear success state. Its actual search plus local checks took 3.951 s; three local candidate checks totaled 72 ms, with a maximum step of 31 ms. The applied model was revision 1/hash `d6a6c870b981f880` and the chair reached the exact bedside endpoint. All three audio cues were configured, three play calls completed and no product/audio exception was reported; counters alone are not an audible-output audit.
+The indoor film uses the same complete aligned input and the measured bedside crop. Its standing camera is `(-225,20,-30)` cm, looking at `(-225,-135.78,-250)` cm. All 26 included buffered chair poses remain within the patch and in frame. The actual QR decodes to the same final model and a fresh companion tab rechecks both tasks; this is a model handoff, not a claim that a selected trajectory or optimization certificate transfers.
 
-The complete 64-case source suite passes across eight files, including sixteen presentation cases. Application TypeScript, native/LEAF TypeScript and the original fixture regression also pass. The complete numerical engine is unchanged.
+The saved release scene has no active LEAF index, bridge, private runner or ray probe. Its SHA-256 after native cleanup is `ccec448382cf8d34780f0f33eaa4b91e8da37c97bfe7ae166506b9428add2d6b`. The source remains available for deliberate development-scene reproduction. Preview input is scripted through real SIK interaction; it is not a recorded physical Spectacles test.
 
-Near-control failures were retained: a camera aimed at the room left the dock outside the frustum and produced no events. A properly aimed near repeat passed; the bare-IK repeat then passed in **7.788 s**, observing actual UIKit **Poke** mode. Direct furniture dragging was subsequently accepted in the final Direct05 run with exact Direct mode, unchanged source during preview and queued onTriggerEndOutside release, one evaluated commit, actual Undo, locked-bed refusal and invalid-boundary rollback. Both hand tracking parents were restored. Direct04 failed IK diagnostics remain historical failures; no requirement was relaxed.
-
-The unpadded [paced rehearsal](leaf/FILM-REHEARSAL.md) passed in **65.556 s**, reaching the real chair endpoint at **59.047 s**. Native v5 miniature and thin-floor outdoor support views were independently accepted for filming. These are rehearsal and staging observations, not acceptance of a recorded or edited video. The subsequent source-clock, capture, scoped Center, full-size03 journey and exact share handoff records are now accepted. Center shows the initial arrangement with unverified exact input identity, so it supports contrast/framing only. Final encoded-film QA remains pending.
+Product008 also closes two presentation findings from final review. A fully occluded Undo hit rectangle now receives a bounded camera-facing position; native verification confirmed all three controls, the complete readable Undo target at the aligned pose, and a real Undo restoring the previous proposal at revision 5. Native vector getters are copied explicitly. The official hint now holds its single-animation end pose through 27 observed idle samples and dismisses after a successful actual drag, using the public AnimationPlayer API. The release scene was cleaned, recompiled and saved again with the same scene hash. Protected film footage remains its accepted product006 source, with the brief older Undo occlusion disclosed in the film technical record.

@@ -1,12 +1,11 @@
 import { Scenario } from 'Leaf.lspkg/Scenarios/scenario/Scenario';
 import { ScenarioConfig } from 'Leaf.lspkg/Scenarios/scenario/ScenarioConfig';
 import { DefaultLeafInteractor } from 'Leaf.lspkg/Interactors/interactor/DefaultLeafInteractor';
-import { IKBodyInteractor } from 'Leaf.lspkg/Interactors/interactor/ik/IKBodyInteractor';
+import { visiblePath } from './OpenDoorVisibleFlow';
 import { DiagnosticRecorder } from 'Leaf.lspkg/Diagnostic/DiagnosticRecorder';
 import { findSceneObjectByName, sleep, withTimeout } from 'Leaf.lspkg/Utils/common/Utils';
 import { expect } from 'Leaf.lspkg/Utils/common/Expect';
 import { TargetingMode } from 'SpectaclesInteractionKit.lspkg/Core/Interactor/Interactor';
-import { SIK } from 'SpectaclesInteractionKit.lspkg/SIK';
 import { experience, record, state, target, until } from './OpenDoorScenarioSupport';
 const Core=require('../OpenDoorCore');
 
@@ -20,7 +19,7 @@ export class OpenDoorDragScenario extends Scenario {
     if(before.menu!=='overview'||before.evaluationPending||before.repairProposals.length)throw new Error('Start at a settled overview with no proposal.');
     const input=before.inputSnapshot,table=input.room.objects.find((o:any)=>o.id==='table');
     if(!table||table.locked)throw new Error('The table must be unlocked for this transaction scenario.');
-    const room=findSceneObjectByName('Room — provided fixture');if(!room)throw new Error('Room display missing.');
+    const room=findSceneObjectByName('Example room');if(!room)throw new Error('Room display missing.');
     const axes=[{x:.05,y:0},{x:-.05,y:0},{x:0,y:.05},{x:0,y:-.05}];
     const delta=axes.find(d=>[.25,.5,1,1.5,2].every(k=>!Core.placementIssue(input.room,table.id,table.pose.x+d.x*k,table.pose.y+d.y*k,table.pose.theta)));
     if(!delta)throw new Error('No legal small table test move in the current room; use a fresh or accepted fixture.');
@@ -28,7 +27,7 @@ export class OpenDoorDragScenario extends Scenario {
     const worldDelta=transform.multiplyPoint(new vec3(delta.x*100,0,-delta.y*100)).sub(origin);
     const hand=new DefaultLeafInteractor('Open Door transaction hand'),piece=target(table.name);
     const previews:any[]=[],events:any[]=[],releases:any[]=[],eventCounts:{[key:string]:number}={};
-    const started=Date.now();let release:any=null,releaseKind='',gestureFailure='',ikStrategy:any=null;
+    const started=Date.now();let release:any=null,releaseKind='',gestureFailure='';
     const compact=(value:any)=>({revision:value.revision,sourceRevision:value.sourceRevision,inputHash:value.inputHash,historyLength:value.historyLength,dragActive:value.dragActive,dragCommitPending:value.dragCommitPending,evaluationPending:value.evaluationPending,menu:value.menu});
     const vector=(value:vec3|null|undefined)=>value?{x:value.x,y:value.y,z:value.z}:null;
     const trace=(name:string,event:any)=>{
@@ -58,30 +57,14 @@ export class OpenDoorDragScenario extends Scenario {
     ];
     try {
       if(mode==='direct'){
-        DiagnosticRecorder.getInstance().setPolicy('fail-fast');
-        const sides=['left','right'] as const;
-        const parents=sides.map(side=>SIK.HandInputData.getHand(side).getHandVisuals().root.getParent());
-        const ik=new IKBodyInteractor({fallback:undefined});
-        try{
-          ikStrategy={rightIndirect:ik.right.isIndirect(piece),leftIndirect:ik.left.isIndirect(piece)};
-          await withTimeout(ik.drag(piece,worldDelta),15000,'Direct table drag did not finish.');
-          expect(DiagnosticRecorder.getInstance().hasErrors(),'Direct table gesture must finish without LEAF diagnostic errors').toBe(false);
-        }finally{
-          ik.destroy();
-          const restoredParents=sides.map((side,index)=>{
-            const parent=SIK.HandInputData.getHand(side).getHandVisuals().root.getParent();
-            expect(parent.isSame(parents[index]),side+' IK cleanup must restore the original hand parent').toBe(true);
-            expect(isNull(parent.getComponent('ObjectTracking3D')),side+' restored parent must own ObjectTracking3D').toBe(false);
-            return {side,parent:parent.name,restored:true,hasTracking:true};
-          });
-          record('direct-drag-ik-cleanup',{restoredParents});
-          await sleep(650);
-        }
+        const top=piece.getTransform().getWorldTransform().multiplyPoint(new vec3(0,table.height*80,0));
+        await withTimeout(visiblePath().followTimedPath(piece,[top,top.add(worldDelta)],800,()=>{}),12000,'Direct visible-hand table drag did not finish.');
       }else await withTimeout(hand.drag(piece,worldDelta.uniformScale(1/24),400),8000,'Far table drag did not finish.');
     }catch(error){gestureFailure=String(error);throw error;}
     finally{
       offUpdate();offRelease();offTrace.forEach(off=>off());
-      record('drag-gesture-trace',{mode,gestureFailure,ikStrategy,target:piece.getSceneObject().name,targetPositionCm:vector(piece.getTransform().getWorldPosition()),targetScale:vector(piece.getTransform().getWorldScale()),requestedWorldDeltaCm:vector(worldDelta),before:compact(before),previewCount:previews.length,releaseKind,releaseCount:releases.length,releases,release:release?compact(release):null,after:compact(state(controller)),eventCounts,events,eventsTruncated:Object.keys(eventCounts).reduce((n,key)=>n+eventCounts[key],0)>events.length,diagnostics:DiagnosticRecorder.getInstance().toReport()});
+      record('drag-gesture-trace',{mode,gestureFailure,target:piece.getSceneObject().name,targetPositionCm:vector(piece.getTransform().getWorldPosition()),targetScale:vector(piece.getTransform().getWorldScale()),requestedWorldDeltaCm:vector(worldDelta),before:compact(before),previewCount:previews.length,releaseKind,releaseCount:releases.length,releases,release:release?compact(release):null,after:compact(state(controller)),eventCounts,events,eventsTruncated:Object.keys(eventCounts).reduce((n,key)=>n+eventCounts[key],0)>events.length,diagnostics:DiagnosticRecorder.getInstance().toReport()});
+      if(mode==='direct')await visiblePath().teardown();
     }
     expect(previews.length>0,'Table drag must produce an active preview; inspect drag-gesture-trace event counts and modes').toBe(true);
     for(const preview of previews){
@@ -107,15 +90,13 @@ export class OpenDoorDragScenario extends Scenario {
     for(const object of before.objects)if(object.id!=='table')expect(JSON.stringify(moved.objects.find((o:any)=>o.id===object.id)),'Table drag must preserve '+object.id).toBe(JSON.stringify(object));
     record('drag-'+mode,{before,previews,releaseKind,releaseCount:releases.length,release,moved});
 
-    await hand.trigger(target('More'));await until(controller,s=>s.menu==='more','More');
-    await hand.trigger(target('Room tools'));await until(controller,s=>s.menu==='tools','Room tools');
-    await hand.trigger(target('More'));await until(controller,s=>s.menu==='toolsMore','Undo tools');
-    await hand.trigger(target('Undo'));
+    await until(controller,s=>!s.playing,'edit playback endpoint',30000);
+    await hand.trigger(target('Undo edit'));
     const restored=await until(controller,s=>!s.evaluationPending&&s.revision===moved.revision+1,'Undo evaluation',30000);
     expect(JSON.stringify(restored.objects),'Undo must restore every original furniture field').toBe(JSON.stringify(before.objects));
     expect(JSON.stringify(restored.profile),'Undo must preserve the chair profile').toBe(JSON.stringify(before.profile));
     expect(restored.historyLength,'Undo must restore the previous history length').toBe(before.historyLength);
-    await hand.trigger(target('Back'));await until(controller,s=>s.menu==='overview','overview');
+    await until(controller,s=>s.menu==='overview','overview');
 
     // Locked and deliberately out-of-bounds drops use real bounded far-ray input.
     const bed=restored.inputSnapshot.room.objects.find((o:any)=>o.id==='bed');

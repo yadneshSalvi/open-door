@@ -1,6 +1,40 @@
 /** Display-only calculations. Metres remain the engine's unit; these outputs are centimetres. */
 export type Point3 = { x:number; y:number; z:number };
 export type ChairPart = { name:string; shape:'box'|'wheel'; position:Point3; size:Point3 };
+export type DisplayBounds = {min:Point3;max:Point3};
+
+/** A context control must not sit behind another miniature piece.
+ * Only the control moves; bounds are display-space centimetres, not solver input.
+ */
+export function visibleUndoPosition(top:Point3,camera:Point3,preferred:Point3,bounds:DisplayBounds[]):Point3 {
+  const dx=camera.x-top.x,dz=camera.z-top.z,length=Math.hypot(dx,dz);
+  const forward=length>.001?{x:dx/length,z:dz/length}:{x:0,z:1};
+  const clear=(at:Point3)=>{
+    const eye={x:camera.x-at.x,y:camera.y-at.y,z:camera.z-at.z},horizontal=Math.hypot(eye.x,eye.z),total=Math.hypot(horizontal,eye.y);
+    if(total<.001)return false;
+    const right=horizontal>.001?{x:eye.z/horizontal,y:0,z:-eye.x/horizontal}:{x:1,y:0,z:0};
+    const up={x:eye.y*right.z/total,y:(eye.z*right.x-eye.x*right.z)/total,z:-eye.y*right.x/total};
+    for(const x of [-4.75,0,4.75])for(const y of [-3.25,0,3.25]){
+      const point={x:at.x+x*right.x+y*up.x,y:at.y+y*up.y,z:at.z+x*right.z+y*up.z};
+      for(const box of bounds){
+        let enter=0,leave=1;
+        for(const axis of ['x','y','z'] as const){
+          const delta=camera[axis]-point[axis];
+          if(Math.abs(delta)<1e-8){if(point[axis]<box.min[axis]||point[axis]>box.max[axis]){enter=2;break;}}
+          else{const a=(box.min[axis]-point[axis])/delta,b=(box.max[axis]-point[axis])/delta;enter=Math.max(enter,Math.min(a,b));leave=Math.min(leave,Math.max(a,b));}
+        }
+        if(enter<=leave&&leave>=0&&enter<.999)return false;
+      }
+    }
+    return true;
+  };
+  if(clear(preferred))return {x:preferred.x,y:preferred.y,z:preferred.z};
+  for(const lift of [5,9,13])for(const distance of [12,16,20]){
+    const candidate={x:top.x+forward.x*distance,y:top.y+lift,z:top.z+forward.z*distance};
+    if(clear(candidate))return candidate;
+  }
+  return {x:preferred.x,y:preferred.y,z:preferred.z};
+}
 
 /** The full-size display has no occluded underside in Preview, so use a thin surface. */
 export function floorSection(miniature:boolean):{centerYcm:number;thicknessCm:number} {
@@ -40,16 +74,16 @@ export function fullSizeRoomPosition(room:{width:number;depth:number},start:{x:n
 }
 
 export function reserveLabel(reserveM:number,index:number):string {
-  if(!Number.isFinite(reserveM)||reserveM<0)return 'Reserve unavailable';
-  if(reserveM<.001)return index===0?'Least moving · tight':'Tight margin';
+  if(!Number.isFinite(reserveM)||reserveM<0)return 'Space not checked';
+  if(reserveM<.001)return index===0?'Fewest moves':'Very little room';
   // Round downward: a label never claims more than the independently certified reserve.
-  return '+'+(Math.floor((reserveM+1e-12)*1000)/10).toFixed(1)+' cm spare';
+  return String(Math.floor((reserveM+1e-12)*1000)/10)+' cm extra room';
 }
 
 /** A certificate belongs to the candidate, never to the Before/source view. */
 export function proposalCaption(showAfter:boolean,reserveM:number,index:number):string {
-  if(!showAfter)return 'Before · current room';
-  if(reserveM<.001)return (index===0?'After · least moving':'After · tight margin')+'\nUnder 1 mm spare';
+  if(!showAfter)return 'Before';
+  if(reserveM<.001)return 'After · less than 1 mm extra room';
   return 'After · '+reserveLabel(reserveM,index);
 }
 
@@ -91,38 +125,32 @@ export function obstructionLabels(result:any):Record<string,string> {
   const labels:Record<string,string>={};
   const route=result?.tasks?.journey,door=result?.tasks?.door;
   if(route?.status!=='verified_feasible'&&route?.witness?.objectId)
-    labels[route.witness.objectId]='Blocks the turn';
+    labels[route.witness.objectId]='Chair hits here';
   if(door?.status!=='verified_feasible'&&door?.witness?.objectId)
-    labels[door.witness.objectId]=labels[door.witness.objectId]?'Turn + door blocked':'Door hits this';
+    labels[door.witness.objectId]=labels[door.witness.objectId]?'Chair + door hit here':"Door can’t open past this";
   return labels;
 }
 
 export const PRIMARY_MENUS:Record<string,readonly string[]>={
   overview:['find','rehearse','more'],
-  more:['scale','tools','back'],
-  tools:['profile','keep','toolsMore'],
-  toolsMore:['undo','details','back'],
-  details:['door','place','about'],
-  placement:['placeHere','querySurface','useProvided'],
-  edit:['fine','undo','back'],
-  fine:['fineX','fineY','fineRotation'],
-  fineX:['minusX','plusX','backEdit'],
-  fineY:['minusY','plusY','backEdit'],
-  fineRotation:['rotateLeft','rotateRight','backEdit'],
-  profile:['profileWidth','profileBuffer','profileOK'],
+  more:['place','scale','back'],
+  door:['door','back'],
+  placement:['placeHere','useProvided','back'],
+  edit:['lock','align','back'],
+  profile:['profileWidth','profileBuffer','back'],
   profileWidth:['widthMinus','widthPlus','backProfile'],
   profileBuffer:['bufferMinus','bufferPlus','backProfile'],
-  profileConfirm:['profileOK'],
   search:['cancel'],
   // The up-to-three spatial tags are the controls in this state. Selecting any
   // option reveals Apply / Before–After / Cancel, without six targets at once.
   repairChoices:[],
   repair:['apply','beforeAfter','cancel'],
+  repairCompare:['before','after','backRepair'],
   repairEmpty:['locks','profile','back'],
   repairUnneeded:['rehearse','back'],
   repairError:['retry','offline','back'],
   about:['back'],
-  keep:['showQR','back'],
+  keep:['showQR','about','back'],
   sharing:['back'],
   playing:['stop'],
   checking:['undo'],

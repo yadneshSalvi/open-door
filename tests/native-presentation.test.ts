@@ -1,10 +1,48 @@
 import {describe,it,expect} from 'vitest';
 import {createRequire} from 'node:module';
-import {PRIMARY_MENUS,PressIdentity,RevisionEvaluation,closestDisplaySegment,completionFeedback,detailVisible,emptyRepairPresentation,floorSection,fullSizeRoomPosition,obstructionLabels,ordinaryTaskFeedback,proposalCaption,reserveLabel,rotateFloor,wheelchairParts} from '../lens-src/SpatialPresentation';
+import {Box3,Ray,Vector3} from 'three';
+import {PRIMARY_MENUS,PressIdentity,RevisionEvaluation,closestDisplaySegment,completionFeedback,detailVisible,emptyRepairPresentation,floorSection,fullSizeRoomPosition,obstructionLabels,ordinaryTaskFeedback,proposalCaption,reserveLabel,rotateFloor,visibleUndoPosition,wheelchairParts} from '../lens-src/SpatialPresentation';
 const require=createRequire(import.meta.url);
 const Core=require('../lens-src/OpenDoorCore.js');
 
 describe('native spatial presentation',()=>{
+  it('keeps the complete Undo hit rectangle visible beside the aligned table and wardrobe',()=>{
+    const input=Core.cloneInput(),table=input.room.objects.find((o:any)=>o.id==='table');table.pose={x:.91,y:3.01,theta:0};
+    const before=JSON.stringify(input),camera=new Vector3(-30,-94,-416);
+    const world=(x:number,y:number,h:number)=>new Vector3(-30+(x-2.1)*10,-142.9+h*10,-474-(y-1.7)*10);
+    const boxes=input.room.objects.filter((o:any)=>o.id!=='table').map((o:any)=>{
+      const points:Vector3[]=[];for(const p of Core.objectPolygon(o))for(const h of [0,o.kind==='wardrobe'?Math.min(o.height,1.1):o.height])points.push(world(p.x,p.y,h));
+      return new Box3().setFromPoints(points);
+    });
+    const top=world(.91,3.01,.5),preferred=top.clone().add(new Vector3(-7,5,0));
+    const safe=visibleUndoPosition(top,camera,preferred,boxes);
+    expect(safe).not.toEqual(preferred);
+    const center=new Vector3(safe.x,safe.y,safe.z),normal=camera.clone().sub(center).normalize();
+    const right=new Vector3().crossVectors(new Vector3(0,1,0),normal).normalize(),up=new Vector3().crossVectors(normal,right).normalize();
+    // Independent Three.js ray/box checks cover the full 9.5 × 6.5 cm hit region,
+    // including corners: a visible center alone would miss a clipped label edge.
+    for(const x of [-4.75,0,4.75])for(const y of [-3.25,0,3.25]){
+      const p=center.clone().addScaledVector(right,x).addScaledVector(up,y),ray=new Ray(p,camera.clone().sub(p).normalize());
+      for(const box of boxes){const hit=ray.intersectBox(box,new Vector3());expect(hit===null||hit.distanceTo(p)>camera.distanceTo(p)).toBe(true);}
+    }
+    expect(new Ray(preferred,camera.clone().sub(preferred).normalize()).intersectBox(boxes[2],new Vector3())).not.toBeNull();
+    expect(JSON.stringify(input)).toBe(before);
+  });
+  it('preserves an already visible contextual control and handles a vertical view finitely',()=>{
+    const top={x:0,y:0,z:0},preferred={x:-7,y:5,z:0};
+    expect(visibleUndoPosition(top,{x:0,y:50,z:70},preferred,[])).toEqual(preferred);
+    const p=visibleUndoPosition(top,{x:0,y:50,z:0},preferred,[]);
+    expect([p.x,p.y,p.z].every(Number.isFinite)).toBe(true);
+  });
+  it('copies native vec3 getters explicitly in both preferred-position return paths',()=>{
+    const native=(x:number,y:number,z:number)=>Object.defineProperties({},
+      {x:{get:()=>x},y:{get:()=>y},z:{get:()=>z}}) as {x:number;y:number;z:number};
+    const top=native(0,0,0),camera=native(0,50,70),preferred=native(-7,5,0);
+    expect(Object.keys(preferred)).toEqual([]);
+    expect(visibleUndoPosition(top,camera,preferred,[])).toEqual({x:-7,y:5,z:0});
+    const occupied={min:{x:-1000,y:-1000,z:-1000},max:{x:1000,y:1000,z:1000}};
+    expect(visibleUndoPosition(top,camera,preferred,[occupied])).toEqual({x:-7,y:5,z:0});
+  });
   it('keeps the miniature slab but renders a thin full-size ground surface',()=>{
     expect(floorSection(true)).toEqual({centerYcm:-3,thicknessCm:6});
     expect(floorSection(false)).toEqual({centerYcm:0,thicknessCm:.1});
@@ -40,7 +78,7 @@ describe('native spatial presentation',()=>{
   });
   it('names only actual obstruction witnesses and invents no clearance deficit',()=>{
     const input=Core.cloneInput(),labels=obstructionLabels(Core.evaluate(input));
-    expect(labels.table).toBe('Blocks the turn');expect(labels.bench).toBe('Door hits this');
+    expect(labels.table).toBe('Chair hits here');expect(labels.bench).toBe("Door can’t open past this");
     expect(Object.values(labels).join(' ')).not.toMatch(/\d|cm|more/);
     expect(obstructionLabels({tasks:{journey:{status:'verified_feasible',witness:{objectId:'old'}},door:{status:'uncertain'}}})).toEqual({});
   });
@@ -58,16 +96,16 @@ describe('native spatial presentation',()=>{
     expect(ordinaryTaskFeedback('journey',{tasks:{journey:{status:'uncertain'}}},true)).toBe('Turn uncertain');
   });
   it('rounds certified reserves down and explicitly flags a tiny margin',()=>{
-    expect(reserveLabel(.030426874516801088,2)).toBe('+3.0 cm spare');
-    expect(reserveLabel(.01028,1)).toBe('+1.0 cm spare');
-    expect(reserveLabel(.000047,0)).toBe('Least moving · tight');
-    expect(reserveLabel(Number.NaN,1)).toBe('Reserve unavailable');
+    expect(reserveLabel(.030426874516801088,2)).toBe('3 cm extra room');
+    expect(reserveLabel(.01028,1)).toBe('1 cm extra room');
+    expect(reserveLabel(.000047,0)).toBe('Fewest moves');
+    expect(reserveLabel(Number.NaN,1)).toBe('Space not checked');
   });
   it('never assigns a candidate reserve to the source Before view',()=>{
-    expect(proposalCaption(false,.030426874516801088,2)).toBe('Before · current room');
+    expect(proposalCaption(false,.030426874516801088,2)).toBe('Before');
     expect(proposalCaption(false,.00005561,0)).not.toMatch(/spare|cm|mm|least/);
-    expect(proposalCaption(true,.030426874516801088,2)).toBe('After · +3.0 cm spare');
-    expect(proposalCaption(true,.00005561,0)).toBe('After · least moving\nUnder 1 mm spare');
+    expect(proposalCaption(true,.030426874516801088,2)).toBe('After · 3 cm extra room');
+    expect(proposalCaption(true,.00005561,0)).toBe('After · less than 1 mm extra room');
   });
   it('does not claim a clear turn after the independently clear door finishes',()=>{
     const input=Core.cloneInput();input.room=Core.moveObject(input.room,'bench',3.56,.48);

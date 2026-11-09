@@ -1,0 +1,160 @@
+{
+  "schema": "open-door.native-leaf-freeze/1",
+  "revision": "round3-leaf-005",
+  "scope": "Preview test and capture sources only; root owns native imports, runner and camera. No production files changed.",
+  "files": [
+    {
+      "source": "lens-src/leaf/OpenDoorDragScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorDragScenario.ts",
+      "sha256": "0596d9e158a3de57639ba01b1fbd54ba74f7480541d2fe509611434867a3a0b4"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorFilmIndex.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorFilmIndex.ts",
+      "sha256": "8a20b946d27fe7a9fc9a35a2c631c1d2ef02dcae5231ae5528ac93b713840be6"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorFilmScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorFilmScenario.ts",
+      "sha256": "c597660622d4d793923c38355f5b2dbbd5efb744133feaabb0bf0c0efdf49f44"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorFullSizeFilmScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorFullSizeFilmScenario.ts",
+      "sha256": "54ff6b6c0a2f6401ed4fffbe1cf0138441db3b68e705a7bb1b2652abf05330bb"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorGhostChoiceScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorGhostChoiceScenario.ts",
+      "sha256": "f86bafc696ed3045f19ed4df90ca1fc6270f58abb5d47e1bfe32ce8a40c27e3c"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorHandPath.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorHandPath.ts",
+      "sha256": "6d2ff7442cfe88da8be4c3916ab1b7f61225b1c3751c2607fb0d4a0fb9c8f4e2"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorLeafIndex.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorLeafIndex.ts",
+      "sha256": "cf5f574f2655ff5154c3f986885b2735d5f33b06ec0bcea97ab3cca005d18e5b"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorObjectMenuScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorObjectMenuScenario.ts",
+      "sha256": "1af3e1b34edf16c6a90fb3c250cb5bdf414d80bc9405deb02f6c71a42afd3dcd"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorOpeningScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorOpeningScenario.ts",
+      "sha256": "0ef215338754c9ad45cef0a9c665e1d7b09acaaa1b926fab5ec94c8c7fe95548"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorPlacementScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorPlacementScenario.ts",
+      "sha256": "7875aba6c45414cdccb35c9d20272cfbdf3ad42bdea3427c9d1913adbb569836"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorReachScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorReachScenario.ts",
+      "sha256": "c717b5a7319fbbdc578f4dd59a27561400e593766d6d3e34221195a1d31ee9aa"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorRepairScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorRepairScenario.ts",
+      "sha256": "ccffa2915a865067a6d7d5034915e4d153c6bdea9b1e855b20899bacea70163e"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorScaleScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorScaleScenario.ts",
+      "sha256": "6bff9c8d9c81aa4e1b681f5eedbd51ed1ca345584ba4ef2c33a35f31cf0aa74c"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorScenarioSupport.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorScenarioSupport.ts",
+      "sha256": "20c977b7e5ba55cf0c7a269833e46fed41ed304736e7d665c3d328251dff9f9e"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorShareFilmScenario.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorShareFilmScenario.ts",
+      "sha256": "92af5c878ee6c4bcc3947c4405a8496d8db0cc95e91a673d136e2dec134e277c"
+    },
+    {
+      "source": "lens-src/leaf/OpenDoorVisibleFlow.ts",
+      "destination": "lens/Assets/Scripts/leaf/OpenDoorVisibleFlow.ts",
+      "sha256": "d4ad86352c44e815dd826709b8c5c71d45bcb291a01c073fd3f138898b53f2de"
+    }
+  ],
+  "productManifest": "lens-src/ROUND3-PRODUCT-SOURCE-004.json",
+  "productManifestSha256": "73c14274e373fb0fa2699046ca2470d71f83a23a9da4ec93a33b4196e89ea3ba",
+  "unchangedCoreSha256": "e25822dda60f356cfcaf70ee1897e2a886e09f85868108ad555eef900a4b3b1e",
+  "qaScenarioIds": [
+    "open-door-visible-drag-transactions",
+    "open-door-drag-transactions",
+    "open-door-surface-reach",
+    "open-door-worldquery-placement",
+    "open-door-object-menus",
+    "open-door-ghost-choice",
+    "open-door-blocked-to-clear",
+    "open-door-full-size-anchor"
+  ],
+  "filmScenarios": [
+    {
+      "id": "open-door-opening-film",
+      "parameters": {},
+      "requires": "Fresh blocked miniature; actual collision then2s operator camera preroll, visible drag and actual chair payoff; door remains blocked"
+    },
+    {
+      "id": "open-door-paced-preview",
+      "parameters": {},
+      "requires": "Fresh unchanged blocked miniature, revision0; camera aimed after reset"
+    },
+    {
+      "id": "open-door-full-size-clear-film",
+      "parameters": {
+        "expectedInputHash": ""
+      },
+      "requires": "Fresh indoor Preview; pass actual main hash for accepted filming"
+    },
+    {
+      "id": "open-door-share-film",
+      "parameters": {
+        "expectedInputHash": ""
+      },
+      "requires": "Fresh Preview; nonempty actual main hash mandatory"
+    },
+    {
+      "id": "open-door-full-size-film",
+      "parameters": {
+        "retainFullSize": "true"
+      },
+      "requires": "Inspection only; makes no clear-route claim"
+    }
+  ],
+  "hand": "Owned SDK-permitted LeafSingleHandInteractor subclass; accepted camera-relative thumb-side roll; measured pinch midpoint; physical hand not scaled; guarded dispose and650ms restoration wait",
+  "audio": "Read-only scheduling observer in main/full/share; no microphone claim or product behavior change",
+  "checks": {
+    "nativeTypecheck": "passed after isolated final-pose observation fix",
+    "runtimeAcceptance": "Full03 reached actual goal and exact input equality, but Update observer omitted the last pose before its settled continuation. LEAF005 awaits observation rerun.",
+    "tests": "90 tests passed across12files, including controller, annotation placement, input/geometry invariants and original numerical suite"
+  },
+  "sourceGuide": "lens-src/leaf/ROUND3-SCENARIOS.md",
+  "supersedes": "ROUND3-LEAF-SOURCE-004.json",
+  "deltaFrom002": [
+    "OpenDoorVisibleFlow.ts"
+  ],
+  "changes003": [
+    "pressVisible waits at most1second for the actual enabled public SIK target, covering the observed one-Update Undo re-enable interval. Duplicate targets fail immediately; no handler fallback or product Undo timing change."
+  ],
+  "deltaFrom003": [
+    "OpenDoorFullSizeFilmScenario.ts"
+  ],
+  "changes004": [
+    "Assert all four inspector vec2 corner bounds within five decimal places rather than exact double spelling. Model/hash/scale/pose-count and input equality checks remain unchanged."
+  ],
+  "deltaFrom004": [
+    "OpenDoorFullSizeFilmScenario.ts"
+  ],
+  "changes005": [
+    "Use one deduplicating actual-state observer for Update events and the settled terminal read, so a promise-resumption race cannot omit the genuine final chair pose. Product playback and all26-pose/hash/input/endpoint checks remain unchanged."
+  ]
+}

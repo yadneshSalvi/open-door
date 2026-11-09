@@ -1,22 +1,22 @@
 import { Scenario } from 'Leaf.lspkg/Scenarios/scenario/Scenario';
 import { ScenarioConfig } from 'Leaf.lspkg/Scenarios/scenario/ScenarioConfig';
-import { DefaultLeafInteractor } from 'Leaf.lspkg/Interactors/interactor/DefaultLeafInteractor';
+import { pressVisible, retreatVisible } from './OpenDoorVisibleFlow';
 import { findSceneObjectByName, sleep } from 'Leaf.lspkg/Utils/common/Utils';
 import { expect } from 'Leaf.lspkg/Utils/common/Expect';
 import WorldCameraFinderProvider from 'SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider';
-import { experience, record, state, target, until } from './OpenDoorScenarioSupport';
+import { experience, record, state, until } from './OpenDoorScenarioSupport';
 
 /** Scale through actual controls. Camera walk-around remains a separate visual acceptance. */
 @component
 export class OpenDoorScaleScenario extends Scenario {
   async run(config?:ScenarioConfig):Promise<void> {
     await sleep(1500);
-    const controller=experience(),before=state(controller),hand=new DefaultLeafInteractor('Open Door scale hand');
+    const controller=experience(),before=state(controller);
     if(before.menu!=='overview'||!before.miniature||before.evaluationPending)throw new Error('Start at the settled miniature overview.');
     const camera=WorldCameraFinderProvider.getInstance().getTransform(),cameraPosition=camera.getWorldPosition(),cameraRotation=camera.getWorldRotation();
-    const room=findSceneObjectByName('Room — provided fixture');if(!room)throw new Error('Room display missing.');
-    await hand.trigger(target('More'));await until(controller,s=>s.menu==='more','More');
-    await hand.trigger(target('Full size'));
+    const room=findSceneObjectByName('Example room');if(!room)throw new Error('Room display missing.');
+    await pressVisible('More');await until(controller,s=>s.menu==='more','More');
+    await pressVisible('Real size');
     const full=await until(controller,s=>!s.miniature,'full-size mode');
     expect(full.inputHash).toBe(before.inputHash);expect(full.sourceRevision).toBe(before.sourceRevision);
     expect(JSON.stringify(full.inputSnapshot)).toBe(JSON.stringify(before.inputSnapshot));
@@ -34,11 +34,11 @@ export class OpenDoorScaleScenario extends Scenario {
       record('full-size-retained-for-operator',{state:state(controller),scope:'Separate manually placed supplied-room Preview scene. Camera movement and visible floor contact require the capture operator.'});
       return;
     }
-    await hand.trigger(target('Miniature'));
+    await pressVisible('More');await until(controller,s=>s.menu==='more','real-size More');await pressVisible('Table view');
     const mini=await until(controller,s=>s.miniature,'return to miniature');
     expect(mini.inputHash).toBe(before.inputHash);
     expect(room.getTransform().getWorldScale().x).toBeCloseTo(.1,5);
-    await hand.trigger(target('Back'));await until(controller,s=>s.menu==='overview','overview');
+    await until(controller,s=>s.menu==='overview','overview');await retreatVisible();
     record('scale-round-trip',state(controller));
   }
 }
