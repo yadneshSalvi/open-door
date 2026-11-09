@@ -7,3 +7,5 @@ The [current gallery](../gallery.md) uses accepted r004 native frames reviewed o
 The real-size corner is a supplied model placed on a measured floor patch in Colorful Home. It does not claim that the background furniture was recognized or measured automatically. Center is a Lens Studio simulation; physical glasses remain untested.
 
 Earlier PNGs and the [r003 record](../evidence/native-gallery.json) remain unchanged as historical evidence. Their recorded environment and state apply only to those earlier captures.
+
+[The YouTube thumbnail](youtube-thumbnail-r004.jpg) links to the [published demonstration](https://youtu.be/eqarlEEm_Vk). It uses actual Preview imagery with a title layout; the source-bound gallery remains the visual evidence record.

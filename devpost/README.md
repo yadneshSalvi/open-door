@@ -1,6 +1,6 @@
 # Open Door documentation
 
-Start with the [Lens overview](../README.md). **Demo film: Open Door — Try the turn.**
+Start with the [Lens overview](../README.md). [Watch Open Door](https://youtu.be/eqarlEEm_Vk).
 
 | Read | What it covers |
 | --- | --- |

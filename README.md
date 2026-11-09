@@ -2,9 +2,9 @@
 
 Try furniture moves before anyone has to lift them. Open Door checks whether an example wheelchair can turn beside a bed, and checks the door separately.
 
-**Demo film: Open Door — Try the turn** · [Lens gallery](devpost/gallery.md)
+[Watch Open Door](https://youtu.be/eqarlEEm_Vk) · [Lens gallery](devpost/gallery.md)
 
-![Open Door's aligned bedside table and checked route in Lens Studio Preview](devpost/media/native-tabletop-aligned-r004.png)
+[![Watch Open Door](devpost/media/youtube-thumbnail-r004.jpg)](https://youtu.be/eqarlEEm_Vk)
 
 ## Designed for glasses
 

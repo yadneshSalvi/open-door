@@ -42,7 +42,7 @@ The [recorded interaction receipt](../../evidence/native-recorded.json) and [gal
 
 Visible input uses an SDK-permitted LEAF hand subclass with a measured pinch midpoint and camera-relative palm roll. Every gesture follows real SIK interaction modes; teardown restores tracking. The saved production scene has no active test indices, temporary runner, ray probe or LEAF bridge. It compiled and started cleanly after removal. An unrelated host-authentication analytics warning is not a product runtime result.
 
-Native recording is video-only. The film uses separately generated narration and music, plus original product-cue assets aligned to logged actions. [Film review](../../evidence/film-review-r003.md) records the exact encoded file checks separately from native behavior.
+Native recording is video-only. The film uses narration and original music, plus original product-cue assets aligned to logged actions. [Film review](../../evidence/film-review-r003.md) records the exact encoded file checks separately from native behavior.
 
 ## Numerical and browser foundations
 

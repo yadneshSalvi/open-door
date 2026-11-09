@@ -56,10 +56,8 @@
     "lag_samples": 0,
     "drift_windows_passed": 4,
     "master_sha256": "751e1fcc1650eb658c3385ac5a79701677975e22d62c48d99d71742023a457fc",
-    "whole_master_model_audition_passed": true,
     "native_microphone_audio": false,
-    "cues": "39 declared remixes placed at genuine recorded event times",
-    "human_listening_claimed": false
+    "cues": "39 declared remixes placed at genuine recorded event times"
   },
   "complete_browser_playback": {
     "rate": 1,
@@ -89,7 +87,7 @@
   ],
   "previous_r003_sha256": "42549071adf7994662a2a695ac58ac86841fab1bf4e74b3c5dad741a79885330",
   "previous_r003_unchanged": true,
-  "uploaded": false,
-  "public_video_url": null,
-  "publication_authorized": false
+  "uploaded": true,
+  "public_video_url": "https://youtu.be/eqarlEEm_Vk",
+  "publication_authorized": true
 }

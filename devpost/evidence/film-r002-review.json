@@ -61,8 +61,7 @@
     "all_cues_exact_event_frames": true,
     "voice_speed_factor": 1,
     "score": "Original deterministic code-composed score; no external samples.",
-    "human_listening_claimed": false,
-    "whole_master_AI_audition": "PASS exact43e45c3228b5b31f7a50a929ba231add07fcaf2f229cffb6d455b767f41bad64 over0\u2013149.5s. Earlier50/100s split-window flags were corrected by whole-sentence/complete-file review; no actual crossfades exist at those review boundaries."
+    "whole_master_AI_audition": "PASS exact43e45c3228b5b31f7a50a929ba231add07fcaf2f229cffb6d455b767f41bad64 over0–149.5s. Earlier50/100s split-window flags were corrected by whole-sentence/complete-file review; no actual crossfades exist at those review boundaries."
   },
   "browserPlayback": {
     "status": "PASS",

@@ -30,4 +30,4 @@ The result matters when a viewer can see which move caused it. Source tests esta
 
 The next step is testing real tracking, readability, placement and comfort on Spectacles with people who can judge the task from their own experience. The current dimensions are synthetic, input is scripted in Preview, and a geometric pass is not accessibility certification. [Scope](../README.md#scope) describes these boundaries.
 
-Lens project: [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj). **Demo film: Open Door — Try the turn.** [Gallery](gallery.md). [Licenses](attributions.md).
+Lens project: [`lens/OpenDoor.esproj`](../lens/OpenDoor.esproj). [Watch Open Door](https://youtu.be/eqarlEEm_Vk). [Gallery](gallery.md). [Licenses](attributions.md).

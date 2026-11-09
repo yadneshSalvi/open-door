@@ -7,7 +7,7 @@ The final file is **1920 × 1080 at 30 fps**, with SHA-256 `42549071adf7994662a2
 - All 4,137 native picture frames match their original fixed source maps within compression tolerance, including all 1,905 frames of the continuous main interaction. Playback remains at normal speed.
 - All 35 caption midpoints and 149 caption-boundary checks passed review at phone width. Captions stay below the subject in a fixed band; the approach to the miniature remains wordless.
 - Encoded audio measures −14.41 LUFS and −1.84 dBTP. The complete mix passed model audio review. Narration averages about 2.36 words per spoken second; four short clauses are brisk but intelligible, with no clipped syllables or masking in the focused review.
-- Native recording captured video only. Generated narration and music are mixed with original product-cue assets at 40 observed native event times.
+- Native recording captured video only. Narration and original music are mixed with original product-cue assets at 40 observed native event times.
 - Complete browser playback ran unmuted at normal speed for 140.9 seconds, with no intermediate pause, seek, buffering or error. The browser reported one dropped frame out of 4,227 and zero corrupted frames.
 
 The opening move proves that the chair can turn; the door is checked separately. The final alignment clears the earlier proposal’s extra-space certificate and recomputes both tasks. The later real-size scene displays only the measured bedside subset, at scale 1. The separate 66→71 cm chair-size demonstration is followed by the original chair in the continuous main interaction. The QR carries the final model to the companion, which checks the inputs again.

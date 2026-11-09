@@ -1,0 +1,9 @@
+Try the furniture move before anyone has to lift it.
+
+Open Door helps people planning space around a bed explore a wheelchair turn and check the door separately. Move the table, undo a change, compare three proposed layouts, and inspect the chosen corner at real size. A QR link opens the same room in the companion for a fresh check.
+
+A SPECS Lens demonstrated with an entered room model in Lens Studio Preview.
+
+Try the companion: https://open-door-weld.vercel.app
+Source code: https://github.com/yadneshSalvi/open-door
+Learn AR with SPECS: https://learn-specs.devpost.com/

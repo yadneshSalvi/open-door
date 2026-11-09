@@ -1,0 +1,38 @@
+{
+  "project": "open-door",
+  "published_at_ist": "2026-11-10T01:26:17.999523+05:30",
+  "video_url": "https://youtu.be/eqarlEEm_Vk",
+  "watch_url": "https://www.youtube.com/watch?v=eqarlEEm_Vk",
+  "channel": "@YadneshSalvi-k8q",
+  "channel_id": "UCcnzM3CV0BpoFiUL2C4ZIfg",
+  "title": "Open Door | Will a Wheelchair Turn Beside This Bed? | Learn AR with SPECS",
+  "visibility": "public",
+  "youtube_checks": "No issues found",
+  "captions": "English, uploaded reviewed SRT",
+  "thumbnail": "custom thumbnail uploaded",
+  "playback": "1920x1080, normal speed, English captions, no media error; browser playback spot check",
+  "anonymous_access": "YouTube oEmbed returned exact title and intended channel without credentials",
+  "artifacts": {
+    "video": {
+      "name": "Open-Door-r004.mp4",
+      "bytes": 22662216,
+      "sha256": "20a4d949ab9d3d85b9f3493e2b976378755aa0452f08a9b16f6c026d32eab4d0"
+    },
+    "captions": {
+      "name": "Open-Door-r004.srt",
+      "bytes": 2132,
+      "sha256": "b56a9fa98d5930734a4891b2b64174a7b3ff91b630fe518683808f8072cf5dc3"
+    },
+    "thumbnail": {
+      "name": "thumbnail-r004.jpg",
+      "bytes": 144539,
+      "sha256": "5effd5835edfd9756126b4f27c69d32dd4750703b7fc75fc858d244418aa95ca"
+    },
+    "description": {
+      "name": "youtube-description.txt",
+      "bytes": 576,
+      "sha256": "6ff516a8a1aa7d208bfd139e1636e2445c59ea865fbc8d8bf22d433d28b8b10e"
+    }
+  },
+  "scope": "Publication receipt; exact original delivery bytes preserved."
+}
